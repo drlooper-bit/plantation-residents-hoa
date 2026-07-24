@@ -2281,6 +2281,35 @@ function renderIrregularities(filter = "all", searchQuery = "") {
   });
 }
 
+// Profanity & Offensive Language Filter with Strikeout '######' Masking
+const PROFANITY_LIST = [
+  'fuck', 'fucking', 'fucked', 'fucker', 'fucks',
+  'shit', 'shitting', 'shitted', 'shits', 'bullshit',
+  'bitch', 'bitches', 'bitching',
+  'ass', 'asshole', 'assholes', 'asses',
+  'bastard', 'bastards',
+  'cunt', 'cunts',
+  'dick', 'dicks', 'dickhead',
+  'pussy', 'pussies',
+  'cock', 'cocksucker',
+  'damn', 'dammit',
+  'slut', 'sluts', 'whore', 'whores',
+  'nigger', 'niggers', 'nigga', 'faggot', 'faggots', 'retard', 'retarded'
+];
+
+function censorProfanity(inputStr) {
+  if (!inputStr || typeof inputStr !== 'string') return inputStr;
+  let cleaned = inputStr;
+  PROFANITY_LIST.forEach(word => {
+    const regex = new RegExp(`\\b${word}\\b`, 'gi');
+    cleaned = cleaned.replace(regex, (match) => {
+      const hashes = '#'.repeat(match.length);
+      return `<span style="text-decoration: line-through; opacity: 0.65; font-family: monospace; font-weight: bold; color: var(--err);">${hashes}</span>`;
+    });
+  });
+  return cleaned;
+}
+
 // Submit a new comment
 window.submitComment = function(irregularityId) {
   const nameInput = document.getElementById(`name-${irregularityId}`);
@@ -2292,9 +2321,9 @@ window.submitComment = function(irregularityId) {
     return;
   }
 
-  const author = nameInput.value.trim() || "Anonymous Resident";
+  const author = censorProfanity(nameInput.value.trim() || "Anonymous Resident");
   const stance = stanceInput.value;
-  const text = textInput.value.trim();
+  const text = censorProfanity(textInput.value.trim());
 
   const now = new Date();
   const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -2384,9 +2413,9 @@ window.submitReply = function(irregularityId, commentIndex, safeId) {
     return;
   }
 
-  const author = nameInput ? nameInput.value.trim() : 'Anonymous Resident';
+  const author = censorProfanity(nameInput ? nameInput.value.trim() : 'Anonymous Resident');
   const stance = stanceInput ? stanceInput.value : 'neutral';
-  const text = textInput.value.trim();
+  const text = censorProfanity(textInput.value.trim());
 
   const now = new Date();
   const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
