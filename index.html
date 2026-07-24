@@ -227,9 +227,47 @@
     gap: 8px;
     transition: all 0.2s;
   }
-  .export-btn:hover {
-    background: var(--accent-glow);
+  /* Quick Jump Index Navigation Bar */
+  .quick-jump-bar {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .quick-jump-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .quick-jump-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .quick-jump-chip {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 13px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .quick-jump-chip:hover {
     border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-glow);
+    transform: translateY(-1px);
   }
 
   /* Irregularity Card & Sections */
@@ -937,6 +975,21 @@
         <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
       <input type="text" class="search-input" id="search-box" placeholder="Search irregularities, statutes, or comments...">
+    </div>
+  </div>
+
+  <!-- Quick Jump Index Navigation Bar -->
+  <div class="quick-jump-bar">
+    <div class="quick-jump-title">⚡ Quick Jump Index (Click to jump directly to any topic):</div>
+    <div class="quick-jump-links">
+      <a href="#vp-arrest-deadly-weapon" class="quick-jump-chip">1. VP Arrest &amp; Charges</a>
+      <a href="#cca-membership-vote" class="quick-jump-chip">2. 3rd CCA Vote</a>
+      <a href="#steves-restaurant-closure" class="quick-jump-chip">3. Restaurant Closure</a>
+      <a href="#accountant-fired-pavilion-office" class="quick-jump-chip">4. Accountant Fired</a>
+      <a href="#spa-unbilled-assessment-collections" class="quick-jump-chip">5. Unbilled SPA Fees</a>
+      <a href="#reserve-shift-operating-fund" class="quick-jump-chip">6. Reserve Transfers</a>
+      <a href="#solicitation-policy-enforcement" class="quick-jump-chip">7. Solicitation Enforcement</a>
+      <a href="#legal-fee-allocation" class="quick-jump-chip">8. Legal Fee Allocation</a>
     </div>
   </div>
 
