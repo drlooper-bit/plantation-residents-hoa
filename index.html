@@ -2527,32 +2527,7 @@ window.toggleEditForm = function(safeId) {
 };
 
 window.claimAndToggleEdit = function(safeId, irregularityId, index) {
-  const comments = forumNotes[irregularityId] || [];
-  const comment = comments[index];
-  if (!comment) return;
-
-  const isAuthor = isCommentAuthor(comment, irregularityId, index);
-  if (isAuthor) {
-    toggleEditForm(safeId);
-    return;
-  }
-
-  const userEntry = prompt(`Author Verification: To edit this perspective, enter your Author Name/Neighborhood as posted (e.g. "${comment.author}"):`);
-  if (!userEntry) return;
-
-  if (userEntry.trim().toLowerCase() === comment.author.trim().toLowerCase()) {
-    addOwnedComment(comment.id || `${irregularityId}-${index}`, comment.author);
-    if (irregularityId === "golf-recovery-plan") {
-      renderGolfRecoveryComments();
-    } else if (irregularityId === "hoa-meeting-july-8-2026") {
-      renderMeetingsComments();
-    } else {
-      renderIrregularities(activeTab, document.getElementById("search-box").value);
-    }
-    setTimeout(() => toggleEditForm(safeId), 100);
-  } else {
-    alert("Author name verification failed. Please enter the exact name used when posting.");
-  }
+  toggleEditForm(safeId);
 };
 
 window.submitCommentEdit = function(irregularityId, commentIndex, safeId) {
