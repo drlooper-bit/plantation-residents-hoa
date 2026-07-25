@@ -271,89 +271,17 @@
   }
 
   /* Irregularity Card & Sections */
-  #irregularities-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-    align-items: start;
-  }
-  @media (min-width: 900px) {
-    #irregularities-container {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
   .irregularity-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    transition: border-color 0.2s;
   }
   .irregularity-card:hover {
     border-color: var(--border-hover);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   }
-
-  .card-trigger-btn {
-    width: 100%;
-    padding: 16px 20px;
-    background: transparent;
-    border: none;
-    text-align: left;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    user-select: none;
-  }
-  .card-trigger-btn .title-area h2 {
-    font-family: var(--font-heading);
-    font-size: 15px;
-    font-weight: 700;
-    margin: 0;
-    color: var(--text);
-    line-height: 1.35;
-  }
-  .card-trigger-btn .trigger-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .chevron-icon {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: var(--bg-input);
-    color: var(--text-muted);
-    transition: transform 0.25s ease, background 0.2s, color 0.2s;
-    font-size: 11px;
-    font-weight: bold;
-  }
-  .irregularity-card.open .chevron-icon {
-    transform: rotate(180deg);
-    background: var(--accent);
-    color: white;
-  }
-
-  .card-collapsible-wrapper {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.35s ease;
-    padding: 0 20px;
-    border-top: 0 solid var(--border);
-  }
-  .irregularity-card.open .card-collapsible-wrapper {
-    max-height: 3500px;
-    padding: 20px;
-    border-top-width: 1px;
-  }
-
   .card-header {
     display: flex;
     justify-content: space-between;
@@ -1047,24 +975,6 @@
         <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
       <input type="text" class="search-input" id="search-box" placeholder="Search irregularities, statutes, or comments...">
-    </div>
-  </div>
-
-  <!-- Topic View Controls (INSIDE topic area, directly above topic cards) -->
-  <div class="controls-bar" id="topic-controls-bar" style="background: var(--bg-card); border: 1px solid var(--border); padding: 10px 16px; border-radius: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-    <div style="font-size: 12px; color: var(--text-dim); font-weight: 600;" id="topic-count-info">
-      Topic View Controls
-    </div>
-    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-      <button type="button" class="ctrl-btn ctrl-btn-primary" onclick="expandAllTopics()" style="background: var(--accent); color: #fff; border: none; font-weight: 700; font-size: 11.5px; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
-        Expand All Topics
-      </button>
-      <button type="button" class="ctrl-btn" onclick="collapseAllTopics()" style="background: var(--bg-input); border: 1px solid var(--border); color: var(--text); font-weight: 700; font-size: 11.5px; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
-        Collapse All Topics
-      </button>
-      <button type="button" class="ctrl-btn" id="accordion-toggle-btn" onclick="toggleAccordionMode()" style="background: var(--bg-input); border: 1px solid var(--border); color: var(--text); font-weight: 700; font-size: 11.5px; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
-        Mode: Multi-Expand
-      </button>
     </div>
   </div>
 
@@ -2271,39 +2181,6 @@ function escapeHtml(text) {
   return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
-let isAccordionMode = false;
-
-window.expandAllTopics = function() {
-  document.querySelectorAll('#irregularities-container .irregularity-card').forEach(card => card.classList.add('open'));
-};
-
-window.collapseAllTopics = function() {
-  document.querySelectorAll('#irregularities-container .irregularity-card').forEach(card => card.classList.remove('open'));
-};
-
-window.toggleAccordionMode = function() {
-  isAccordionMode = !isAccordionMode;
-  const btn = document.getElementById('accordion-toggle-btn');
-  if (btn) {
-    btn.textContent = `Mode: ${isAccordionMode ? 'Single Accordion (Auto-collapse)' : 'Multi-Expand'}`;
-    btn.style.background = isAccordionMode ? 'var(--accent)' : 'var(--bg-input)';
-    btn.style.color = isAccordionMode ? '#ffffff' : 'var(--text)';
-  }
-};
-
-window.toggleTopicCard = function(id) {
-  const card = document.querySelector(`.irregularity-card[data-id="${id}"]`);
-  if (!card) return;
-
-  const isCurrentlyOpen = card.classList.contains('open');
-
-  if (isAccordionMode && !isCurrentlyOpen) {
-    collapseAllTopics();
-  }
-
-  card.classList.toggle("open");
-};
-
 // Render dynamic irregularities cards
 function renderIrregularities(filter = "all", searchQuery = "") {
   const VISIBLE_CAP = 5;
@@ -2387,74 +2264,68 @@ function renderIrregularities(filter = "all", searchQuery = "") {
     }
 
     card.innerHTML = `
-      <button type="button" class="card-trigger-btn" onclick="toggleTopicCard('${item.id}')">
+      <div class="card-header">
         <div class="title-area">
           <h2>${escapeHtml(item.title)}</h2>
           <span class="source-tag">Source: <strong>${escapeHtml(item.source)}</strong></span>
         </div>
-        <div class="trigger-right">
-          <span class="forum-count" style="background: #EFF6FF; color: #1E40AF; border: 1px solid #DBEAFE; padding: 3px 10px; border-radius: 12px; font-weight: 700;">💬 ${comments.length} Post${comments.length !== 1 ? 's' : ''}</span>
-          <span class="badge badge-${escapeHtml(item.severity)}">${escapeHtml(item.severity)}</span>
-          <div class="chevron-icon">▼</div>
-        </div>
-      </button>
+        <span class="badge badge-${escapeHtml(item.severity)}">${escapeHtml(item.severity)}</span>
+      </div>
 
-      <div class="card-collapsible-wrapper">
-        <div class="card-body">
-          <div class="details-col">
-            <h3>${item.category === "litigation" ? "Forensic Context" : "The Irregularity"}</h3>
-            <p>${escapeHtml(item.details)}</p>
-            
-            ${item.category === "litigation" ? `
-            <h3>Florida Legal Standard</h3>
-            <p style="font-style: italic; color: var(--text-dim);">${escapeHtml(item.legalStandard || "")}</p>
-            ` : ""}
-            
-            <h3>${item.category === "litigation" ? "Board Response" : "Official Board Explanation"}</h3>
-            <p style="font-style: italic; color: var(--text-dim);">${escapeHtml(item.boardPosition)}</p>
-          </div>
-          ${statutesHtml}
+      <div class="card-body">
+        <div class="details-col">
+          <h3>${item.category === "litigation" ? "Forensic Context" : "The Irregularity"}</h3>
+          <p>${escapeHtml(item.details)}</p>
+          
+          ${item.category === "litigation" ? `
+          <h3>Florida Legal Standard</h3>
+          <p style="font-style: italic; color: var(--text-dim);">${escapeHtml(item.legalStandard || "")}</p>
+          ` : ""}
+          
+          <h3>${item.category === "litigation" ? "Board Response" : "Official Board Explanation"}</h3>
+          <p style="font-style: italic; color: var(--text-dim);">${escapeHtml(item.boardPosition)}</p>
         </div>
+        ${statutesHtml}
+      </div>
 
-        <div class="prompt-box">
-          <h4>${item.category === "litigation" ? "Precedent Inquiry Prompt" : "Irregularity Inquiry Prompt"}</h4>
-          <p>${escapeHtml(item.prompt)}</p>
+      <div class="prompt-box">
+        <h4>${item.category === "litigation" ? "Precedent Inquiry Prompt" : "Irregularity Inquiry Prompt"}</h4>
+        <p>${escapeHtml(item.prompt)}</p>
+      </div>
+
+      <div class="forum-section">
+        <div class="perspectives-window" style="padding:14px;">
+          <div class="forum-header">
+          <h4>Resident Perspectives &amp; Town Hall Info</h4>
+          <span class="forum-count">${comments.length} Posts</span>
         </div>
-
-        <div class="forum-section">
-          <div class="perspectives-window" style="padding:14px;">
-            <div class="forum-header">
-              <h4>Resident Perspectives &amp; Town Hall Info</h4>
-              <span class="forum-count">${comments.length} Posts</span>
-            </div>
-            
-            <div class="comment-list" id="comments-${item.id}">
-              ${commentsListHtml}
-            </div>
+        
+        <div class="comment-list" id="comments-${item.id}">
+          ${commentsListHtml}
+        </div>
           </div>
 
-          <div class="add-comment-form" style="margin-top: 16px;">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="name-${item.id}">Resident Name &amp; Address / Neighborhood (e.g. Resident - Ashley Court)</label>
-                <input type="text" class="form-control" id="name-${item.id}" placeholder="Enter name, street address, or neighborhood (can be anonymous)">
-              </div>
-              <div class="form-group">
-                <label for="stance-${item.id}">Your Perspective / Stance</label>
-                <select class="form-control" id="stance-${item.id}">
-                  <option value="concerned">Concerned Resident</option>
-                  <option value="skeptical">Skeptical Watchdog</option>
-                  <option value="neutral">Neutral Inquirer</option>
-                  <option value="supportive">Supportive of Board</option>
-                </select>
-              </div>
+        <div class="add-comment-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name-${item.id}">Resident Name &amp; Address / Neighborhood (e.g. Resident - Ashley Court)</label>
+              <input type="text" class="form-control" id="name-${item.id}" placeholder="Enter name, street address, or neighborhood (can be anonymous)">
             </div>
             <div class="form-group">
-              <label for="text-${item.id}">Your Perspective, Statement or Supplementary Information</label>
-              <textarea class="form-control" id="text-${item.id}" rows="3" placeholder="Provide your perspective, share facts, or ask follow-up questions regarding this irregularity..."></textarea>
+              <label for="stance-${item.id}">Your Perspective / Stance</label>
+              <select class="form-control" id="stance-${item.id}">
+                <option value="concerned">Concerned Resident</option>
+                <option value="skeptical">Skeptical Watchdog</option>
+                <option value="neutral">Neutral Inquirer</option>
+                <option value="supportive">Supportive of Board</option>
+              </select>
             </div>
-            <button type="button" class="submit-btn" onclick="submitComment('${item.id}')">Submit Perspective</button>
           </div>
+          <div class="form-group">
+            <label for="text-${item.id}">Your Perspective, Statement or Supplementary Information</label>
+            <textarea class="form-control" id="text-${item.id}" rows="3" placeholder="Provide your perspective, share facts, or ask follow-up questions regarding this irregularity..."></textarea>
+          </div>
+          <button type="button" class="submit-btn" onclick="submitComment('${item.id}')">Submit Perspective</button>
         </div>
       </div>
     `;
@@ -3109,7 +2980,6 @@ let activeTab = "all";
 function applyTabState(tab) {
   const searchBar = document.getElementById("search-container");
   const container = document.getElementById("irregularities-container");
-  const controlsBar = document.getElementById("topic-controls-bar");
   const radar = document.getElementById("radar-container");
   const turnaround = document.getElementById("turnaround-container");
   const history = document.getElementById("history-container");
@@ -3117,41 +2987,26 @@ function applyTabState(tab) {
   const meetings = document.getElementById("meetings-container");
   const recall = document.getElementById("recall-container");
 
-  // Reset visibility for all containers
-  if (container) container.style.display = "none";
-  if (controlsBar) controlsBar.style.display = "none";
-  if (searchBar) searchBar.style.display = "none";
-  if (radar) radar.style.display = "none";
-  if (turnaround) turnaround.style.display = "none";
-  if (history) history.style.display = "none";
-  if (exploratory) exploratory.style.display = "none";
-  if (meetings) meetings.style.display = "none";
-  if (recall) recall.style.display = "none";
-
   if (tab === "litigation") {
-    if (container) container.style.display = "grid";
-    if (controlsBar) controlsBar.style.display = "flex";
-    if (searchBar) searchBar.style.display = "flex";
-    if (radar) radar.style.display = "block";
+    container.style.display = "block"; searchBar.style.display = "flex"; turnaround.style.display = "none"; radar.style.display = "block"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
     renderIrregularities(tab, document.getElementById("search-box").value);
   } else if (tab === "turnaround") {
-    if (turnaround) turnaround.style.display = "block";
+    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "block"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
     renderGolfRecoveryComments();
   } else if (tab === "recall") {
+    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none";
     if (recall) recall.style.display = "block";
     renderRecallPoll();
   } else if (tab === "meetings") {
-    if (meetings) meetings.style.display = "block";
+    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "none"; if (recall) recall.style.display = "none";
+    document.getElementById("meetings-container").style.display = "block";
     renderMeetingsComments();
   } else if (tab === "history") {
-    if (history) history.style.display = "block";
+    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "block"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
   } else if (tab === "exploratory") {
-    if (exploratory) exploratory.style.display = "block";
+    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "block"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
   } else {
-    // "all", "financial", "governance", etc.
-    if (container) container.style.display = "grid";
-    if (controlsBar) controlsBar.style.display = "flex";
-    if (searchBar) searchBar.style.display = "flex";
+    container.style.display = "block"; searchBar.style.display = "flex"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
     renderIrregularities(tab, document.getElementById("search-box").value);
   }
 }
