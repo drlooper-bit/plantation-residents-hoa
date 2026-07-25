@@ -2518,6 +2518,35 @@ window.toggleEditForm = function(safeId) {
   form.style.display = isHidden ? 'block' : 'none';
 };
 
+window.claimAndToggleEdit = function(safeId, irregularityId, index) {
+  const comments = forumNotes[irregularityId] || [];
+  const comment = comments[index];
+  if (!comment) return;
+
+  const isAuthor = isCommentAuthor(comment, irregularityId, index);
+  if (isAuthor) {
+    toggleEditForm(safeId);
+    return;
+  }
+
+  const userEntry = prompt(`Author Verification: To edit this perspective, enter your Author Name/Neighborhood as posted (e.g. "${comment.author}"):`);
+  if (!userEntry) return;
+
+  if (userEntry.trim().toLowerCase() === comment.author.trim().toLowerCase()) {
+    addOwnedComment(comment.id || `${irregularityId}-${index}`, comment.author);
+    if (irregularityId === "golf-recovery-plan") {
+      renderGolfRecoveryComments();
+    } else if (irregularityId === "hoa-meeting-july-8-2026") {
+      renderMeetingsComments();
+    } else {
+      renderIrregularities(activeTab, document.getElementById("search-box").value);
+    }
+    setTimeout(() => toggleEditForm(safeId), 100);
+  } else {
+    alert("Author name verification failed. Please enter the exact name used when posting.");
+  }
+};
+
 window.submitCommentEdit = function(irregularityId, commentIndex, safeId) {
   const textInput = document.getElementById(`edit-text-${safeId}`);
   if (!textInput || !textInput.value.trim()) {
@@ -2638,11 +2667,11 @@ window.buildCommentHtml = function(c, irregularityId, index) {
 
   const editedTag = c.editedAt ? ` <span class=\"comment-edited-tag\" style=\"font-size: 10.5px; opacity: 0.7; font-style: italic;\">(Edited ${escapeHtml(c.editedAt)})</span>` : '';
 
-  const editBtnHtml = isAuthor ? `
-    <button type=\"button\" class=\"edit-toggle\" onclick=\"toggleEditForm('${safeId}')\" style=\"margin-left: 10px; background: none; border: none; color: var(--accent); font-weight: 700; cursor: pointer; font-size: 12px;\">Edit</button>
-  ` : '';
+  const editBtnHtml = `
+    <button type=\"button\" class=\"edit-toggle\" onclick=\"claimAndToggleEdit('${safeId}', '${irregularityId}', ${index})\" style=\"margin-left: 10px; background: none; border: none; color: var(--accent); font-weight: 700; cursor: pointer; font-size: 12px;\">Edit</button>
+  `;
 
-  const editFormHtml = isAuthor ? `
+  const editFormHtml = `
     <div class=\"edit-form\" id=\"edit-form-${safeId}\" style=\"display: none; margin-top: 10px; padding: 10px; border-left: 2px solid var(--accent); background: var(--bg-input); border-radius: 6px;\">
       <label style=\"font-size: 11px; font-weight: 700; color: var(--text-dim); display: block; margin-bottom: 4px;\">EDIT YOUR PERSPECTIVE</label>
       <textarea id=\"edit-text-${safeId}\" rows=\"3\" style=\"width: 100%; padding: 8px; margin-bottom: 6px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-card); color: var(--text);\">${escapeHtml(c.text)}</textarea>
@@ -2651,7 +2680,7 @@ window.buildCommentHtml = function(c, irregularityId, index) {
         <button type=\"button\" onclick=\"toggleEditForm('${safeId}')\" style=\"background: transparent; color: var(--text-muted); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer;\">Cancel</button>
       </div>
     </div>
-  ` : '';
+  `;
 
   return `
     <div class=\"comment-card\" data-comment-id=\"${escapeHtml(likesKey)}\">
