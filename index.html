@@ -2889,30 +2889,58 @@ window.toggleArchive = function(irregularityId) {
     : `Archived Posts (${archivedDiv.querySelectorAll('.comment-card').length})`;
 };
 
-// HOA Board Recall Poll Logic
-const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v3';
-const RECALL_USER_VOTE_KEY = 'plant_hoa_user_recall_vote_v3';
+// HOA Board Recall Poll Logic — Global Real-Time Cloud Sync
+const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v4';
+const RECALL_USER_VOTE_KEY = 'plant_hoa_user_recall_vote_v4';
+const RECALL_APP_KEY = '2q7ohpt5';
 
 let recallPollData = {
   yes: 3,
   no: 1
 };
 
-function loadRecallPollData() {
+function loadRecallPollData(callback) {
   try {
     const stored = localStorage.getItem(RECALL_STORAGE_KEY);
     if (stored) {
-      recallPollData = JSON.parse(stored);
-    } else {
-      localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
+      const parsed = JSON.parse(stored);
+      if (parsed && typeof parsed.yes === 'number' && parsed.yes > recallPollData.yes) {
+        recallPollData.yes = parsed.yes;
+      }
+      if (parsed && typeof parsed.no === 'number' && parsed.no > recallPollData.no) {
+        recallPollData.no = parsed.no;
+      }
     }
-  } catch (e) {
-    console.warn("localStorage read error for recall poll", e);
-  }
+  } catch (e) {}
+
+  const getYesUrl = `https://keyvalue.immanuel.co/api/KeyVal/GetValue/${RECALL_APP_KEY}/recall_yes`;
+  const getNoUrl = `https://keyvalue.immanuel.co/api/KeyVal/GetValue/${RECALL_APP_KEY}/recall_no`;
+
+  Promise.all([
+    fetch(getYesUrl).then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch(getNoUrl).then(r => r.ok ? r.json() : null).catch(() => null)
+  ]).then(([remoteYes, remoteNo]) => {
+    if (remoteYes !== null) {
+      const cleanedY = parseInt(String(remoteYes).replace(/"/g, '').trim(), 10);
+      if (!isNaN(cleanedY) && cleanedY > recallPollData.yes) {
+        recallPollData.yes = cleanedY;
+      }
+    }
+    if (remoteNo !== null) {
+      const cleanedN = parseInt(String(remoteNo).replace(/"/g, '').trim(), 10);
+      if (!isNaN(cleanedN) && cleanedN > recallPollData.no) {
+        recallPollData.no = cleanedN;
+      }
+    }
+    try {
+      localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
+    } catch (e) {}
+
+    if (callback) callback();
+  });
 }
 
-function renderRecallPoll() {
-  loadRecallPollData();
+function updateRecallPollUI() {
   const yesCount = recallPollData.yes || 0;
   const noCount = recallPollData.no || 0;
   const total = yesCount + noCount;
@@ -2933,7 +2961,6 @@ function renderRecallPoll() {
   if (noStat) noStat.textContent = `${noPct}% (${noCount.toLocaleString()} votes)`;
   if (totalLabel) totalLabel.textContent = `Total Community Votes: ${total.toLocaleString()}`;
 
-  // Check if user already voted
   try {
     const userVote = localStorage.getItem(RECALL_USER_VOTE_KEY);
     if (userVote && voteMsg) {
@@ -2941,9 +2968,14 @@ function renderRecallPoll() {
       voteMsg.style.background = "rgba(77, 171, 247, 0.12)";
       voteMsg.style.border = "1px solid rgba(77, 171, 247, 0.3)";
       voteMsg.style.color = "var(--accent)";
-      voteMsg.textContent = `Your vote (${userVote.toUpperCase()}) has been recorded. Thank you for participating!`;
+      voteMsg.textContent = `Your vote (${userVote.toUpperCase()}) has been recorded and saved globally. Thank you for participating!`;
     }
   } catch (e) {}
+}
+
+function renderRecallPoll() {
+  updateRecallPollUI();
+  loadRecallPollData(updateRecallPollUI);
 }
 
 window.castRecallVote = function(option) {
@@ -2969,7 +3001,13 @@ window.castRecallVote = function(option) {
 
     localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
     localStorage.setItem(RECALL_USER_VOTE_KEY, option);
-    renderRecallPoll();
+    updateRecallPollUI();
+
+    const newCount = option === 'yes' ? recallPollData.yes : recallPollData.no;
+    const keyName = option === 'yes' ? 'recall_yes' : 'recall_no';
+    const setUrl = `https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/${RECALL_APP_KEY}/${keyName}/${newCount}`;
+    
+    fetch(setUrl, { method: 'POST' }).catch(err => console.warn('Cloud poll vote sync error:', err));
   } catch (e) {
     console.error("Error submitting recall vote:", e);
   }
