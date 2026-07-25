@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview: Governance Topics — 2-Column Collapsible Grid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&family=Fira+Code&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F1F5F9;
+    --bg-card: #FFFFFF;
+    --bg-input: #F8FAFC;
+    --border: #E2E8F0;
+    --border-hover: #CBD5E1;
+    --text: #1E293B;
+    --text-dim: #64748B;
+    --text-muted: #94A3B8;
+    --accent: #1E40AF;
+    --accent-glow: rgba(30, 64, 175, 0.12);
+    --ok: #10B981;
+    --warn: #F59E0B;
+    --err: #EF4444;
+    --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  
+  * { box-sizing: border-box; }
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    margin: 0;
+    padding: 24px;
+    line-height: 1.5;
+  }
+  
+  .wrap { max-width: 1200px; margin: 0 auto; }
+  
+  .preview-header {
+    background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);
+    color: white;
+    padding: 24px 30px;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 25px -5px rgba(30,64,175,0.25);
+  }
+  .preview-header h1 {
+    font-family: var(--font-heading);
+    margin: 0 0 6px 0;
+    font-size: 24px;
+    font-weight: 800;
+  }
+  .preview-header p { margin: 0; font-size: 14px; opacity: 0.92; }
+  
+  .controls-bar {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 14px 20px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .controls-bar .info { font-size: 13px; color: var(--text-dim); font-weight: 600; }
+  .btn-group { display: flex; gap: 8px; }
+  .ctrl-btn {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .ctrl-btn:hover { background: #E2E8F0; border-color: var(--border-hover); }
+  .ctrl-btn-primary { background: var(--accent); color: white; border: none; }
+  .ctrl-btn-primary:hover { background: #1d3587; }
+  
+  /* 2-COLUMN SIDE-BY-SIDE GRID */
+  .topics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (min-width: 900px) {
+    .topics-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  /* COLLAPSIBLE CARD STYLING */
+  .topic-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+  }
+  .topic-card:hover {
+    border-color: var(--border-hover);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  
+  /* CARD HEADER / DROPDOWN TRIGGER */
+  .card-trigger {
+    width: 100%;
+    padding: 16px 20px;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+  }
+  .trigger-left { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .topic-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.35;
+  }
+  .topic-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+  
+  .badge {
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .badge-critical { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+  .badge-high { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+  .badge-medium { background: #E0F2FE; color: #075985; border: 1px solid #BAE6FD; }
+  
+  .meta-tag { font-size: 11px; color: var(--text-dim); background: var(--bg-input); padding: 2px 7px; border-radius: 4px; border: 1px solid var(--border); }
+  
+  .trigger-right { display: flex; align-items: center; gap: 10px; }
+  .post-badge {
+    background: #EFF6FF;
+    color: #1E40AF;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid #DBEAFE;
+    white-space: nowrap;
+  }
+  
+  .chevron {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--bg-input);
+    color: var(--text-muted);
+    transition: transform 0.25s ease, background 0.2s, color 0.2s;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .topic-card.open .chevron {
+    transform: rotate(180deg);
+    background: var(--accent);
+    color: white;
+  }
+  
+  /* CARD BODY (COLLAPSIBLE CONTENT) */
+  .card-collapsible {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.35s ease;
+    padding: 0 20px;
+    border-top: 0 solid var(--border);
+  }
+  .topic-card.open .card-collapsible {
+    max-height: 2000px;
+    padding: 20px;
+    border-top-width: 1px;
+  }
+  
+  .section-subtitle {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    margin: 0 0 6px 0;
+  }
+  .details-text { font-size: 13.5px; color: var(--text); margin: 0 0 16px 0; line-height: 1.6; }
+  
+  .statutes-block { background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 16px; }
+  .statute-item { font-size: 12px; color: var(--text); margin-bottom: 4px; display: flex; gap: 6px; }
+  .statute-item code { font-family: 'Fira Code', monospace; font-weight: 700; color: var(--accent); }
+  
+  .prompt-box {
+    background: #EFF6FF;
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+  }
+  .prompt-box h4 { margin: 0 0 4px 0; font-size: 12px; color: #1E3A8A; text-transform: uppercase; }
+  .prompt-box p { margin: 0; font-size: 13px; color: #1E40AF; font-style: italic; }
+  
+  /* RESIDENT COMMENTS INLINE SECTION */
+  .comments-container {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .comments-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .comments-header h4 { margin: 0; font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text); }
+  
+  .comments-scroll-list {
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .comments-scroll-list::-webkit-scrollbar { width: 5px; }
+  .comments-scroll-list::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+  
+  .comment-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+  }
+  .comment-meta { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; color: var(--text-dim); }
+  .comment-author { font-weight: 700; color: var(--text); }
+  .comment-stance { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 1px 6px; border-radius: 4px; }
+  .stance-concerned { background: #FEE2E2; color: #991B1B; }
+  .stance-skeptical { background: #FEF3C7; color: #92400E; }
+  .stance-neutral { background: #F1F5F9; color: #475569; }
+  .stance-supportive { background: #DCFCE7; color: #166534; }
+  .comment-text { font-size: 12.5px; margin: 0; color: #334155; }
+  .comment-actions { margin-top: 6px; display: flex; gap: 10px; font-size: 11px; }
+  .action-btn { background: none; border: none; color: var(--accent); font-weight: 700; cursor: pointer; padding: 0; }
+  
+  .no-comments { font-size: 12px; color: var(--text-muted); font-style: italic; text-align: center; padding: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="preview-header">
+    <h1>Layout Preview: Governance Topics (Side-by-Side Collapsible Grid)</h1>
+    <p>Demonstrating 2-Column Side-by-Side layout with 1-click Dropdown Topics for reduced scrolling.</p>
+  </div>
+  
+  <div class="controls-bar">
+    <div class="info">Showing Governance Category Placeholder Data (4 Topics)</div>
+    <div class="btn-group">
+      <button class="ctrl-btn ctrl-btn-primary" onclick="expandAll()">Expand All Topics</button>
+      <button class="ctrl-btn" onclick="collapseAll()">Collapse All Topics</button>
+      <button class="ctrl-btn" id="accordion-toggle" onclick="toggleAccordionMode()">Mode: Multi-Expand</button>
+    </div>
+  </div>
+  
+  <div class="topics-grid" id="topics-grid">
+
+    <div class="topic-card" id="card-cca-membership-vote">
+      <button class="card-trigger" onclick="toggleCard('cca-membership-vote')">
+        <div class="trigger-left">
+          <div class="topic-title">[Priority: Top] Third Membership Vote on Capital Contribution Assessment (CCA)</div>
+          <div class="topic-meta">
+            <span class="badge badge-critical">critical</span>
+            <span class="meta-tag">Source: July 8, 2026 Board Meeting Resolution / F.S. § 720.306</span>
+          </div>
+        </div>
+        <div class="trigger-right">
+          <span class="post-badge">💬 1 Post</span>
+          <div class="chevron">▼</div>
+        </div>
+      </button>
+
+      <div class="card-collapsible">
+        <div class="section-subtitle">Forensic Context / Irregularity Details</div>
+        <p class="details-text">The board has approved a motion (5-0) to hold a third community-wide vote on the Capital Contribution Assessment (CCA), to close by October 30, 2026, as a single-issue election. The CCA would charge a one-time fee to new home buyers at closing (equivalent to 6 months of assessments, estimated at $990 based on past dockets) to build HOA capital reserves. Current homeowners are exempt. If passed originally, it would have generated approximately $297,000 to date.</p>
+
+        <div class="section-subtitle">Official Board Position</div>
+        <p class="details-text" style="font-style: italic; color: var(--text-dim);">The board maintains that the CCA is critical for the long-term health of reserves without placing a financial burden on current residents. They point out that strong reserves support property values and reduce the likelihood of special assessments.</p>
+
+        
+        <div class="section-subtitle">Statutory Compliance Framework</div>
+        <div class="statutes-block"><div class="statute-item"><code>F.S. § 720.306</code> <span>— Requirements for association meetings and member voting</span></div><div class="statute-item"><code>Bylaws & Covenants</code> <span>— Covenant amendment procedures for fee structures</span></div></div>
+        
+
+        <div class="prompt-box">
+          <h4>Inquiry Prompt</h4>
+          <p>How will the board encourage voter turnout to exceed the previous elections, and what are the budget contingency plans if the CCA fails a third time?</p>
+        </div>
+
+        <div class="comments-container">
+          <div class="comments-header">
+            <h4>Resident Perspectives &amp; Forum Notes</h4>
+            <span style="font-size: 11px; color: var(--text-dim); font-weight: 700;">1 Posts</span>
+          </div>
+          <div class="comments-scroll-list">
+            <div class="comment-card">
+              <div class="comment-meta">
+                <span class="comment-author">Resident (Long Meadow)</span>
+                <div>
+                  <span class="comment-stance stance-concerned">CONCERNED</span>
+                  <span style="margin-left: 6px;">2026-07-14 11:13</span>
+                </div>
+              </div>
+              <p class="comment-text">"The Capital Contribution Assessment appears to be another attempt to create a new revenue stream rather than addressing the real issue: proper management of existing money and assets. Homeowners are already dealing with reduced property appeal caused by deteriorating golf courses and amenities. Adding a new transfer-related fee only creates more baggage for sellers, gives buyers another reason to negotiate the price down or demand concessions, and does nothing to prove that current funds and community assets are being managed responsibly. Before asking residents or future buyers for more money, the HOA should demonstrate better stewardship of the resources it already controls."</p>
+              <div class="comment-actions">
+                <button class="action-btn">Like (0)</button>
+                <button class="action-btn">Reply</button>
+                <button class="action-btn">Edit</button>
+              </div>
+            </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="topic-card" id="card-accountant-fired-pavilion-office">
+      <button class="card-trigger" onclick="toggleCard('accountant-fired-pavilion-office')">
+        <div class="trigger-left">
+          <div class="topic-title">[ALLEGED] [Priority: Top] HOA Staff Accountant Fired & Pavilion Room Closed</div>
+          <div class="topic-meta">
+            <span class="badge badge-high">high</span>
+            <span class="meta-tag">Source: Concerned Residents Forum / Facebook (June 18, 2026)</span>
+          </div>
+        </div>
+        <div class="trigger-right">
+          <span class="post-badge">💬 0 Posts</span>
+          <div class="chevron">▼</div>
+        </div>
+      </button>
+
+      <div class="card-collapsible">
+        <div class="section-subtitle">Forensic Context / Irregularity Details</div>
+        <p class="details-text">[UNOFFICIAL REPORT] Forum posts claim the board terminated the staff accountant and temporarily converted the Pavilion meeting room into administrative office space for contract bookkeepers. This has not been officially confirmed in the board's July minutes.</p>
+
+        <div class="section-subtitle">Official Board Position</div>
+        <p class="details-text" style="font-style: italic; color: var(--text-dim);">Bookkeeping and audit compliance are high-priority operations that require dedicated operational space. The board states that temporary adjustments to common spaces are necessary to restore administrative order.</p>
+
+        
+        <div class="section-subtitle">Statutory Compliance Framework</div>
+        <div class="statutes-block"><div class="statute-item"><code>F.S. § 720.303(6)</code> <span>— Accurate financial records maintenance and staffing</span></div><div class="statute-item"><code>F.S. § 720.303(2)</code> <span>— Closure of common-area amenities without member consultation</span></div></div>
+        
+
+        <div class="prompt-box">
+          <h4>Inquiry Prompt</h4>
+          <p>Why was the staff accountant fired during a critical audit reconciliation period, and when will the Pavilion meeting room be restored to resident use?</p>
+        </div>
+
+        <div class="comments-container">
+          <div class="comments-header">
+            <h4>Resident Perspectives &amp; Forum Notes</h4>
+            <span style="font-size: 11px; color: var(--text-dim); font-weight: 700;">0 Posts</span>
+          </div>
+          <div class="no-comments">No resident perspectives submitted yet for this topic.</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="topic-card" id="card-resident-recall-petitions">
+      <button class="card-trigger" onclick="toggleCard('resident-recall-petitions')">
+        <div class="trigger-left">
+          <div class="topic-title">[Priority: Top] Resident Recall Petitions & Emergency Board Elections</div>
+          <div class="topic-meta">
+            <span class="badge badge-medium">medium</span>
+            <span class="meta-tag">Source: Concerned Residents Forum / Facebook (June 19, 2026) / F.S. § 720.303(10)</span>
+          </div>
+        </div>
+        <div class="trigger-right">
+          <span class="post-badge">💬 0 Posts</span>
+          <div class="chevron">▼</div>
+        </div>
+      </button>
+
+      <div class="card-collapsible">
+        <div class="section-subtitle">Forensic Context / Irregularity Details</div>
+        <p class="details-text">Residents on the community forum are organizing a petition to recall and remove current board members from office. The petition calls for the immediate resignation of the board and the scheduling of emergency recall elections. Under Florida Statute § 720.303(10), any director may be recalled by a majority of all voting interests (50% + 1 of the total association membership).</p>
+
+        <div class="section-subtitle">Official Board Position</div>
+        <p class="details-text" style="font-style: italic; color: var(--text-dim);">The board maintains that it is executing its duties in accordance with the governing documents and Florida law, and that a recall would create administrative instability and disrupt the reserve recovery plan.</p>
+
+        
+        <div class="section-subtitle">Statutory Compliance Framework</div>
+        <div class="statutes-block"><div class="statute-item"><code>F.S. § 720.303(10)</code> <span>— Statutory procedures governing the recall of homeowners association directors</span></div></div>
+        
+
+        <div class="prompt-box">
+          <h4>Inquiry Prompt</h4>
+          <p>What is the board's strategy if a recall petition successfully gathers the required majority signatures, and how will they ensure a transparent certification process?</p>
+        </div>
+
+        <div class="comments-container">
+          <div class="comments-header">
+            <h4>Resident Perspectives &amp; Forum Notes</h4>
+            <span style="font-size: 11px; color: var(--text-dim); font-weight: 700;">0 Posts</span>
+          </div>
+          <div class="no-comments">No resident perspectives submitted yet for this topic.</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="topic-card" id="card-ca-closed-minutes-03-20-2026">
+      <button class="card-trigger" onclick="toggleCard('ca-closed-minutes-03-20-2026')">
+        <div class="trigger-left">
+          <div class="topic-title">HOA BOD Closed Meeting Minutes March 20, 2026</div>
+          <div class="topic-meta">
+            <span class="badge badge-medium">medium</span>
+            <span class="meta-tag">Source: https://plantationatleesburg.com/wp-content/uploads/2026/05/03.20.2026-Approved-BOD-Mtg.-Min-CLOSED.pdf</span>
+          </div>
+        </div>
+        <div class="trigger-right">
+          <span class="post-badge">💬 0 Posts</span>
+          <div class="chevron">▼</div>
+        </div>
+      </button>
+
+      <div class="card-collapsible">
+        <div class="section-subtitle">Forensic Context / Irregularity Details</div>
+        <p class="details-text">Closed session minutes from the March 20, 2026 board meeting. The closed session was called to order at 8:00 AM EST to discuss a personnel matter. Board present: President Russ Roberson, Secretary/Treasurer Geoff Alpert, Director at Large Nancy Sheahan, Director at Large Gary Rushlo, and Vice President Jerry Tucker via telephone. No votes were taken in closed session. The meeting reconvened in open session at 9:11 AM and was adjourned at 9:13 AM.</p>
+
+        <div class="section-subtitle">Official Board Position</div>
+        <p class="details-text" style="font-style: italic; color: var(--text-dim);">The board maintains that closed sessions are used strictly for personnel matters and that no votes or financial decisions occurred during the closed portion.</p>
+
+        
+        <div class="section-subtitle">Statutory Compliance Framework</div>
+        <div class="statutes-block"><div class="statute-item"><code>F.S. § 720.303(2)</code> <span>— Closed session notice and recordkeeping requirements</span></div></div>
+        
+
+        <div class="prompt-box">
+          <h4>Inquiry Prompt</h4>
+          <p>What specific personnel matter was discussed in closed session, and were any follow-up actions taken in open session?</p>
+        </div>
+
+        <div class="comments-container">
+          <div class="comments-header">
+            <h4>Resident Perspectives &amp; Forum Notes</h4>
+            <span style="font-size: 11px; color: var(--text-dim); font-weight: 700;">0 Posts</span>
+          </div>
+          <div class="no-comments">No resident perspectives submitted yet for this topic.</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="topic-card" id="card-hoa-board-directors-2025">
+      <button class="card-trigger" onclick="toggleCard('hoa-board-directors-2025')">
+        <div class="trigger-left">
+          <div class="topic-title">Audit Failures, Disclaimers & Suspensions (2022–2025)</div>
+          <div class="topic-meta">
+            <span class="badge badge-critical">critical</span>
+            <span class="meta-tag">Source: Final FS 2022 - V2.txt / plantation-governance-review-2026-06.txt Sec 7</span>
+          </div>
+        </div>
+        <div class="trigger-right">
+          <span class="post-badge">💬 3 Posts</span>
+          <div class="chevron">▼</div>
+        </div>
+      </button>
+
+      <div class="card-collapsible">
+        <div class="section-subtitle">Forensic Context / Irregularity Details</div>
+        <p class="details-text">The annual CPA audits, which faced severe ongoing delays, have been completed and brought up to date through 2024. iRO CPA completed both the 2023 and 2024 financial audits on February 13, 2026, restoring the association to statutory compliance. The 2025 audit is currently in progress, with the board transitioning focus to this next review.</p>
+
+        <div class="section-subtitle">Official Board Position</div>
+        <p class="details-text" style="font-style: italic; color: var(--text-dim);">The board reports that audits are fully finalized through 2024, and focus has successfully transitioned to the 2025 CPA audit.</p>
+
+        
+        <div class="section-subtitle">Statutory Compliance Framework</div>
+        <div class="statutes-block"><div class="statute-item"><code>F.S. § 720.303(7)</code> <span>— Mandatory annual financial report deadline</span></div><div class="statute-item"><code>HB 1203</code> <span>— Failure to provide official audit records within statutory timelines</span></div></div>
+        
+
+        <div class="prompt-box">
+          <h4>Inquiry Prompt</h4>
+          <p>Why did the 2022 audit result in a Disclaimer of Opinion? What specific intercompany balances and consolidation entries could the auditors not reconcile?</p>
+        </div>
+
+        <div class="comments-container">
+          <div class="comments-header">
+            <h4>Resident Perspectives &amp; Forum Notes</h4>
+            <span style="font-size: 11px; color: var(--text-dim); font-weight: 700;">3 Posts</span>
+          </div>
+          <div class="comments-scroll-list">
+            <div class="comment-card">
+              <div class="comment-meta">
+                <span class="comment-author">Retired Auditor (Long Meadow)</span>
+                <div>
+                  <span class="comment-stance stance-concerned">CONCERNED</span>
+                  <span style="margin-left: 6px;">2026-06-25 10:15</span>
+                </div>
+              </div>
+              <p class="comment-text">"As a retired accountant, a suspended audit for multiple straight years is a red alert. If there is nothing to hide, why aren't the ledgers in the hands of the CPA? We cannot get mortgages refi or sell our houses easily with suspended audits on record."</p>
+              <div class="comment-actions">
+                <button class="action-btn">Like (0)</button>
+                <button class="action-btn">Reply</button>
+                <button class="action-btn">Edit</button>
+              </div>
+            </div>
+            
+            <div class="comment-card">
+              <div class="comment-meta">
+                <span class="comment-author">Resident (Ashley Court)</span>
+                <div>
+                  <span class="comment-stance stance-neutral">NEUTRAL</span>
+                  <span style="margin-left: 6px;">2026-06-26 14:22</span>
+                </div>
+              </div>
+              <p class="comment-text">"I spoke with Dennis at the office and he said the CPA is just waiting on some bank statements from the 2023 ledger transfer. It seems like it's a software translation issue, not fraud."</p>
+              <div class="comment-actions">
+                <button class="action-btn">Like (0)</button>
+                <button class="action-btn">Reply</button>
+                <button class="action-btn">Edit</button>
+              </div>
+            </div>
+            
+            <div class="comment-card">
+              <div class="comment-meta">
+                <span class="comment-author">Ed Fredericks (Concerned Residents)</span>
+                <div>
+                  <span class="comment-stance stance-skeptical">SKEPTICAL</span>
+                  <span style="margin-left: 6px;">2026-06-28 09:41</span>
+                </div>
+              </div>
+              <p class="comment-text">"It's not just a software issue. The board answered in writing last November that the audits were completed. Now they say they are suspended. That is a clear contradiction. We deserve transparency."</p>
+              <div class="comment-actions">
+                <button class="action-btn">Like (0)</button>
+                <button class="action-btn">Reply</button>
+                <button class="action-btn">Edit</button>
+              </div>
+            </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="topic-card" id="card-mrta-expiration">
+      <button class="card-trigger" onclick="toggleCard('mrta-expiration')">
+        <div class="trigger-left">
+          <div class="topic-title">[ALLEGED] Marketable Record Title Act (MRTA) Covenant Extinguishment Claim</div>
+          <div class="topic-meta">
+            <span class="badge badge-critical">critical</span>
+            <span class="meta-tag">Source: Declaration of Covenants (Book 1130, Page 0882) / F.S. Ch. 712</span>
+          </div>
+        </div>
+        <div class="trigger-right">
+          <span class="post-badge">💬 0 Posts</span>
+          <div class="chevron">▼</div>
+        </div>
+      </button>
+
+      <div class="card-collapsible">
+        <div class="section-subtitle">Forensic Context / Irregularity Details</div>
+        <p class="details-text">[RESIDENT LEGAL THEORY] Resident advocates assert that the community's covenants may have expired under the 30-year Marketable Record Title Act (MRTA) window because they did not locate a recorded preservation notice in their public records search. This claim is controversial and has not been tested in court.</p>
+
+        <div class="section-subtitle">Official Board Position</div>
+        <p class="details-text" style="font-style: italic; color: var(--text-dim);">The board operates under the assumption that the covenants remain fully active and enforceable under corporate and residential guidelines.</p>
+
+        
+        <div class="section-subtitle">Statutory Compliance Framework</div>
+        <div class="statutes-block"><div class="statute-item"><code>F.S. Ch. 712</code> <span>— Covenant extinguishment after 30-year statutory window</span></div><div class="statute-item"><code>F.S. § 720.305</code> <span>— Extinguishment of legal authority to enforce rules or collect assessments</span></div></div>
+        
+
+        <div class="prompt-box">
+          <h4>Inquiry Prompt</h4>
+          <p>Has the board verified that a valid Notice of Preservation was recorded before the 30-year MRTA deadline? If not, what is the legal basis for covenant enforcement?</p>
+        </div>
+
+        <div class="comments-container">
+          <div class="comments-header">
+            <h4>Resident Perspectives &amp; Forum Notes</h4>
+            <span style="font-size: 11px; color: var(--text-dim); font-weight: 700;">0 Posts</span>
+          </div>
+          <div class="no-comments">No resident perspectives submitted yet for this topic.</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="topic-card" id="card-vendor-bids">
+      <button class="card-trigger" onclick="toggleCard('vendor-bids')">
+        <div class="trigger-left">
+          <div class="topic-title">Concealment of 2026 Vendor Bids & Contracts</div>
+          <div class="topic-meta">
+            <span class="badge badge-high">high</span>
+            <span class="meta-tag">Source: plantation-governance-review-2026-06.txt Sec 8-11</span>
+          </div>
+        </div>
+        <div class="trigger-right">
+          <span class="post-badge">💬 2 Posts</span>
+          <div class="chevron">▼</div>
+        </div>
+      </button>
+
+      <div class="card-collapsible">
+        <div class="section-subtitle">Forensic Context / Irregularity Details</div>
+        <p class="details-text">The 'Contracts' section of the HOA resident portal remains empty of 2026 vendor bids and executed agreements. This includes major contracts for Ashley pool renovations and community road maintenance. The statutory deadline for posting these contracts passed over 18 months ago, denying residents visibility into vendor selection and bidding practices.</p>
+
+        <div class="section-subtitle">Official Board Position</div>
+        <p class="details-text" style="font-style: italic; color: var(--text-dim);">Bids are sensitive commercial records. The board publishes contracts after they are finalized, signed, and reviewed by legal counsel.</p>
+
+        
+        <div class="section-subtitle">Statutory Compliance Framework</div>
+        <div class="statutes-block"><div class="statute-item"><code>F.S. § 720.303(5)</code> <span>— Conspicuously publish all bids and contracts to members</span></div><div class="statute-item"><code>HB 1203 Portal Mandate</code> <span>— Digital publication of executed contracts and bidding packages</span></div></div>
+        
+
+        <div class="prompt-box">
+          <h4>Inquiry Prompt</h4>
+          <p>Why are the 2026 vendor bids and contracts missing from the portal? Are contract prices and bids being intentionally hidden from members?</p>
+        </div>
+
+        <div class="comments-container">
+          <div class="comments-header">
+            <h4>Resident Perspectives &amp; Forum Notes</h4>
+            <span style="font-size: 11px; color: var(--text-dim); font-weight: 700;">2 Posts</span>
+          </div>
+          <div class="comments-scroll-list">
+            <div class="comment-card">
+              <div class="comment-meta">
+                <span class="comment-author">Homeowner (Ashley Court)</span>
+                <div>
+                  <span class="comment-stance stance-concerned">CONCERNED</span>
+                  <span style="margin-left: 6px;">2026-06-25 09:00</span>
+                </div>
+              </div>
+              <p class="comment-text">"F.S. 720.303(5) is very clear. We have a legal right to see all vendor bids and executed contracts. The fact that the contracts page on the portal has been empty for 18 months is a direct violation of the law. What is the board hiding?"</p>
+              <div class="comment-actions">
+                <button class="action-btn">Like (0)</button>
+                <button class="action-btn">Reply</button>
+                <button class="action-btn">Edit</button>
+              </div>
+            </div>
+            
+            <div class="comment-card">
+              <div class="comment-meta">
+                <span class="comment-author">Resident (Manor Pool Area)</span>
+                <div>
+                  <span class="comment-stance stance-neutral">NEUTRAL</span>
+                  <span style="margin-left: 6px;">2026-06-26 12:15</span>
+                </div>
+              </div>
+              <p class="comment-text">"I asked for the Ashley pool renovation contract and was told I could view it physically at the office. They aren't hiding it, but they should put it on the website to comply with HB 1203."</p>
+              <div class="comment-actions">
+                <button class="action-btn">Like (0)</button>
+                <button class="action-btn">Reply</button>
+                <button class="action-btn">Edit</button>
+              </div>
+            </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="topic-card" id="card-transfer-cap">
+      <button class="card-trigger" onclick="toggleCard('transfer-cap')">
+        <div class="trigger-left">
+          <div class="topic-title">CCR 10% Annual Transfer Cap Compliance</div>
+          <div class="topic-meta">
+            <span class="badge badge-medium">medium</span>
+            <span class="meta-tag">Source: Allegations Supplement Post 3</span>
+          </div>
+        </div>
+        <div class="trigger-right">
+          <span class="post-badge">💬 1 Post</span>
+          <div class="chevron">▼</div>
+        </div>
+      </button>
+
+      <div class="card-collapsible">
+        <div class="section-subtitle">Forensic Context / Irregularity Details</div>
+        <p class="details-text">Residents allege the board exceeded the 10% annual transfer cap on master assessments to the special activity fund in 2025. The second amended restrictions limit cumulative annual transfers to $507,600 (10% of total master assessments). The ledger indicates transfers may have exceeded this threshold without member voting.</p>
+
+        <div class="section-subtitle">Official Board Position</div>
+        <p class="details-text" style="font-style: italic; color: var(--text-dim);">Transfers are calculated based on net operating budgets and capital reserves. The board maintains all transfers were within statutory and bylaws caps.</p>
+
+        
+        <div class="section-subtitle">Statutory Compliance Framework</div>
+        <div class="statutes-block"><div class="statute-item"><code>Second Amended Restrictions</code> <span>— 10% cap limit on annual transfers</span></div><div class="statute-item"><code>F.S. § 720.305</code> <span>— Duty of the board to strictly comply with governing documents</span></div></div>
+        
+
+        <div class="prompt-box">
+          <h4>Inquiry Prompt</h4>
+          <p>What were the exact cumulative transfers to the special activity fund in 2025? Did they exceed the $507,600 limit?</p>
+        </div>
+
+        <div class="comments-container">
+          <div class="comments-header">
+            <h4>Resident Perspectives &amp; Forum Notes</h4>
+            <span style="font-size: 11px; color: var(--text-dim); font-weight: 700;">1 Posts</span>
+          </div>
+          <div class="comments-scroll-list">
+            <div class="comment-card">
+              <div class="comment-meta">
+                <span class="comment-author">Resident (Otter Creek)</span>
+                <div>
+                  <span class="comment-stance stance-skeptical">SKEPTICAL</span>
+                  <span style="margin-left: 6px;">2026-06-26 09:30</span>
+                </div>
+              </div>
+              <p class="comment-text">"The second amended restrictions limit transfers to 10% of total assessments ($507k). Ledger review shows we exceeded that in 2025 to support the golf course. The board cannot just ignore our own covenants when they run out of money."</p>
+              <div class="comment-actions">
+                <button class="action-btn">Like (0)</button>
+                <button class="action-btn">Reply</button>
+                <button class="action-btn">Edit</button>
+              </div>
+            </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="topic-card" id="card-social-media">
+      <button class="card-trigger" onclick="toggleCard('social-media')">
+        <div class="trigger-left">
+          <div class="topic-title">Board Social Media Policy & Fund Usage</div>
+          <div class="topic-meta">
+            <span class="badge badge-medium">medium</span>
+            <span class="meta-tag">Source: February 2025 Strategy Deck</span>
+          </div>
+        </div>
+        <div class="trigger-right">
+          <span class="post-badge">💬 2 Posts</span>
+          <div class="chevron">▼</div>
+        </div>
+      </button>
+
+      <div class="card-collapsible">
+        <div class="section-subtitle">Forensic Context / Irregularity Details</div>
+        <p class="details-text">A February 2025 board strategy deck proposed creating a 'positive news only' Facebook page to manage community sentiment. Residents allege that HOA staff time and resources are being used to run this page, and that comments criticising the board are censored, violating statutory records accessibility and open communication rules.</p>
+
+        <div class="section-subtitle">Official Board Position</div>
+        <p class="details-text" style="font-style: italic; color: var(--text-dim);">The Facebook page is a communication channel designed to share community news and updates. No HOA funds are used for advertising, and moderation is standard policy.</p>
+
+        
+        <div class="section-subtitle">Statutory Compliance Framework</div>
+        <div class="statutes-block"><div class="statute-item"><code>F.S. § 720.303</code> <span>— Access to official records and correspondence</span></div><div class="statute-item"><code>Ch. 617 Fiduciary Duty</code> <span>— Use of corporate funds for political or selective messaging</span></div></div>
+        
+
+        <div class="prompt-box">
+          <h4>Inquiry Prompt</h4>
+          <p>Are association funds or staff hours used to run or moderate the board's Facebook page? Why are resident questions regarding finances being deleted?</p>
+        </div>
+
+        <div class="comments-container">
+          <div class="comments-header">
+            <h4>Resident Perspectives &amp; Forum Notes</h4>
+            <span style="font-size: 11px; color: var(--text-dim); font-weight: 700;">2 Posts</span>
+          </div>
+          <div class="comments-scroll-list">
+            <div class="comment-card">
+              <div class="comment-meta">
+                <span class="comment-author">Homeowner (Ashley Court)</span>
+                <div>
+                  <span class="comment-stance stance-concerned">CONCERNED</span>
+                  <span style="margin-left: 6px;">2026-06-27 15:40</span>
+                </div>
+              </div>
+              <p class="comment-text">"I posted a question about the suspended audits on the community Facebook page, and it was deleted within 10 minutes, and I was blocked. If association staff are doing this during work hours, they are censoring residents using our own money."</p>
+              <div class="comment-actions">
+                <button class="action-btn">Like (0)</button>
+                <button class="action-btn">Reply</button>
+                <button class="action-btn">Edit</button>
+              </div>
+            </div>
+            
+            <div class="comment-card">
+              <div class="comment-meta">
+                <span class="comment-author">Homeowner (Long Meadow)</span>
+                <div>
+                  <span class="comment-stance stance-neutral">NEUTRAL</span>
+                  <span style="margin-left: 6px;">2026-06-28 16:15</span>
+                </div>
+              </div>
+              <p class="comment-text">"The Facebook group is privately run by board members as individuals, not as the official HOA. They can moderate it how they want. But it does look bad to delete financial questions."</p>
+              <div class="comment-actions">
+                <button class="action-btn">Like (0)</button>
+                <button class="action-btn">Reply</button>
+                <button class="action-btn">Edit</button>
+              </div>
+            </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+let isAccordionMode = false;
+
+function toggleCard(id) {
+  const card = document.getElementById(`card-${id}`);
+  if (!card) return;
+  
+  const isCurrentlyOpen = card.classList.contains('open');
+  
+  if (isAccordionMode && !isCurrentlyOpen) {
+    collapseAll();
+  }
+  
+  card.classList.toggle('open');
+}
+
+function expandAll() {
+  document.querySelectorAll('.topic-card').forEach(card => card.classList.add('open'));
+}
+
+function collapseAll() {
+  document.querySelectorAll('.topic-card').forEach(card => card.classList.remove('open'));
+}
+
+function toggleAccordionMode() {
+  isAccordionMode = !isAccordionMode;
+  const btn = document.getElementById('accordion-toggle');
+  btn.textContent = `Mode: ${isAccordionMode ? 'Single Accordion (Auto-collapse)' : 'Multi-Expand'}`;
+  btn.classList.toggle('ctrl-btn-primary', isAccordionMode);
+}
+</script>
+</body>
+</html>
