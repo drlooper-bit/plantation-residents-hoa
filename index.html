@@ -2363,6 +2363,23 @@ function censorProfanity(inputStr) {
   return cleaned;
 }
 
+// Ownership tracking for Author-Only editing
+function getMyOwnedComments() {
+  try {
+    return JSON.parse(localStorage.getItem('myOwnedComments') || '[]');
+  } catch (e) {
+    return [];
+  }
+}
+
+function addOwnedComment(id) {
+  const owned = getMyOwnedComments();
+  if (!owned.includes(id)) {
+    owned.push(id);
+    localStorage.setItem('myOwnedComments', JSON.stringify(owned));
+  }
+}
+
 // Submit a new comment
 window.submitComment = function(irregularityId) {
   const nameInput = document.getElementById(`name-${irregularityId}`);
@@ -2396,6 +2413,7 @@ window.submitComment = function(irregularityId) {
 
   forumNotes[irregularityId].push(newComment);
   saveForumData();
+  addOwnedComment(newComment.id);
 
   // Clear input fields
   nameInput.value = "";
@@ -2456,6 +2474,40 @@ window.toggleReplyForm = function(safeId) {
   form.style.display = isHidden ? 'block' : 'none';
 };
 
+window.toggleEditForm = function(safeId) {
+  const form = document.getElementById(`edit-form-${safeId}`);
+  if (!form) return;
+  const isHidden = form.style.display === 'none';
+  form.style.display = isHidden ? 'block' : 'none';
+};
+
+window.submitCommentEdit = function(irregularityId, commentIndex, safeId) {
+  const textInput = document.getElementById(`edit-text-${safeId}`);
+  if (!textInput || !textInput.value.trim()) {
+    alert("Please enter text for your comment.");
+    return;
+  }
+
+  const comments = forumNotes[irregularityId] || [];
+  const comment = comments[commentIndex];
+  if (!comment) return;
+
+  comment.text = censorProfanity(textInput.value.trim());
+
+  const now = new Date();
+  comment.editedAt = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+  saveForumData();
+
+  if (irregularityId === "golf-recovery-plan") {
+    renderGolfRecoveryComments();
+  } else if (irregularityId === "hoa-meeting-july-8-2026") {
+    renderMeetingsComments();
+  } else {
+    renderIrregularities(activeTab, document.getElementById("search-box").value);
+  }
+};
+
 window.submitReply = function(irregularityId, commentIndex, safeId) {
   const nameInput = document.getElementById(`reply-name-${safeId}`);
   const stanceInput = document.getElementById(`reply-stance-${safeId}`);
@@ -2483,6 +2535,11 @@ window.submitReply = function(irregularityId, commentIndex, safeId) {
     comment.replies = [];
   }
   comment.replies.push(reply);
+  
+  const parentKey = comment.id || `${irregularityId}-${commentIndex}`;
+  const replyKey = `${parentKey}__reply_${comment.replies.length - 1}`;
+  addOwnedComment(replyKey);
+
   saveForumData();
 
   if (textInput) textInput.value = '';
@@ -2540,6 +2597,26 @@ window.buildCommentHtml = function(c, irregularityId, index) {
   const replies = Array.isArray(c.replies) ? c.replies : [];
   const repliesHtml = replies.map((r, idx) => buildReplyHtml(r, irregularityId, likesKey, idx)).join('');
 
+  const ownedList = getMyOwnedComments();
+  const isAuthor = ownedList.includes(likesKey) || ownedList.includes(oldKey);
+
+  const editedTag = c.editedAt ? ` <span class=\"comment-edited-tag\" style=\"font-size: 10.5px; opacity: 0.7; font-style: italic;\">(Edited ${escapeHtml(c.editedAt)})</span>` : '';
+
+  const editBtnHtml = isAuthor ? `
+    <button type=\"button\" class=\"edit-toggle\" onclick=\"toggleEditForm('${safeId}')\" style=\"margin-left: 10px; background: none; border: none; color: var(--accent); font-weight: 700; cursor: pointer; font-size: 12px;\">Edit</button>
+  ` : '';
+
+  const editFormHtml = isAuthor ? `
+    <div class=\"edit-form\" id=\"edit-form-${safeId}\" style=\"display: none; margin-top: 10px; padding: 10px; border-left: 2px solid var(--accent); background: var(--bg-input); border-radius: 6px;\">
+      <label style=\"font-size: 11px; font-weight: 700; color: var(--text-dim); display: block; margin-bottom: 4px;\">EDIT YOUR PERSPECTIVE</label>
+      <textarea id=\"edit-text-${safeId}\" rows=\"3\" style=\"width: 100%; padding: 8px; margin-bottom: 6px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-card); color: var(--text);\">${escapeHtml(c.text)}</textarea>
+      <div style=\"display: flex; gap: 8px;\">
+        <button type=\"button\" onclick=\"submitCommentEdit('${irregularityId}', ${index}, '${safeId}')\" style=\"background: var(--accent); color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer;\">Save Edit</button>
+        <button type=\"button\" onclick=\"toggleEditForm('${safeId}')\" style=\"background: transparent; color: var(--text-muted); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer;\">Cancel</button>
+      </div>
+    </div>
+  ` : '';
+
   return `
     <div class=\"comment-card\" data-comment-id=\"${escapeHtml(likesKey)}\">
       <div class=\"comment-meta\">
@@ -2549,12 +2626,14 @@ window.buildCommentHtml = function(c, irregularityId, index) {
           <span class=\"comment-date\" style=\"margin-left: 8px;\">${escapeHtml(c.date)}</span>
         </div>
       </div>
-      <p class=\"comment-text\">${escapeHtml(c.text)}</p>
+      <p class=\"comment-text\">${escapeHtml(c.text)}${editedTag}</p>
       <div class=\"like-row\">
         <button type=\"button\" class=\"like-button\" onclick=\"toggleLike('${irregularityId}', ${index}, this)\" ${liked ? 'disabled' : ''}>${liked ? 'Liked' : 'Like'}</button>
         <span class=\"like-count\">${likes} like${likes === 1 ? '' : 's'}</span>
         <button type=\"button\" class=\"reply-toggle\" onclick=\"toggleReplyForm('${safeId}')\" style=\"margin-left: 10px; background: none; border: none; color: var(--accent); font-weight: 700; cursor: pointer; font-size: 12px;\">Reply</button>
+        ${editBtnHtml}
       </div>
+      ${editFormHtml}
       <div class=\"reply-form\" id=\"reply-form-${safeId}\" style=\"display: none; margin-top: 10px; padding: 10px; border-left: 2px solid var(--border);\">
         <input id=\"reply-name-${safeId}\" placeholder=\"RESIDENT NAME / NEIGHBORHOOD\" style=\"width: 100%; padding: 8px; margin-bottom: 6px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-input); color: var(--text);\" />
         <select id=\"reply-stance-${safeId}\" style=\"width: 100%; padding: 8px; margin-bottom: 6px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-input); color: var(--text);\">
