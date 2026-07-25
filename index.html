@@ -2372,12 +2372,49 @@ function getMyOwnedComments() {
   }
 }
 
-function addOwnedComment(id) {
+function addOwnedComment(id, author) {
   const owned = getMyOwnedComments();
-  if (!owned.includes(id)) {
+  if (id && !owned.includes(id)) {
     owned.push(id);
     localStorage.setItem('myOwnedComments', JSON.stringify(owned));
   }
+  if (author) {
+    try {
+      const myAuthors = JSON.parse(localStorage.getItem('myAuthorNames') || '[]');
+      if (!myAuthors.includes(author)) {
+        myAuthors.push(author);
+        localStorage.setItem('myAuthorNames', JSON.stringify(myAuthors));
+      }
+    } catch(e){}
+  }
+}
+
+function isCommentAuthor(c, irregularityId, index) {
+  if (!c) return false;
+  const oldKey = c.id || `${irregularityId}-${index}`;
+  const likesKey = c.id || oldKey;
+  
+  const ownedList = getMyOwnedComments();
+  if (ownedList.includes(likesKey) || ownedList.includes(oldKey) || (c.id && ownedList.includes(c.id))) {
+    return true;
+  }
+
+  // Check saved author names
+  try {
+    const myAuthors = JSON.parse(localStorage.getItem('myAuthorNames') || '[]');
+    if (c.author && myAuthors.includes(c.author)) {
+      return true;
+    }
+  } catch(e){}
+
+  // Check if comment is a user-created local comment (not in default INITIAL_COMMENTS)
+  const defaultComments = INITIAL_COMMENTS[irregularityId] || [];
+  const isDefault = defaultComments.some(init => init.author === c.author && init.date === c.date && init.text === c.text);
+  if (!isDefault) {
+    return true;
+  }
+
+  return false;
 }
 
 // Submit a new comment
@@ -2413,7 +2450,7 @@ window.submitComment = function(irregularityId) {
 
   forumNotes[irregularityId].push(newComment);
   saveForumData();
-  addOwnedComment(newComment.id);
+  addOwnedComment(newComment.id, author);
 
   // Clear input fields
   nameInput.value = "";
@@ -2538,7 +2575,7 @@ window.submitReply = function(irregularityId, commentIndex, safeId) {
   
   const parentKey = comment.id || `${irregularityId}-${commentIndex}`;
   const replyKey = `${parentKey}__reply_${comment.replies.length - 1}`;
-  addOwnedComment(replyKey);
+  addOwnedComment(replyKey, author);
 
   saveForumData();
 
@@ -2597,8 +2634,7 @@ window.buildCommentHtml = function(c, irregularityId, index) {
   const replies = Array.isArray(c.replies) ? c.replies : [];
   const repliesHtml = replies.map((r, idx) => buildReplyHtml(r, irregularityId, likesKey, idx)).join('');
 
-  const ownedList = getMyOwnedComments();
-  const isAuthor = ownedList.includes(likesKey) || ownedList.includes(oldKey);
+  const isAuthor = isCommentAuthor(c, irregularityId, index);
 
   const editedTag = c.editedAt ? ` <span class=\"comment-edited-tag\" style=\"font-size: 10.5px; opacity: 0.7; font-style: italic;\">(Edited ${escapeHtml(c.editedAt)})</span>` : '';
 
