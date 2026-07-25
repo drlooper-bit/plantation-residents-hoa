@@ -1040,24 +1040,6 @@
     <button class="nav-btn" data-tab="exploratory">Exploratory Only</button>
   </div>
 
-  <!-- Controls Bar: Expand All / Collapse All / Accordion Mode -->
-  <div class="controls-bar" style="background: var(--bg-card); border: 1px solid var(--border); padding: 12px 18px; border-radius: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-    <div style="font-size: 12.5px; color: var(--text-dim); font-weight: 600;" id="topic-count-info">
-      Topic View Controls
-    </div>
-    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-      <button type="button" class="ctrl-btn ctrl-btn-primary" onclick="expandAllTopics()" style="background: var(--accent); color: #fff; border: none; font-weight: 700; font-size: 12px; padding: 7px 14px; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
-        Expand All Topics
-      </button>
-      <button type="button" class="ctrl-btn" onclick="collapseAllTopics()" style="background: var(--bg-input); border: 1px solid var(--border); color: var(--text); font-weight: 700; font-size: 12px; padding: 7px 14px; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
-        Collapse All Topics
-      </button>
-      <button type="button" class="ctrl-btn" id="accordion-toggle-btn" onclick="toggleAccordionMode()" style="background: var(--bg-input); border: 1px solid var(--border); color: var(--text); font-weight: 700; font-size: 12px; padding: 7px 14px; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
-        Mode: Multi-Expand
-      </button>
-    </div>
-  </div>
-
   <!-- Search & Actions Bar -->
   <div class="actions-bar" id="search-container">
     <div class="search-wrapper">
@@ -1065,6 +1047,24 @@
         <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
       <input type="text" class="search-input" id="search-box" placeholder="Search irregularities, statutes, or comments...">
+    </div>
+  </div>
+
+  <!-- Topic View Controls (INSIDE topic area, directly above topic cards) -->
+  <div class="controls-bar" id="topic-controls-bar" style="background: var(--bg-card); border: 1px solid var(--border); padding: 10px 16px; border-radius: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+    <div style="font-size: 12px; color: var(--text-dim); font-weight: 600;" id="topic-count-info">
+      Topic View Controls
+    </div>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+      <button type="button" class="ctrl-btn ctrl-btn-primary" onclick="expandAllTopics()" style="background: var(--accent); color: #fff; border: none; font-weight: 700; font-size: 11.5px; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
+        Expand All Topics
+      </button>
+      <button type="button" class="ctrl-btn" onclick="collapseAllTopics()" style="background: var(--bg-input); border: 1px solid var(--border); color: var(--text); font-weight: 700; font-size: 11.5px; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
+        Collapse All Topics
+      </button>
+      <button type="button" class="ctrl-btn" id="accordion-toggle-btn" onclick="toggleAccordionMode()" style="background: var(--bg-input); border: 1px solid var(--border); color: var(--text); font-weight: 700; font-size: 11.5px; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
+        Mode: Multi-Expand
+      </button>
     </div>
   </div>
 
@@ -3109,6 +3109,7 @@ let activeTab = "all";
 function applyTabState(tab) {
   const searchBar = document.getElementById("search-container");
   const container = document.getElementById("irregularities-container");
+  const controlsBar = document.getElementById("topic-controls-bar");
   const radar = document.getElementById("radar-container");
   const turnaround = document.getElementById("turnaround-container");
   const history = document.getElementById("history-container");
@@ -3116,26 +3117,41 @@ function applyTabState(tab) {
   const meetings = document.getElementById("meetings-container");
   const recall = document.getElementById("recall-container");
 
+  // Reset visibility for all containers
+  if (container) container.style.display = "none";
+  if (controlsBar) controlsBar.style.display = "none";
+  if (searchBar) searchBar.style.display = "none";
+  if (radar) radar.style.display = "none";
+  if (turnaround) turnaround.style.display = "none";
+  if (history) history.style.display = "none";
+  if (exploratory) exploratory.style.display = "none";
+  if (meetings) meetings.style.display = "none";
+  if (recall) recall.style.display = "none";
+
   if (tab === "litigation") {
-    container.style.display = "block"; searchBar.style.display = "flex"; turnaround.style.display = "none"; radar.style.display = "block"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
+    if (container) container.style.display = "grid";
+    if (controlsBar) controlsBar.style.display = "flex";
+    if (searchBar) searchBar.style.display = "flex";
+    if (radar) radar.style.display = "block";
     renderIrregularities(tab, document.getElementById("search-box").value);
   } else if (tab === "turnaround") {
-    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "block"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
+    if (turnaround) turnaround.style.display = "block";
     renderGolfRecoveryComments();
   } else if (tab === "recall") {
-    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none";
     if (recall) recall.style.display = "block";
     renderRecallPoll();
   } else if (tab === "meetings") {
-    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "none"; if (recall) recall.style.display = "none";
-    document.getElementById("meetings-container").style.display = "block";
+    if (meetings) meetings.style.display = "block";
     renderMeetingsComments();
   } else if (tab === "history") {
-    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "block"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
+    if (history) history.style.display = "block";
   } else if (tab === "exploratory") {
-    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "block"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
+    if (exploratory) exploratory.style.display = "block";
   } else {
-    container.style.display = "block"; searchBar.style.display = "flex"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
+    // "all", "financial", "governance", etc.
+    if (container) container.style.display = "grid";
+    if (controlsBar) controlsBar.style.display = "flex";
+    if (searchBar) searchBar.style.display = "flex";
     renderIrregularities(tab, document.getElementById("search-box").value);
   }
 }
