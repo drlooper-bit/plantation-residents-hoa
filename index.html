@@ -976,8 +976,7 @@
 
   <!-- Navigation tabs -->
   <div class="nav-bar">
-    <button class="nav-btn active" data-tab="all">All Irregularities</button>
-    <button class="nav-btn" data-tab="financial">Financial Anomalies</button>
+    <button class="nav-btn active" data-tab="financial">Financial Anomalies</button>
     <button class="nav-btn" data-tab="governance">Governance &amp; Compliance</button>
     <button class="nav-btn" data-tab="litigation">Litigation &amp; Radar</button>
     <button class="nav-btn" data-tab="turnaround">Turnaround Plan</button>
@@ -3002,7 +3001,7 @@ window.castRecallVote = function(option) {
 };
 
 // Tabs switching logic
-let activeTab = "all";
+let activeTab = "financial";
 function applyTabState(tab) {
   const searchBar = document.getElementById("search-container");
   const container = document.getElementById("irregularities-container");
