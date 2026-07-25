@@ -13,8 +13,8 @@
   const APP_KEY = "2q7ohpt5";
 
   function initCounter() {
-    const hitCountEl = document.getElementById("hit-count");
-    if (!hitCountEl) return;
+    const hitCountEls = document.querySelectorAll(".hit-count-val, #hit-count");
+    if (hitCountEls.length === 0) return;
 
     // Determine highest local high-water mark
     let storedMax = LOCKED_BASELINE_FLOOR;
@@ -29,7 +29,9 @@
     function updateDisplay(val) {
       const safeVal = Math.max(val, storedMax, LOCKED_BASELINE_FLOOR);
       storedMax = safeVal;
-      hitCountEl.textContent = safeVal.toLocaleString();
+      document.querySelectorAll(".hit-count-val, #hit-count").forEach(el => {
+        el.textContent = safeVal.toLocaleString();
+      });
       try {
         localStorage.setItem(MAX_VISITS_KEY, String(safeVal));
       } catch (e) {}
