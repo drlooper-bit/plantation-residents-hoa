@@ -271,17 +271,89 @@
   }
 
   /* Irregularity Card & Sections */
+  #irregularities-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (min-width: 900px) {
+    #irregularities-container {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
   .irregularity-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 24px;
-    transition: border-color 0.2s;
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
   }
   .irregularity-card:hover {
     border-color: var(--border-hover);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   }
+
+  .card-trigger-btn {
+    width: 100%;
+    padding: 16px 20px;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+  }
+  .card-trigger-btn .title-area h2 {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text);
+    line-height: 1.35;
+  }
+  .card-trigger-btn .trigger-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .chevron-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--bg-input);
+    color: var(--text-muted);
+    transition: transform 0.25s ease, background 0.2s, color 0.2s;
+    font-size: 11px;
+    font-weight: bold;
+  }
+  .irregularity-card.open .chevron-icon {
+    transform: rotate(180deg);
+    background: var(--accent);
+    color: white;
+  }
+
+  .card-collapsible-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.35s ease;
+    padding: 0 20px;
+    border-top: 0 solid var(--border);
+  }
+  .irregularity-card.open .card-collapsible-wrapper {
+    max-height: 3500px;
+    padding: 20px;
+    border-top-width: 1px;
+  }
+
   .card-header {
     display: flex;
     justify-content: space-between;
@@ -2181,6 +2253,12 @@ function escapeHtml(text) {
   return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
+window.toggleTopicCard = function(id) {
+  const card = document.querySelector(`.irregularity-card[data-id="${id}"]`);
+  if (!card) return;
+  card.classList.toggle("open");
+};
+
 // Render dynamic irregularities cards
 function renderIrregularities(filter = "all", searchQuery = "") {
   const VISIBLE_CAP = 5;
@@ -2264,68 +2342,74 @@ function renderIrregularities(filter = "all", searchQuery = "") {
     }
 
     card.innerHTML = `
-      <div class="card-header">
+      <button type="button" class="card-trigger-btn" onclick="toggleTopicCard('${item.id}')">
         <div class="title-area">
           <h2>${escapeHtml(item.title)}</h2>
           <span class="source-tag">Source: <strong>${escapeHtml(item.source)}</strong></span>
         </div>
-        <span class="badge badge-${escapeHtml(item.severity)}">${escapeHtml(item.severity)}</span>
-      </div>
-
-      <div class="card-body">
-        <div class="details-col">
-          <h3>${item.category === "litigation" ? "Forensic Context" : "The Irregularity"}</h3>
-          <p>${escapeHtml(item.details)}</p>
-          
-          ${item.category === "litigation" ? `
-          <h3>Florida Legal Standard</h3>
-          <p style="font-style: italic; color: var(--text-dim);">${escapeHtml(item.legalStandard || "")}</p>
-          ` : ""}
-          
-          <h3>${item.category === "litigation" ? "Board Response" : "Official Board Explanation"}</h3>
-          <p style="font-style: italic; color: var(--text-dim);">${escapeHtml(item.boardPosition)}</p>
+        <div class="trigger-right">
+          <span class="forum-count" style="background: #EFF6FF; color: #1E40AF; border: 1px solid #DBEAFE; padding: 3px 10px; border-radius: 12px; font-weight: 700;">💬 ${comments.length} Post${comments.length !== 1 ? 's' : ''}</span>
+          <span class="badge badge-${escapeHtml(item.severity)}">${escapeHtml(item.severity)}</span>
+          <div class="chevron-icon">▼</div>
         </div>
-        ${statutesHtml}
-      </div>
+      </button>
 
-      <div class="prompt-box">
-        <h4>${item.category === "litigation" ? "Precedent Inquiry Prompt" : "Irregularity Inquiry Prompt"}</h4>
-        <p>${escapeHtml(item.prompt)}</p>
-      </div>
-
-      <div class="forum-section">
-        <div class="perspectives-window" style="padding:14px;">
-          <div class="forum-header">
-          <h4>Resident Perspectives &amp; Town Hall Info</h4>
-          <span class="forum-count">${comments.length} Posts</span>
-        </div>
-        
-        <div class="comment-list" id="comments-${item.id}">
-          ${commentsListHtml}
-        </div>
+      <div class="card-collapsible-wrapper">
+        <div class="card-body">
+          <div class="details-col">
+            <h3>${item.category === "litigation" ? "Forensic Context" : "The Irregularity"}</h3>
+            <p>${escapeHtml(item.details)}</p>
+            
+            ${item.category === "litigation" ? `
+            <h3>Florida Legal Standard</h3>
+            <p style="font-style: italic; color: var(--text-dim);">${escapeHtml(item.legalStandard || "")}</p>
+            ` : ""}
+            
+            <h3>${item.category === "litigation" ? "Board Response" : "Official Board Explanation"}</h3>
+            <p style="font-style: italic; color: var(--text-dim);">${escapeHtml(item.boardPosition)}</p>
           </div>
+          ${statutesHtml}
+        </div>
 
-        <div class="add-comment-form">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="name-${item.id}">Resident Name &amp; Address / Neighborhood (e.g. Resident - Ashley Court)</label>
-              <input type="text" class="form-control" id="name-${item.id}" placeholder="Enter name, street address, or neighborhood (can be anonymous)">
+        <div class="prompt-box">
+          <h4>${item.category === "litigation" ? "Precedent Inquiry Prompt" : "Irregularity Inquiry Prompt"}</h4>
+          <p>${escapeHtml(item.prompt)}</p>
+        </div>
+
+        <div class="forum-section">
+          <div class="perspectives-window" style="padding:14px;">
+            <div class="forum-header">
+              <h4>Resident Perspectives &amp; Town Hall Info</h4>
+              <span class="forum-count">${comments.length} Posts</span>
             </div>
-            <div class="form-group">
-              <label for="stance-${item.id}">Your Perspective / Stance</label>
-              <select class="form-control" id="stance-${item.id}">
-                <option value="concerned">Concerned Resident</option>
-                <option value="skeptical">Skeptical Watchdog</option>
-                <option value="neutral">Neutral Inquirer</option>
-                <option value="supportive">Supportive of Board</option>
-              </select>
+            
+            <div class="comment-list" id="comments-${item.id}">
+              ${commentsListHtml}
             </div>
           </div>
-          <div class="form-group">
-            <label for="text-${item.id}">Your Perspective, Statement or Supplementary Information</label>
-            <textarea class="form-control" id="text-${item.id}" rows="3" placeholder="Provide your perspective, share facts, or ask follow-up questions regarding this irregularity..."></textarea>
+
+          <div class="add-comment-form" style="margin-top: 16px;">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name-${item.id}">Resident Name &amp; Address / Neighborhood (e.g. Resident - Ashley Court)</label>
+                <input type="text" class="form-control" id="name-${item.id}" placeholder="Enter name, street address, or neighborhood (can be anonymous)">
+              </div>
+              <div class="form-group">
+                <label for="stance-${item.id}">Your Perspective / Stance</label>
+                <select class="form-control" id="stance-${item.id}">
+                  <option value="concerned">Concerned Resident</option>
+                  <option value="skeptical">Skeptical Watchdog</option>
+                  <option value="neutral">Neutral Inquirer</option>
+                  <option value="supportive">Supportive of Board</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="text-${item.id}">Your Perspective, Statement or Supplementary Information</label>
+              <textarea class="form-control" id="text-${item.id}" rows="3" placeholder="Provide your perspective, share facts, or ask follow-up questions regarding this irregularity..."></textarea>
+            </div>
+            <button type="button" class="submit-btn" onclick="submitComment('${item.id}')">Submit Perspective</button>
           </div>
-          <button type="button" class="submit-btn" onclick="submitComment('${item.id}')">Submit Perspective</button>
         </div>
       </div>
     `;
