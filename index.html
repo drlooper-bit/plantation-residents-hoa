@@ -2889,10 +2889,9 @@ window.toggleArchive = function(irregularityId) {
     : `Archived Posts (${archivedDiv.querySelectorAll('.comment-card').length})`;
 };
 
-// HOA Board Recall Poll Logic — Global Real-Time Cloud Sync
-const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v5';
-const RECALL_USER_VOTE_KEY = 'plant_hoa_user_recall_vote_v5';
-const RECALL_APP_KEY = '2q7ohpt5';
+// HOA Board Recall Poll Logic — Global Real-Time Cloud Sync (counterapi.dev)
+const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v6';
+const RECALL_USER_VOTE_KEY = 'plant_hoa_user_recall_vote_v6';
 
 let recallPollData = {
   yes: 342,
@@ -2913,24 +2912,20 @@ function loadRecallPollData(callback) {
     }
   } catch (e) {}
 
-  const getYesUrl = `https://keyvalue.immanuel.co/api/KeyVal/GetValue/${RECALL_APP_KEY}/recall_yes`;
-  const getNoUrl = `https://keyvalue.immanuel.co/api/KeyVal/GetValue/${RECALL_APP_KEY}/recall_no`;
+  const getYesUrl = 'https://api.counterapi.dev/v1/plant_hoa_recall/yes';
+  const getNoUrl = 'https://api.counterapi.dev/v1/plant_hoa_recall/no';
 
   Promise.all([
     fetch(getYesUrl).then(r => r.ok ? r.json() : null).catch(() => null),
     fetch(getNoUrl).then(r => r.ok ? r.json() : null).catch(() => null)
   ]).then(([remoteYes, remoteNo]) => {
-    if (remoteYes !== null) {
-      const cleanedY = parseInt(String(remoteYes).replace(/"/g, '').trim(), 10);
-      if (!isNaN(cleanedY) && cleanedY > recallPollData.yes) {
-        recallPollData.yes = cleanedY;
-      }
+    if (remoteYes && typeof remoteYes.count === 'number') {
+      const apiYes = 341 + remoteYes.count;
+      if (apiYes > recallPollData.yes) recallPollData.yes = apiYes;
     }
-    if (remoteNo !== null) {
-      const cleanedN = parseInt(String(remoteNo).replace(/"/g, '').trim(), 10);
-      if (!isNaN(cleanedN) && cleanedN > recallPollData.no) {
-        recallPollData.no = cleanedN;
-      }
+    if (remoteNo && typeof remoteNo.count === 'number') {
+      const apiNo = 67 + remoteNo.count;
+      if (apiNo > recallPollData.no) recallPollData.no = apiNo;
     }
     try {
       localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
@@ -3003,11 +2998,11 @@ window.castRecallVote = function(option) {
     localStorage.setItem(RECALL_USER_VOTE_KEY, option);
     updateRecallPollUI();
 
-    const newCount = option === 'yes' ? recallPollData.yes : recallPollData.no;
-    const keyName = option === 'yes' ? 'recall_yes' : 'recall_no';
-    const setUrl = `https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/${RECALL_APP_KEY}/${keyName}/${newCount}`;
+    const setUrl = option === 'yes'
+      ? 'https://api.counterapi.dev/v1/plant_hoa_recall/yes/up'
+      : 'https://api.counterapi.dev/v1/plant_hoa_recall/no/up';
     
-    fetch(setUrl, { method: 'POST' }).catch(err => console.warn('Cloud poll vote sync error:', err));
+    fetch(setUrl).catch(err => console.warn('Cloud poll vote sync error:', err));
   } catch (e) {
     console.error("Error submitting recall vote:", e);
   }
