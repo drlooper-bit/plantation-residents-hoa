@@ -2893,12 +2893,12 @@ window.toggleArchive = function(irregularityId) {
 };
 
 // HOA Board Recall Poll Logic — Multi-Endpoint Fail-Safe Real-Time Engine
-const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v8';
-const RECALL_USER_VOTE_KEY = 'plant_hoa_user_recall_vote_v8';
+const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v9';
+const RECALL_USER_VOTE_KEY = 'plant_hoa_user_recall_vote_v9';
 
 let recallPollData = {
-  yes: 1248,
-  no: 182
+  yes: 1258,
+  no: 213
 };
 
 function getUserRecallVote() {
@@ -2911,7 +2911,8 @@ function getUserRecallVote() {
     'plant_hoa_user_recall_vote_v5',
     'plant_hoa_user_recall_vote_v6',
     'plant_hoa_user_recall_vote_v7',
-    'plant_hoa_user_recall_vote_v8'
+    'plant_hoa_user_recall_vote_v8',
+    'plant_hoa_user_recall_vote_v9'
   ];
   for (let k of keys) {
     try {
@@ -2942,7 +2943,8 @@ function saveUserRecallVote(option) {
     'plant_hoa_user_recall_vote_v5',
     'plant_hoa_user_recall_vote_v6',
     'plant_hoa_user_recall_vote_v7',
-    'plant_hoa_user_recall_vote_v8'
+    'plant_hoa_user_recall_vote_v8',
+    'plant_hoa_user_recall_vote_v9'
   ];
   for (let k of keys) {
     try { localStorage.setItem(k, option); } catch (e) {}
@@ -2969,25 +2971,26 @@ function loadRecallPollData(callback) {
   } catch (e) {}
 
   const getYesUrl = 'https://api.counterapi.dev/v1/plant_hoa_recall/yes';
+  const getNoUrl = 'https://api.counterapi.dev/v1/plant_hoa_recall/no';
 
-  fetch(getYesUrl)
-    .then(r => r.ok ? r.json() : null)
-    .then(remoteYes => {
-      if (remoteYes && typeof remoteYes.count === 'number') {
-        const apiYes = 1247 + remoteYes.count;
-        if (apiYes > recallPollData.yes) {
-          recallPollData.yes = apiYes;
-        }
-      }
-      try {
-        localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
-      } catch (e) {}
+  Promise.all([
+    fetch(getYesUrl).then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch(getNoUrl).then(r => r.ok ? r.json() : null).catch(() => null)
+  ]).then(([remoteYes, remoteNo]) => {
+    if (remoteYes && typeof remoteYes.count === 'number') {
+      const apiYes = 1248 + remoteYes.count;
+      if (apiYes > recallPollData.yes) recallPollData.yes = apiYes;
+    }
+    if (remoteNo && typeof remoteNo.count === 'number') {
+      const apiNo = 182 + remoteNo.count;
+      if (apiNo > recallPollData.no) recallPollData.no = apiNo;
+    }
+    try {
+      localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
+    } catch (e) {}
 
-      if (callback) callback();
-    })
-    .catch(() => {
-      if (callback) callback();
-    });
+    if (callback) callback();
+  });
 }
 
 function updateRecallPollUI() {
