@@ -7,7 +7,7 @@
 (function() {
   'use strict';
   
-  const LOCKED_BASELINE_FLOOR = 869;
+  const LOCKED_BASELINE_FLOOR = 1485;
   const VISITED_KEY = "has_visited_plant_hoa_dashboard_v3";
   const MAX_VISITS_KEY = "plant_hoa_max_visits_v2";
 
