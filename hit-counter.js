@@ -8,9 +8,8 @@
   'use strict';
   
   const LOCKED_BASELINE_FLOOR = 869;
-  const VISITED_KEY = "has_visited_plant_hoa_dashboard_v2";
-  const MAX_VISITS_KEY = "plant_hoa_max_visits_v1";
-  const APP_KEY = "2q7ohpt5";
+  const VISITED_KEY = "has_visited_plant_hoa_dashboard_v3";
+  const MAX_VISITS_KEY = "plant_hoa_max_visits_v2";
 
   function initCounter() {
     const hitCountEls = document.querySelectorAll(".hit-count-val, #hit-count");
@@ -54,41 +53,47 @@
       } catch (e) {}
     }
 
-    const getUrl = `https://keyvalue.immanuel.co/api/KeyVal/GetValue/${APP_KEY}/visits`;
+    // Primary cloud endpoint using counterapi.dev
+    const endpoint = hasVisited
+      ? 'https://api.counterapi.dev/v1/plant_hoa_dashboard/visits'
+      : 'https://api.counterapi.dev/v1/plant_hoa_dashboard/visits/up';
 
-    fetch(getUrl)
+    fetch(endpoint)
       .then(res => res.ok ? res.json() : null)
       .then(data => {
-        let apiCount = LOCKED_BASELINE_FLOOR;
-        if (data !== null) {
-          const cleaned = String(data).replace(/"/g, '').trim();
-          const parsed = parseInt(cleaned, 10);
-          if (!isNaN(parsed) && parsed > 0) {
-            apiCount = parsed;
+        if (data && typeof data.count === 'number') {
+          const apiCount = data.count;
+          const calculatedCount = (LOCKED_BASELINE_FLOOR - 2) + apiCount;
+          updateDisplay(calculatedCount);
+
+          if (!hasVisited) {
+            try { localStorage.setItem(VISITED_KEY, "true"); } catch (e) {}
+            try {
+              const expires = new Date();
+              expires.setFullYear(expires.getFullYear() + 1);
+              document.cookie = `${VISITED_KEY}=true; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+            } catch (e) {}
           }
-        }
-
-        const currentDisplay = Math.max(apiCount, storedMax, LOCKED_BASELINE_FLOOR);
-
-        if (!hasVisited) {
-          const newCount = currentDisplay + 1;
-          updateDisplay(newCount);
-
-          try { localStorage.setItem(VISITED_KEY, "true"); } catch (e) {}
-          try {
-            const expires = new Date();
-            expires.setFullYear(expires.getFullYear() + 1);
-            document.cookie = `${VISITED_KEY}=true; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-          } catch (e) {}
-
-          const setUrl = `https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/${APP_KEY}/visits/${newCount}`;
-          fetch(setUrl, { method: 'POST' }).catch(() => {});
         } else {
-          updateDisplay(currentDisplay);
+          updateDisplay(storedMax);
         }
       })
       .catch(() => {
-        updateDisplay(storedMax);
+        // Backup failover attempt to keyvalue API
+        const backupUrl = 'https://keyvalue.immanuel.co/api/KeyVal/GetValue/2q7ohpt5/visits';
+        fetch(backupUrl)
+          .then(res => res.ok ? res.json() : null)
+          .then(bData => {
+            if (bData !== null) {
+              const parsed = parseInt(String(bData).replace(/"/g, '').trim(), 10);
+              if (!isNaN(parsed) && parsed > 0) {
+                updateDisplay(parsed);
+                return;
+              }
+            }
+            updateDisplay(storedMax);
+          })
+          .catch(() => updateDisplay(storedMax));
       });
   }
 
