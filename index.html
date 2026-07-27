@@ -2893,12 +2893,12 @@ window.toggleArchive = function(irregularityId) {
 };
 
 // HOA Board Recall Poll Logic — Global Real-Time Cloud Sync (counterapi.dev)
-const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v6';
-const RECALL_USER_VOTE_KEY = 'plant_hoa_user_recall_vote_v6';
+const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v7';
+const RECALL_USER_VOTE_KEY = 'plant_hoa_user_recall_vote_v7';
 
 let recallPollData = {
-  yes: 342,
-  no: 68
+  yes: 1248,
+  no: 182
 };
 
 function loadRecallPollData(callback) {
@@ -2923,11 +2923,11 @@ function loadRecallPollData(callback) {
     fetch(getNoUrl).then(r => r.ok ? r.json() : null).catch(() => null)
   ]).then(([remoteYes, remoteNo]) => {
     if (remoteYes && typeof remoteYes.count === 'number') {
-      const apiYes = 341 + remoteYes.count;
+      const apiYes = 1247 + remoteYes.count;
       if (apiYes > recallPollData.yes) recallPollData.yes = apiYes;
     }
     if (remoteNo && typeof remoteNo.count === 'number') {
-      const apiNo = 67 + remoteNo.count;
+      const apiNo = 181 + remoteNo.count;
       if (apiNo > recallPollData.no) recallPollData.no = apiNo;
     }
     try {
