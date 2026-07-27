@@ -1485,10 +1485,10 @@ C. Combined Total<br>
 
         <!-- Voting Options Buttons -->
         <div id="recall-vote-actions" style="display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
-          <button type="button" onclick="castRecallVote('yes')" style="flex: 1; min-width: 200px; padding: 14px 20px; background: rgba(255, 107, 107, 0.12); border: 2px solid var(--err); border-radius: 10px; color: var(--err); font-family: var(--font-heading); font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+          <button type="button" id="recall-btn-yes" onclick="castRecallVote('yes')" style="flex: 1; min-width: 200px; padding: 14px 20px; background: rgba(255, 107, 107, 0.12); border: 2px solid var(--err); border-radius: 10px; color: var(--err); font-family: var(--font-heading); font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
             <span>👍 YES — Recall the Board</span>
           </button>
-          <button type="button" onclick="castRecallVote('no')" style="flex: 1; min-width: 200px; padding: 14px 20px; background: rgba(121, 210, 166, 0.12); border: 2px solid var(--ok); border-radius: 10px; color: #065F46; font-family: var(--font-heading); font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+          <button type="button" id="recall-btn-no" onclick="castRecallVote('no')" style="flex: 1; min-width: 200px; padding: 14px 20px; background: rgba(121, 210, 166, 0.12); border: 2px solid var(--ok); border-radius: 10px; color: #065F46; font-family: var(--font-heading); font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
             <span>👎 NO — Keep Current Board</span>
           </button>
         </div>
@@ -2894,12 +2894,64 @@ window.toggleArchive = function(irregularityId) {
 
 // HOA Board Recall Poll Logic — Global Real-Time Cloud Sync (counterapi.dev)
 const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v7';
-const RECALL_USER_VOTE_KEY = 'plant_hoa_user_recall_vote_v7';
 
 let recallPollData = {
   yes: 1248,
   no: 182
 };
+
+function getUserRecallVote() {
+  const keys = [
+    'plant_hoa_user_recall_vote',
+    'plant_hoa_user_recall_vote_v1',
+    'plant_hoa_user_recall_vote_v2',
+    'plant_hoa_user_recall_vote_v3',
+    'plant_hoa_user_recall_vote_v4',
+    'plant_hoa_user_recall_vote_v5',
+    'plant_hoa_user_recall_vote_v6',
+    'plant_hoa_user_recall_vote_v7',
+    'plant_hoa_user_recall_vote_v8'
+  ];
+  for (let k of keys) {
+    try {
+      const val = localStorage.getItem(k);
+      if (val === 'yes' || val === 'no') return val;
+    } catch (e) {}
+  }
+  try {
+    const cookies = document.cookie.split(';');
+    for (let c of cookies) {
+      const trimmed = c.trim();
+      if (trimmed.startsWith('plant_hoa_user_recall_vote=')) {
+        const parts = trimmed.split('=');
+        if (parts[1] === 'yes' || parts[1] === 'no') return parts[1];
+      }
+    }
+  } catch (e) {}
+  return null;
+}
+
+function saveUserRecallVote(option) {
+  const keys = [
+    'plant_hoa_user_recall_vote',
+    'plant_hoa_user_recall_vote_v1',
+    'plant_hoa_user_recall_vote_v2',
+    'plant_hoa_user_recall_vote_v3',
+    'plant_hoa_user_recall_vote_v4',
+    'plant_hoa_user_recall_vote_v5',
+    'plant_hoa_user_recall_vote_v6',
+    'plant_hoa_user_recall_vote_v7',
+    'plant_hoa_user_recall_vote_v8'
+  ];
+  for (let k of keys) {
+    try { localStorage.setItem(k, option); } catch (e) {}
+  }
+  try {
+    const expires = new Date();
+    expires.setFullYear(expires.getFullYear() + 1);
+    document.cookie = `plant_hoa_user_recall_vote=${option}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+  } catch (e) {}
+}
 
 function loadRecallPollData(callback) {
   try {
@@ -2952,6 +3004,8 @@ function updateRecallPollUI() {
   const noStat = document.getElementById("recall-no-stat");
   const totalLabel = document.getElementById("recall-total-votes-label");
   const voteMsg = document.getElementById("recall-vote-msg");
+  const yesBtn = document.getElementById("recall-btn-yes");
+  const noBtn = document.getElementById("recall-btn-no");
 
   if (yesBar) yesBar.style.width = `${yesPct}%`;
   if (noBar) noBar.style.width = `${noPct}%`;
@@ -2959,16 +3013,36 @@ function updateRecallPollUI() {
   if (noStat) noStat.textContent = `${noPct}% (${noCount.toLocaleString()} votes)`;
   if (totalLabel) totalLabel.textContent = `Total Community Votes: ${total.toLocaleString()}`;
 
-  try {
-    const userVote = localStorage.getItem(RECALL_USER_VOTE_KEY);
-    if (userVote && voteMsg) {
-      voteMsg.style.display = "block";
-      voteMsg.style.background = "rgba(77, 171, 247, 0.12)";
-      voteMsg.style.border = "1px solid rgba(77, 171, 247, 0.3)";
-      voteMsg.style.color = "var(--accent)";
-      voteMsg.textContent = `Your vote (${userVote.toUpperCase()}) has been recorded and saved globally. Thank you for participating!`;
+  const userVote = getUserRecallVote();
+  if (userVote) {
+    if (yesBtn) {
+      yesBtn.disabled = true;
+      yesBtn.style.opacity = userVote === 'yes' ? '1' : '0.4';
+      yesBtn.style.cursor = 'not-allowed';
+      if (userVote === 'yes') {
+        yesBtn.style.border = '2px solid #10B981';
+        yesBtn.style.background = 'rgba(16, 185, 129, 0.15)';
+        yesBtn.innerHTML = '<span>✓ YOU VOTED YES (RECALL)</span>';
+      }
     }
-  } catch (e) {}
+    if (noBtn) {
+      noBtn.disabled = true;
+      noBtn.style.opacity = userVote === 'no' ? '1' : '0.4';
+      noBtn.style.cursor = 'not-allowed';
+      if (userVote === 'no') {
+        noBtn.style.border = '2px solid #10B981';
+        noBtn.style.background = 'rgba(16, 185, 129, 0.15)';
+        noBtn.innerHTML = '<span>✓ YOU VOTED NO (KEEP BOARD)</span>';
+      }
+    }
+    if (voteMsg) {
+      voteMsg.style.display = "block";
+      voteMsg.style.background = "rgba(16, 185, 129, 0.12)";
+      voteMsg.style.border = "1px solid rgba(16, 185, 129, 0.3)";
+      voteMsg.style.color = "#065F46";
+      voteMsg.innerHTML = `✓ Your vote (<strong>${userVote.toUpperCase()}</strong>) has been recorded and locked for this device. Single-vote policy is strictly enforced.`;
+    }
+  }
 }
 
 function renderRecallPoll() {
@@ -2978,16 +3052,9 @@ function renderRecallPoll() {
 
 window.castRecallVote = function(option) {
   try {
-    const existingVote = localStorage.getItem(RECALL_USER_VOTE_KEY);
+    const existingVote = getUserRecallVote();
     if (existingVote) {
-      const voteMsg = document.getElementById("recall-vote-msg");
-      if (voteMsg) {
-        voteMsg.style.display = "block";
-        voteMsg.style.background = "rgba(255, 192, 72, 0.12)";
-        voteMsg.style.border = "1px solid rgba(255, 192, 72, 0.3)";
-        voteMsg.style.color = "var(--warn)";
-        voteMsg.textContent = `You have already voted (${existingVote.toUpperCase()}). Thank you for participating!`;
-      }
+      updateRecallPollUI();
       return;
     }
 
@@ -2998,7 +3065,7 @@ window.castRecallVote = function(option) {
     }
 
     localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
-    localStorage.setItem(RECALL_USER_VOTE_KEY, option);
+    saveUserRecallVote(option);
     updateRecallPollUI();
 
     const setUrl = option === 'yes'
