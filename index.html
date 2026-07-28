@@ -967,9 +967,6 @@
         <div style="background: #FFFFFF; padding: 10px 14px; border-radius: 8px; border: 1px solid #94A3B8; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
           <strong style="color: #0F172A;">💬 Submit Perspectives:</strong> Every card includes an interactive form allowing homeowners to share statements, ask questions, or contribute supplementary information.
         </div>
-        <div style="background: #FFFFFF; padding: 10px 14px; border-radius: 8px; border: 1px solid #94A3B8; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
-          <strong style="color: #0F172A;">🗳️ Live Community Polling:</strong> Visit the <em>HOA Board Recall</em> tab to cast your vote in the real-time cloud-synchronized community sentiment poll.
-        </div>
       </div>
     </div>
   </div>
@@ -983,7 +980,6 @@
     <button class="nav-btn" data-tab="governance">Governance &amp; Compliance</button>
     <button class="nav-btn" data-tab="litigation">Litigation &amp; Radar</button>
     <button class="nav-btn" data-tab="turnaround">Turnaround Plan</button>
-    <button class="nav-btn" data-tab="recall">HOA Board Recall</button>
     <button class="nav-btn" data-tab="history">History of The Plantation</button>
     <button class="nav-btn" data-tab="meetings">HOA Meetings and Notes</button>
     <button class="nav-btn" data-tab="exploratory">Exploratory Only</button>
@@ -1456,102 +1452,7 @@ C. Combined Total<br>
     </div>
   </div>
 
-  <!-- TAB CONTENT: HOA BOARD RECALL & POLL -->
-  <div id="recall-container" style="display: none;">
-    <div style="max-width: 900px; margin: 0 auto; padding: 10px 0;">
-      
-      <h2 style="font-family: var(--font-heading); font-size: 22px; margin: 0 0 8px 0; color: var(--err); display: flex; align-items: center; gap: 10px;">
-        🗳️ Resident Special Initiative: HOA Board Recall Poll
-      </h2>
-      <p style="color: var(--text-dim); margin: 0 0 24px 0; font-size: 13.5px; line-height: 1.6;">
-        Under <strong>Florida Statute § 720.303(10)</strong>, homeowners have the statutory right to recall and remove any or all members of the Board of Directors with or without cause. This independent poll measures resident sentiment across the 2,820 single-family homes in The Plantation at Leesburg.
-      </p>
 
-      <!-- Interactive Poll Card -->
-      <div style="background: var(--bg-card); border: 2px solid var(--border-hover); border-radius: 16px; padding: 28px; margin-bottom: 28px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
-        
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
-          <div>
-            <span style="background: rgba(255, 107, 107, 0.15); color: var(--err); border: 1px solid rgba(255, 107, 107, 0.3); font-size: 10.5px; font-weight: 700; text-transform: uppercase; padding: 3px 8px; border-radius: 12px; letter-spacing: 0.05em;">Community Vote</span>
-            <h3 style="font-family: var(--font-heading); font-size: 20px; margin: 10px 0 0 0; color: var(--text);">
-              Should we recall the HOA Board completely?
-            </h3>
-          </div>
-          <div style="text-align: right;">
-            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Statutory Threshold</div>
-            <div style="font-size: 13px; font-weight: 700; color: var(--accent);">1,411 Votes Required (50% + 1)</div>
-          </div>
-        </div>
-
-        <!-- Voting Options Buttons -->
-        <div id="recall-vote-actions" style="display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
-          <button type="button" id="recall-btn-yes" onclick="castRecallVote('yes')" style="flex: 1; min-width: 200px; padding: 14px 20px; background: rgba(255, 107, 107, 0.12); border: 2px solid var(--err); border-radius: 10px; color: var(--err); font-family: var(--font-heading); font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
-            <span>👍 YES — Recall the Board</span>
-          </button>
-          <button type="button" id="recall-btn-no" onclick="castRecallVote('no')" style="flex: 1; min-width: 200px; padding: 14px 20px; background: rgba(121, 210, 166, 0.12); border: 2px solid var(--ok); border-radius: 10px; color: #065F46; font-family: var(--font-heading); font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
-            <span>👎 NO — Keep Current Board</span>
-          </button>
-        </div>
-
-        <!-- User Vote Notification -->
-        <div id="recall-vote-msg" style="display: none; padding: 10px 14px; border-radius: 8px; font-size: 12.5px; margin-bottom: 20px; font-weight: 600; text-align: center;"></div>
-
-        <!-- Live Results Progress Bars -->
-        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <h4 style="margin: 0; font-size: 13.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim);">Live Poll Results</h4>
-            <span style="font-size: 12px; color: var(--text-muted);" id="recall-total-votes-label">Total Votes: 0</span>
-          </div>
-
-          <!-- YES Bar -->
-          <div style="margin-bottom: 16px;">
-            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;">
-              <span style="color: var(--err); font-weight: 600;">YES — Recall Board</span>
-              <span style="font-weight: 700; color: var(--text);" id="recall-yes-stat">0% (0 votes)</span>
-            </div>
-            <div style="width: 100%; height: 16px; background: rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
-              <div id="recall-yes-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #ff6b6b, #ff8787); transition: width 0.4s ease;"></div>
-            </div>
-          </div>
-
-          <!-- NO Bar -->
-          <div>
-            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;">
-              <span style="color: var(--ok); font-weight: 600;">NO — Keep Current Board</span>
-              <span style="font-weight: 700; color: var(--text);" id="recall-no-stat">0% (0 votes)</span>
-            </div>
-            <div style="width: 100%; height: 16px; background: rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
-              <div id="recall-no-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #51cf66, #69db7c); transition: width 0.4s ease;"></div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-
-      <!-- Statutory Framework & Process Cards -->
-      <div class="turnaround-grid">
-        <div class="workstream-card">
-          <h3 style="color: var(--warn);">📜 Florida Statute § 720.303(10) Legal Standard</h3>
-          <ul style="line-height: 1.6; font-size: 13px;">
-            <li><strong>Right to Recall:</strong> Any director may be recalled and removed from office with or without cause by a majority of all voting interests (50% + 1 of 2,820 homes = 1,411 signatures).</li>
-            <li><strong>Written Agreement / Ballot:</strong> Recall may be executed via written agreement ballots signed by registered parcel owners without holding a formal meeting.</li>
-            <li><strong>Board Action Deadline:</strong> Upon receipt of a recall agreement, the board must meet within <strong>5 business days</strong> to either certify or non-certify the recall.</li>
-          </ul>
-        </div>
-
-        <div class="workstream-card">
-          <h3 style="color: var(--accent);">⚖️ DBPR Binding Arbitration &amp; Governance</h3>
-          <ul style="line-height: 1.6; font-size: 13px;">
-            <li><strong>Automatic Removal:</strong> If the board certifies the recall, the recalled directors are immediately removed and must surrender all association records within 5 business days.</li>
-            <li><strong>DBPR Petition:</strong> If the board fails to certify, it must file a petition for recall arbitration with the Florida DBPR within 5 business days.</li>
-            <li><strong>Owner Recourse:</strong> If the board refuses to act or meet, representative homeowners may file a recall petition directly with DBPR to enforce the removal.</li>
-          </ul>
-        </div>
-      </div>
-
-    </div>
-  </div>
 
   <!-- Resident Suggestion Modal -->
   <div id="suggestion-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 999999; align-items: center; justify-content: center; padding: 20px;">
@@ -2905,245 +2806,6 @@ window.toggleArchive = function(irregularityId) {
     : `Archived Posts (${archivedDiv.querySelectorAll('.comment-card').length})`;
 };
 
-// HOA Board Recall Poll Logic — Permanent Fail-Safe Real-Time Engine (Seed Baseline Removed)
-const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v700';
-const BASELINE_YES_FLOOR = 946;
-const BASELINE_NO_FLOOR = 350;
-
-let recallPollData = {
-  yes: BASELINE_YES_FLOOR,
-  no: BASELINE_NO_FLOOR
-};
-
-function getUserRecallVote() {
-  const keys = [
-    'plant_hoa_user_recall_vote',
-    'plant_hoa_user_recall_vote_v1',
-    'plant_hoa_user_recall_vote_v2',
-    'plant_hoa_user_recall_vote_v3',
-    'plant_hoa_user_recall_vote_v4',
-    'plant_hoa_user_recall_vote_v5',
-    'plant_hoa_user_recall_vote_v6',
-    'plant_hoa_user_recall_vote_v7',
-    'plant_hoa_user_recall_vote_v8',
-    'plant_hoa_user_recall_vote_v9',
-    'plant_hoa_user_recall_vote_v10',
-    'plant_hoa_user_recall_vote_v11',
-    'plant_hoa_user_recall_vote_v100',
-    'plant_hoa_user_recall_vote_v200',
-    'plant_hoa_user_recall_vote_v500',
-    'plant_hoa_user_recall_vote_v600',
-    'plant_hoa_user_recall_vote_v700'
-  ];
-  for (let k of keys) {
-    try {
-      const val = localStorage.getItem(k);
-      if (val === 'yes' || val === 'no') return val;
-    } catch (e) {}
-  }
-  try {
-    const cookies = document.cookie.split(';');
-    for (let c of cookies) {
-      const trimmed = c.trim();
-      if (trimmed.startsWith('plant_hoa_user_recall_vote=')) {
-        const parts = trimmed.split('=');
-        if (parts[1] === 'yes' || parts[1] === 'no') return parts[1];
-      }
-    }
-  } catch (e) {}
-  return null;
-}
-
-function saveUserRecallVote(option) {
-  const keys = [
-    'plant_hoa_user_recall_vote',
-    'plant_hoa_user_recall_vote_v1',
-    'plant_hoa_user_recall_vote_v2',
-    'plant_hoa_user_recall_vote_v3',
-    'plant_hoa_user_recall_vote_v4',
-    'plant_hoa_user_recall_vote_v5',
-    'plant_hoa_user_recall_vote_v6',
-    'plant_hoa_user_recall_vote_v7',
-    'plant_hoa_user_recall_vote_v8',
-    'plant_hoa_user_recall_vote_v9',
-    'plant_hoa_user_recall_vote_v10',
-    'plant_hoa_user_recall_vote_v11',
-    'plant_hoa_user_recall_vote_v100',
-    'plant_hoa_user_recall_vote_v200',
-    'plant_hoa_user_recall_vote_v500',
-    'plant_hoa_user_recall_vote_v600',
-    'plant_hoa_user_recall_vote_v700'
-  ];
-  for (let k of keys) {
-    try { localStorage.setItem(k, option); } catch (e) {}
-  }
-  try {
-    const expires = new Date();
-    expires.setFullYear(expires.getFullYear() + 1);
-    document.cookie = `plant_hoa_user_recall_vote=${option}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-  } catch (e) {}
-}
-
-function loadRecallPollData(callback) {
-  try {
-    const stored = localStorage.getItem(RECALL_STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (parsed && typeof parsed.yes === 'number' && parsed.yes >= BASELINE_YES_FLOOR) {
-        recallPollData.yes = parsed.yes;
-      }
-      if (parsed && typeof parsed.no === 'number' && parsed.no >= BASELINE_NO_FLOOR) {
-        recallPollData.no = parsed.no;
-      }
-    }
-  } catch (e) {}
-
-  const kvYesUrl = 'https://keyvalue.immanuel.co/api/KeyVal/GetValue/2q7ohpt5/recall_yes';
-  const kvNoUrl = 'https://keyvalue.immanuel.co/api/KeyVal/GetValue/2q7ohpt5/recall_no';
-
-  Promise.all([
-    fetch(kvYesUrl).then(r => r.ok ? r.json() : null).catch(() => null),
-    fetch(kvNoUrl).then(r => r.ok ? r.json() : null).catch(() => null)
-  ]).then(([remoteYes, remoteNo]) => {
-    if (remoteYes !== null) {
-      const cleanedY = parseInt(String(remoteYes).replace(/"/g, '').trim(), 10);
-      if (!isNaN(cleanedY)) {
-        const calcY = BASELINE_YES_FLOOR + (cleanedY > 382 ? (cleanedY - 382) : 0);
-        if (calcY > recallPollData.yes) recallPollData.yes = calcY;
-      }
-    }
-    if (remoteNo !== null) {
-      const cleanedN = parseInt(String(remoteNo).replace(/"/g, '').trim(), 10);
-      if (!isNaN(cleanedN)) {
-        const calcN = BASELINE_NO_FLOOR + (cleanedN > 304 ? (cleanedN - 304) : 0);
-        if (calcN > recallPollData.no) recallPollData.no = calcN;
-      }
-    }
-    try {
-      localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
-    } catch (e) {}
-
-    if (callback) callback();
-  }).catch(() => {
-    if (callback) callback();
-  });
-}
-
-function updateRecallPollUI() {
-  const yesCount = Math.max(recallPollData.yes || 0, BASELINE_YES_FLOOR);
-  const noCount = Math.max(recallPollData.no || 0, BASELINE_NO_FLOOR);
-  const total = yesCount + noCount;
-
-  const yesPct = total > 0 ? ((yesCount / total) * 100).toFixed(1) : 0;
-  const noPct = total > 0 ? ((noCount / total) * 100).toFixed(1) : 0;
-
-  const yesBar = document.getElementById("recall-yes-bar");
-  const noBar = document.getElementById("recall-no-bar");
-  const yesStat = document.getElementById("recall-yes-stat");
-  const noStat = document.getElementById("recall-no-stat");
-  const totalLabel = document.getElementById("recall-total-votes-label");
-  const voteMsg = document.getElementById("recall-vote-msg");
-  const yesBtn = document.getElementById("recall-btn-yes");
-  const noBtn = document.getElementById("recall-btn-no");
-
-  if (yesBar) yesBar.style.width = `${yesPct}%`;
-  if (noBar) noBar.style.width = `${noPct}%`;
-  if (yesStat) yesStat.textContent = `${yesPct}% (${yesCount.toLocaleString()} votes)`;
-  if (noStat) noStat.textContent = `${noPct}% (${noCount.toLocaleString()} votes)`;
-  if (totalLabel) totalLabel.textContent = `Total Community Votes: ${total.toLocaleString()}`;
-
-  const userVote = getUserRecallVote();
-  if (userVote) {
-    if (yesBtn) {
-      yesBtn.disabled = true;
-      yesBtn.style.opacity = userVote === 'yes' ? '1' : '0.4';
-      yesBtn.style.cursor = 'not-allowed';
-      if (userVote === 'yes') {
-        yesBtn.style.border = '2px solid #10B981';
-        yesBtn.style.background = 'rgba(16, 185, 129, 0.15)';
-        yesBtn.innerHTML = '<span>✓ YOU VOTED YES (RECALL)</span>';
-      }
-    }
-    if (noBtn) {
-      noBtn.disabled = true;
-      noBtn.style.opacity = userVote === 'no' ? '1' : '0.4';
-      noBtn.style.cursor = 'not-allowed';
-      if (userVote === 'no') {
-        noBtn.style.border = '2px solid #10B981';
-        noBtn.style.background = 'rgba(16, 185, 129, 0.15)';
-        noBtn.innerHTML = '<span>✓ YOU VOTED NO (KEEP BOARD)</span>';
-      }
-    }
-    if (voteMsg) {
-      voteMsg.style.display = "block";
-      voteMsg.style.background = "rgba(16, 185, 129, 0.12)";
-      voteMsg.style.border = "1px solid rgba(16, 185, 129, 0.3)";
-      voteMsg.style.color = "#065F46";
-      voteMsg.innerHTML = `✓ Your vote (<strong>${userVote.toUpperCase()}</strong>) has been recorded and locked for this device. Single-vote policy is strictly enforced.`;
-    }
-  }
-}
-
-function renderRecallPoll() {
-  updateRecallPollUI();
-  loadRecallPollData(updateRecallPollUI);
-}
-
-window.castRecallVote = function(option) {
-  try {
-    const existingVote = getUserRecallVote();
-    if (existingVote) {
-      updateRecallPollUI();
-      return;
-    }
-
-    if (option === 'yes') {
-      recallPollData.yes += 1;
-    } else if (option === 'no') {
-      recallPollData.no += 1;
-    }
-
-    // 1. Instantly save to local high-water mark
-    try {
-      localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
-    } catch (e) {}
-
-    // 2. Lock single-vote on device
-    saveUserRecallVote(option);
-
-    // 3. Update screen UI IMMEDIATELY
-    updateRecallPollUI();
-
-    // 4. Send Direct Email Audit Payload to Administrator
-    try {
-      fetch('https://formsubmit.co/ajax/drlooper@gmail.com', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-          _subject: `[Plantation HOA Poll] New ${option.toUpperCase()} Vote Cast`,
-          vote_option: option.toUpperCase(),
-          timestamp: new Date().toISOString(),
-          new_yes_total: recallPollData.yes,
-          new_no_total: recallPollData.no,
-          total_community_votes: recallPollData.yes + recallPollData.no
-        })
-      }).catch(() => {});
-    } catch (e) {}
-
-    // 5. Background sync to secondary endpoints
-    const setUrlCounterApi = option === 'yes'
-      ? 'https://api.counterapi.dev/v1/plant_hoa_recall/yes/up'
-      : 'https://api.counterapi.dev/v1/plant_hoa_recall/no/up';
-
-    const setUrlKeyValue = `https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/2q7ohpt5/recall_${option}/${recallPollData[option]}`;
-
-    fetch(setUrlCounterApi).catch(() => {});
-    fetch(setUrlKeyValue, { method: 'POST' }).catch(() => {});
-  } catch (e) {
-    console.error("Error submitting recall vote:", e);
-  }
-};
-
 // Tabs switching logic
 let activeTab = "financial";
 function applyTabState(tab) {
@@ -3154,28 +2816,23 @@ function applyTabState(tab) {
   const history = document.getElementById("history-container");
   const exploratory = document.getElementById("exploratory-container");
   const meetings = document.getElementById("meetings-container");
-  const recall = document.getElementById("recall-container");
 
   if (tab === "litigation") {
-    container.style.display = "grid"; searchBar.style.display = "flex"; turnaround.style.display = "none"; radar.style.display = "block"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
+    container.style.display = "grid"; searchBar.style.display = "flex"; turnaround.style.display = "none"; radar.style.display = "block"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none";
     renderIrregularities(tab, document.getElementById("search-box").value);
   } else if (tab === "turnaround") {
-    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "block"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
+    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "block"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none";
     renderGolfRecoveryComments();
-  } else if (tab === "recall") {
-    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none";
-    if (recall) recall.style.display = "block";
-    renderRecallPoll();
   } else if (tab === "meetings") {
-    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "none"; if (recall) recall.style.display = "none";
+    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "none";
     document.getElementById("meetings-container").style.display = "block";
     renderMeetingsComments();
   } else if (tab === "history") {
-    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "block"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
+    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "block"; exploratory.style.display = "none"; meetings.style.display = "none";
   } else if (tab === "exploratory") {
-    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "block"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
+    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "block"; meetings.style.display = "none";
   } else {
-    container.style.display = "grid"; searchBar.style.display = "flex"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
+    container.style.display = "grid"; searchBar.style.display = "flex"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none";
     renderIrregularities(tab, document.getElementById("search-box").value);
   }
 }
