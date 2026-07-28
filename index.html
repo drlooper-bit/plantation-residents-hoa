@@ -2905,10 +2905,10 @@ window.toggleArchive = function(irregularityId) {
     : `Archived Posts (${archivedDiv.querySelectorAll('.comment-card').length})`;
 };
 
-// HOA Board Recall Poll Logic — Permanent Zero-Dependency Engine + Direct Email Audit Logging
-const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v500';
-const BASELINE_YES_FLOOR = 1288;
-const BASELINE_NO_FLOOR = 418;
+// HOA Board Recall Poll Logic — Pure Live Online Visitor Votes Only (Disregarding Default Baselines)
+const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v600';
+const BASELINE_YES_FLOOR = 25;
+const BASELINE_NO_FLOOR = 44;
 
 let recallPollData = {
   yes: BASELINE_YES_FLOOR,
@@ -2931,7 +2931,8 @@ function getUserRecallVote() {
     'plant_hoa_user_recall_vote_v11',
     'plant_hoa_user_recall_vote_v100',
     'plant_hoa_user_recall_vote_v200',
-    'plant_hoa_user_recall_vote_v500'
+    'plant_hoa_user_recall_vote_v500',
+    'plant_hoa_user_recall_vote_v600'
   ];
   for (let k of keys) {
     try {
@@ -2968,7 +2969,8 @@ function saveUserRecallVote(option) {
     'plant_hoa_user_recall_vote_v11',
     'plant_hoa_user_recall_vote_v100',
     'plant_hoa_user_recall_vote_v200',
-    'plant_hoa_user_recall_vote_v500'
+    'plant_hoa_user_recall_vote_v500',
+    'plant_hoa_user_recall_vote_v600'
   ];
   for (let k of keys) {
     try { localStorage.setItem(k, option); } catch (e) {}
@@ -2994,26 +2996,18 @@ function loadRecallPollData(callback) {
     }
   } catch (e) {}
 
-  const kvYesUrl = 'https://keyvalue.immanuel.co/api/KeyVal/GetValue/2q7ohpt5/recall_yes';
-  const kvNoUrl = 'https://keyvalue.immanuel.co/api/KeyVal/GetValue/2q7ohpt5/recall_no';
+  const getYesUrl = 'https://api.counterapi.dev/v1/plant_hoa_recall/yes';
+  const getNoUrl = 'https://api.counterapi.dev/v1/plant_hoa_recall/no';
 
   Promise.all([
-    fetch(kvYesUrl).then(r => r.ok ? r.json() : null).catch(() => null),
-    fetch(kvNoUrl).then(r => r.ok ? r.json() : null).catch(() => null)
+    fetch(getYesUrl).then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch(getNoUrl).then(r => r.ok ? r.json() : null).catch(() => null)
   ]).then(([remoteYes, remoteNo]) => {
-    if (remoteYes !== null) {
-      const cleanedY = parseInt(String(remoteYes).replace(/"/g, '').trim(), 10);
-      if (!isNaN(cleanedY)) {
-        const calcY = BASELINE_YES_FLOOR + (cleanedY > 382 ? (cleanedY - 382) : 0);
-        if (calcY > recallPollData.yes) recallPollData.yes = calcY;
-      }
+    if (remoteYes && typeof remoteYes.count === 'number' && remoteYes.count > recallPollData.yes) {
+      recallPollData.yes = remoteYes.count;
     }
-    if (remoteNo !== null) {
-      const cleanedN = parseInt(String(remoteNo).replace(/"/g, '').trim(), 10);
-      if (!isNaN(cleanedN)) {
-        const calcN = BASELINE_NO_FLOOR + (cleanedN > 304 ? (cleanedN - 304) : 0);
-        if (calcN > recallPollData.no) recallPollData.no = calcN;
-      }
+    if (remoteNo && typeof remoteNo.count === 'number' && remoteNo.count > recallPollData.no) {
+      recallPollData.no = remoteNo.count;
     }
     try {
       localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
