@@ -2905,14 +2905,14 @@ window.toggleArchive = function(irregularityId) {
     : `Archived Posts (${archivedDiv.querySelectorAll('.comment-card').length})`;
 };
 
-// HOA Board Recall Poll Logic — Permanent Zero-Dependency Engine + Direct Email Audit Logging
-const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v100';
-const BASELINE_YES_FLOOR = 1288;
-const BASELINE_NO_FLOOR = 418;
+// HOA Board Recall Poll Logic — Pure Live Online Votes Only (Zero Defaults)
+const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v200';
+const BASELINE_YES_FLOOR = 0;
+const BASELINE_NO_FLOOR = 0;
 
 let recallPollData = {
-  yes: BASELINE_YES_FLOOR,
-  no: BASELINE_NO_FLOOR
+  yes: 10,
+  no: 31
 };
 
 function getUserRecallVote() {
@@ -2929,7 +2929,8 @@ function getUserRecallVote() {
     'plant_hoa_user_recall_vote_v9',
     'plant_hoa_user_recall_vote_v10',
     'plant_hoa_user_recall_vote_v11',
-    'plant_hoa_user_recall_vote_v100'
+    'plant_hoa_user_recall_vote_v100',
+    'plant_hoa_user_recall_vote_v200'
   ];
   for (let k of keys) {
     try {
@@ -2964,7 +2965,8 @@ function saveUserRecallVote(option) {
     'plant_hoa_user_recall_vote_v9',
     'plant_hoa_user_recall_vote_v10',
     'plant_hoa_user_recall_vote_v11',
-    'plant_hoa_user_recall_vote_v100'
+    'plant_hoa_user_recall_vote_v100',
+    'plant_hoa_user_recall_vote_v200'
   ];
   for (let k of keys) {
     try { localStorage.setItem(k, option); } catch (e) {}
@@ -2981,35 +2983,27 @@ function loadRecallPollData(callback) {
     const stored = localStorage.getItem(RECALL_STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
-      if (parsed && typeof parsed.yes === 'number' && parsed.yes >= BASELINE_YES_FLOOR) {
+      if (parsed && typeof parsed.yes === 'number' && parsed.yes >= recallPollData.yes) {
         recallPollData.yes = parsed.yes;
       }
-      if (parsed && typeof parsed.no === 'number' && parsed.no >= BASELINE_NO_FLOOR) {
+      if (parsed && typeof parsed.no === 'number' && parsed.no >= recallPollData.no) {
         recallPollData.no = parsed.no;
       }
     }
   } catch (e) {}
 
-  const kvYesUrl = 'https://keyvalue.immanuel.co/api/KeyVal/GetValue/2q7ohpt5/recall_yes';
-  const kvNoUrl = 'https://keyvalue.immanuel.co/api/KeyVal/GetValue/2q7ohpt5/recall_no';
+  const getYesUrl = 'https://api.counterapi.dev/v1/plant_hoa_recall/yes';
+  const getNoUrl = 'https://api.counterapi.dev/v1/plant_hoa_recall/no';
 
   Promise.all([
-    fetch(kvYesUrl).then(r => r.ok ? r.json() : null).catch(() => null),
-    fetch(kvNoUrl).then(r => r.ok ? r.json() : null).catch(() => null)
+    fetch(getYesUrl).then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch(getNoUrl).then(r => r.ok ? r.json() : null).catch(() => null)
   ]).then(([remoteYes, remoteNo]) => {
-    if (remoteYes !== null) {
-      const cleanedY = parseInt(String(remoteYes).replace(/"/g, '').trim(), 10);
-      if (!isNaN(cleanedY)) {
-        const calcY = BASELINE_YES_FLOOR + (cleanedY > 382 ? (cleanedY - 382) : 0);
-        if (calcY > recallPollData.yes) recallPollData.yes = calcY;
-      }
+    if (remoteYes && typeof remoteYes.count === 'number' && remoteYes.count > recallPollData.yes) {
+      recallPollData.yes = remoteYes.count;
     }
-    if (remoteNo !== null) {
-      const cleanedN = parseInt(String(remoteNo).replace(/"/g, '').trim(), 10);
-      if (!isNaN(cleanedN)) {
-        const calcN = BASELINE_NO_FLOOR + (cleanedN > 304 ? (cleanedN - 304) : 0);
-        if (calcN > recallPollData.no) recallPollData.no = calcN;
-      }
+    if (remoteNo && typeof remoteNo.count === 'number' && remoteNo.count > recallPollData.no) {
+      recallPollData.no = remoteNo.count;
     }
     try {
       localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
