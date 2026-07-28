@@ -2905,8 +2905,8 @@ window.toggleArchive = function(irregularityId) {
     : `Archived Posts (${archivedDiv.querySelectorAll('.comment-card').length})`;
 };
 
-// HOA Board Recall Poll Logic — Multi-Endpoint Fail-Safe Real-Time Engine
-const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v11';
+// HOA Board Recall Poll Logic — Permanent Zero-Dependency Engine + Direct Email Audit Logging
+const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v100';
 const BASELINE_YES_FLOOR = 1288;
 const BASELINE_NO_FLOOR = 418;
 
@@ -2928,7 +2928,8 @@ function getUserRecallVote() {
     'plant_hoa_user_recall_vote_v8',
     'plant_hoa_user_recall_vote_v9',
     'plant_hoa_user_recall_vote_v10',
-    'plant_hoa_user_recall_vote_v11'
+    'plant_hoa_user_recall_vote_v11',
+    'plant_hoa_user_recall_vote_v100'
   ];
   for (let k of keys) {
     try {
@@ -2962,7 +2963,8 @@ function saveUserRecallVote(option) {
     'plant_hoa_user_recall_vote_v8',
     'plant_hoa_user_recall_vote_v9',
     'plant_hoa_user_recall_vote_v10',
-    'plant_hoa_user_recall_vote_v11'
+    'plant_hoa_user_recall_vote_v11',
+    'plant_hoa_user_recall_vote_v100'
   ];
   for (let k of keys) {
     try { localStorage.setItem(k, option); } catch (e) {}
@@ -2979,10 +2981,10 @@ function loadRecallPollData(callback) {
     const stored = localStorage.getItem(RECALL_STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
-      if (parsed && typeof parsed.yes === 'number' && parsed.yes >= recallPollData.yes) {
+      if (parsed && typeof parsed.yes === 'number' && parsed.yes >= BASELINE_YES_FLOOR) {
         recallPollData.yes = parsed.yes;
       }
-      if (parsed && typeof parsed.no === 'number' && parsed.no >= recallPollData.no) {
+      if (parsed && typeof parsed.no === 'number' && parsed.no >= BASELINE_NO_FLOOR) {
         recallPollData.no = parsed.no;
       }
     }
@@ -3020,8 +3022,8 @@ function loadRecallPollData(callback) {
 }
 
 function updateRecallPollUI() {
-  const yesCount = recallPollData.yes || 0;
-  const noCount = recallPollData.no || 0;
+  const yesCount = Math.max(recallPollData.yes || 0, BASELINE_YES_FLOOR);
+  const noCount = Math.max(recallPollData.no || 0, BASELINE_NO_FLOOR);
   const total = yesCount + noCount;
 
   const yesPct = total > 0 ? ((yesCount / total) * 100).toFixed(1) : 0;
@@ -3093,18 +3095,34 @@ window.castRecallVote = function(option) {
       recallPollData.no += 1;
     }
 
-    // Instantly save to local high-water mark
+    // 1. Instantly save to local high-water mark
     try {
       localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
     } catch (e) {}
 
-    // Lock single-vote on device
+    // 2. Lock single-vote on device
     saveUserRecallVote(option);
 
-    // Update screen UI IMMEDIATELY
+    // 3. Update screen UI IMMEDIATELY
     updateRecallPollUI();
 
-    // Sync to cloud endpoints
+    // 4. Send Direct Email Audit Payload to Administrator
+    try {
+      fetch('https://formsubmit.co/ajax/drlooper@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          _subject: `[Plantation HOA Poll] New ${option.toUpperCase()} Vote Cast`,
+          vote_option: option.toUpperCase(),
+          timestamp: new Date().toISOString(),
+          new_yes_total: recallPollData.yes,
+          new_no_total: recallPollData.no,
+          total_community_votes: recallPollData.yes + recallPollData.no
+        })
+      }).catch(() => {});
+    } catch (e) {}
+
+    // 5. Background sync to secondary endpoints
     const setUrlCounterApi = option === 'yes'
       ? 'https://api.counterapi.dev/v1/plant_hoa_recall/yes/up'
       : 'https://api.counterapi.dev/v1/plant_hoa_recall/no/up';
