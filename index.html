@@ -2906,12 +2906,13 @@ window.toggleArchive = function(irregularityId) {
 };
 
 // HOA Board Recall Poll Logic — Multi-Endpoint Fail-Safe Real-Time Engine
-const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v9';
-const RECALL_USER_VOTE_KEY = 'plant_hoa_user_recall_vote_v9';
+const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v10';
+const BASELINE_YES_FLOOR = 1258;
+const BASELINE_NO_FLOOR = 213;
 
 let recallPollData = {
-  yes: 1258,
-  no: 213
+  yes: BASELINE_YES_FLOOR,
+  no: BASELINE_NO_FLOOR
 };
 
 function getUserRecallVote() {
@@ -2925,7 +2926,8 @@ function getUserRecallVote() {
     'plant_hoa_user_recall_vote_v6',
     'plant_hoa_user_recall_vote_v7',
     'plant_hoa_user_recall_vote_v8',
-    'plant_hoa_user_recall_vote_v9'
+    'plant_hoa_user_recall_vote_v9',
+    'plant_hoa_user_recall_vote_v10'
   ];
   for (let k of keys) {
     try {
@@ -2957,7 +2959,8 @@ function saveUserRecallVote(option) {
     'plant_hoa_user_recall_vote_v6',
     'plant_hoa_user_recall_vote_v7',
     'plant_hoa_user_recall_vote_v8',
-    'plant_hoa_user_recall_vote_v9'
+    'plant_hoa_user_recall_vote_v9',
+    'plant_hoa_user_recall_vote_v10'
   ];
   for (let k of keys) {
     try { localStorage.setItem(k, option); } catch (e) {}
@@ -2991,17 +2994,19 @@ function loadRecallPollData(callback) {
     fetch(getNoUrl).then(r => r.ok ? r.json() : null).catch(() => null)
   ]).then(([remoteYes, remoteNo]) => {
     if (remoteYes && typeof remoteYes.count === 'number') {
-      const apiYes = 1248 + remoteYes.count;
-      if (apiYes > recallPollData.yes) recallPollData.yes = apiYes;
+      const calcYes = BASELINE_YES_FLOOR + (remoteYes.count > 10 ? (remoteYes.count - 10) : 0);
+      if (calcYes > recallPollData.yes) recallPollData.yes = calcYes;
     }
     if (remoteNo && typeof remoteNo.count === 'number') {
-      const apiNo = 182 + remoteNo.count;
-      if (apiNo > recallPollData.no) recallPollData.no = apiNo;
+      const calcNo = BASELINE_NO_FLOOR + (remoteNo.count > 31 ? (remoteNo.count - 31) : 0);
+      if (calcNo > recallPollData.no) recallPollData.no = calcNo;
     }
     try {
       localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
     } catch (e) {}
 
+    if (callback) callback();
+  }).catch(() => {
     if (callback) callback();
   });
 }
