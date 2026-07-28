@@ -2906,9 +2906,9 @@ window.toggleArchive = function(irregularityId) {
 };
 
 // HOA Board Recall Poll Logic — Multi-Endpoint Fail-Safe Real-Time Engine
-const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v10';
-const BASELINE_YES_FLOOR = 1258;
-const BASELINE_NO_FLOOR = 213;
+const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v11';
+const BASELINE_YES_FLOOR = 1288;
+const BASELINE_NO_FLOOR = 418;
 
 let recallPollData = {
   yes: BASELINE_YES_FLOOR,
@@ -2927,7 +2927,8 @@ function getUserRecallVote() {
     'plant_hoa_user_recall_vote_v7',
     'plant_hoa_user_recall_vote_v8',
     'plant_hoa_user_recall_vote_v9',
-    'plant_hoa_user_recall_vote_v10'
+    'plant_hoa_user_recall_vote_v10',
+    'plant_hoa_user_recall_vote_v11'
   ];
   for (let k of keys) {
     try {
@@ -2960,7 +2961,8 @@ function saveUserRecallVote(option) {
     'plant_hoa_user_recall_vote_v7',
     'plant_hoa_user_recall_vote_v8',
     'plant_hoa_user_recall_vote_v9',
-    'plant_hoa_user_recall_vote_v10'
+    'plant_hoa_user_recall_vote_v10',
+    'plant_hoa_user_recall_vote_v11'
   ];
   for (let k of keys) {
     try { localStorage.setItem(k, option); } catch (e) {}
@@ -2986,20 +2988,26 @@ function loadRecallPollData(callback) {
     }
   } catch (e) {}
 
-  const getYesUrl = 'https://api.counterapi.dev/v1/plant_hoa_recall/yes';
-  const getNoUrl = 'https://api.counterapi.dev/v1/plant_hoa_recall/no';
+  const kvYesUrl = 'https://keyvalue.immanuel.co/api/KeyVal/GetValue/2q7ohpt5/recall_yes';
+  const kvNoUrl = 'https://keyvalue.immanuel.co/api/KeyVal/GetValue/2q7ohpt5/recall_no';
 
   Promise.all([
-    fetch(getYesUrl).then(r => r.ok ? r.json() : null).catch(() => null),
-    fetch(getNoUrl).then(r => r.ok ? r.json() : null).catch(() => null)
+    fetch(kvYesUrl).then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch(kvNoUrl).then(r => r.ok ? r.json() : null).catch(() => null)
   ]).then(([remoteYes, remoteNo]) => {
-    if (remoteYes && typeof remoteYes.count === 'number') {
-      const calcYes = BASELINE_YES_FLOOR + (remoteYes.count > 10 ? (remoteYes.count - 10) : 0);
-      if (calcYes > recallPollData.yes) recallPollData.yes = calcYes;
+    if (remoteYes !== null) {
+      const cleanedY = parseInt(String(remoteYes).replace(/"/g, '').trim(), 10);
+      if (!isNaN(cleanedY)) {
+        const calcY = BASELINE_YES_FLOOR + (cleanedY > 382 ? (cleanedY - 382) : 0);
+        if (calcY > recallPollData.yes) recallPollData.yes = calcY;
+      }
     }
-    if (remoteNo && typeof remoteNo.count === 'number') {
-      const calcNo = BASELINE_NO_FLOOR + (remoteNo.count > 31 ? (remoteNo.count - 31) : 0);
-      if (calcNo > recallPollData.no) recallPollData.no = calcNo;
+    if (remoteNo !== null) {
+      const cleanedN = parseInt(String(remoteNo).replace(/"/g, '').trim(), 10);
+      if (!isNaN(cleanedN)) {
+        const calcN = BASELINE_NO_FLOOR + (cleanedN > 304 ? (cleanedN - 304) : 0);
+        if (calcN > recallPollData.no) recallPollData.no = calcN;
+      }
     }
     try {
       localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
