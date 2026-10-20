@@ -1,0 +1,3066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plantation at Leesburg — HOA Irregularities Hub & Resident Forum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&family=Fira+Code&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F1F5F9;
+    --bg-card: #FFFFFF;
+    --bg-input: #F8FAFC;
+    --bg-overlay: #FFFFFF;
+    --border: #E2E8F0;
+    --border-hover: #CBD5E1;
+    --text: #1E293B;
+    --text-dim: #64748B;
+    --text-muted: #94A3B8;
+    --accent: #1E40AF;
+    --accent-glow: rgba(30, 64, 175, 0.12);
+    --accent-gradient: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);
+    --ok: #10B981;
+    --ok-glow: rgba(16, 185, 129, 0.08);
+    --warn: #EF4444;
+    --warn-glow: rgba(239, 68, 68, 0.08);
+    --err: #EF4444;
+    --err-glow: rgba(239, 68, 68, 0.08);
+    --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-code: 'Fira Code', monospace;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px 60px;
+  }
+
+  /* Header styles */
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+  @media (min-width: 768px) {
+    header {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+  header h1 {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.01em;
+  }
+  header .meta {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+  header .meta strong {
+    color: var(--accent);
+  }
+
+  /* KPI Section */
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .kpi {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .kpi:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-hover);
+  }
+  .kpi::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+  }
+  .kpi.kpi-critical::before { background: var(--err); }
+  .kpi.kpi-warning::before { background: var(--warn); }
+  .kpi.kpi-info::before { background: var(--accent); }
+  .kpi.kpi-ok::before { background: var(--ok); }
+  
+  .kpi .label {
+    color: var(--text-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+  .kpi .value {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 800;
+    margin-top: 8px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .kpi .desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* Tabs/Filters Navigation */
+  .nav-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+  }
+  .nav-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+  .nav-btn.active {
+    background: var(--accent-gradient);
+    color: var(--bg);
+    border-color: transparent;
+    box-shadow: 0 4px 12px var(--accent-glow);
+  }
+  
+  /* Search & Actions Bar */
+  .actions-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  @media (min-width: 768px) {
+    .actions-bar {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+  .search-wrapper {
+    position: relative;
+    flex-grow: 1;
+    max-width: 500px;
+  }
+  .search-input {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 14px 10px 36px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+  .export-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .export-btn:hover {
+    background: var(--accent-glow);
+    border-color: var(--accent);
+  }
+
+  /* Irregularity Card & Sections */
+  .irregularity-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    transition: border-color 0.2s;
+  }
+  .irregularity-card:hover {
+    border-color: var(--border-hover);
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .title-area h2 {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text);
+  }
+  .title-area .source-tag {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    display: block;
+  }
+  .badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .badge-critical { background: var(--err-glow); color: var(--err); border: 1px solid rgba(255,128,128,0.2); }
+  .badge-high { background: rgba(255, 179, 102, 0.1); color: #ffb366; border: 1px solid rgba(255,179,102,0.2); }
+  .badge-medium { background: var(--warn-glow); color: var(--warn); border: 1px solid rgba(255,210,117,0.2); }
+
+  .card-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  @media (min-width: 992px) {
+    .card-body {
+      grid-template-columns: 3fr 2fr;
+    }
+  }
+
+  .details-col h3 {
+    font-family: var(--font-heading);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin: 0 0 8px 0;
+  }
+  .details-col p {
+    margin: 0 0 16px 0;
+    color: var(--text-dim);
+  }
+  .details-col ul {
+    margin: 8px 0 16px 18px;
+    padding: 0;
+    color: var(--text-dim);
+  }
+  .details-col li {
+    margin-bottom: 6px;
+  }
+  
+  .details-col .fact-quote {
+    background: #141420;
+    border-left: 3px solid var(--accent);
+    padding: 10px 14px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    font-family: var(--font-code);
+    font-size: 12px;
+    color: #b8c8ff;
+  }
+
+  .statutes-col {
+    background: rgba(255,255,255,0.015);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    height: fit-content;
+  }
+  .statutes-col h4 {
+    margin: 0 0 10px 0;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+  }
+  .statutes-col .statute-badge {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-bottom: 8px;
+    font-family: var(--font-code);
+    font-size: 11.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .statutes-col .statute-badge span {
+    color: var(--warn);
+    font-weight: 500;
+  }
+
+  .prompt-box {
+    background: rgba(77, 166, 255, 0.05);
+    border: 1px dashed rgba(77, 166, 255, 0.3);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+  .prompt-box h4 {
+    margin: 0 0 6px 0;
+    font-size: 12px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .prompt-box p {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* Forum Comments / Notes Section */
+  .forum-section {
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+  .forum-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .forum-header h4 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 13.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+  .forum-count {
+    background: var(--border);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-right: 6px;
+  }
+  .comment-archived {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+    padding: 12px;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.02);
+  }
+  .archive-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.875rem;
+  }
+  .perspectives-window {
+    max-height: 52vh;
+    overflow: auto;
+    padding-right: 6px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(0,0,0,0.18);
+  }
+  .perspectives-window::-webkit-scrollbar {
+    width: 6px;
+  }
+  .perspectives-window::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .perspectives-window::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+  }
+
+  .comment-card {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    animation: fadeIn 0.3s ease-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .comment-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .comment-author {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 12.5px;
+  }
+  .comment-stance {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .stance-concerned { background: rgba(255,128,128,0.12); color: var(--err); }
+  .stance-skeptical { background: rgba(255,210,117,0.12); color: var(--warn); }
+  .stance-supportive { background: rgba(121,210,166,0.12); color: var(--ok); }
+  .stance-neutral { background: rgba(77,166,255,0.12); color: var(--accent); }
+
+  .comment-date {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .comment-text {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 12.5px;
+    white-space: pre-wrap;
+  }
+
+  .like-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .like-button {
+    border: 1px solid rgba(255, 210, 117, 0.4);
+    background: rgba(255, 210, 117, 0.1);
+    color: #ffd279;
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  .like-button:hover {
+    border-color: #ffd279;
+    color: #ffe4a6;
+  }
+
+  .like-count {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* Add Comment Form */
+  .add-comment-form {
+    background: rgba(255, 255, 255, 0.005);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  @media (min-width: 768px) {
+    .form-row {
+      grid-template-columns: 2fr 1fr;
+    }
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .form-group label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+  
+  .form-control {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 12.5px;
+    outline: none;
+  }
+  .form-control:focus {
+    border-color: var(--accent);
+  }
+  textarea.form-control {
+    resize: vertical;
+    min-height: 60px;
+  }
+
+  .submit-btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    align-self: flex-end;
+  }
+  .submit-btn:hover {
+    opacity: 0.9;
+  }
+
+  /* Appellate Radar Tab */
+  .radar-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .precedent-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .precedent-card h3 {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    margin: 0 0 12px 0;
+    color: var(--warn);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .precedent-card .citation {
+    font-family: var(--font-code);
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: normal;
+  }
+  .precedent-card p {
+    color: var(--text-dim);
+    margin: 0 0 16px 0;
+  }
+  .precedent-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+  }
+  .metric-item span {
+    display: block;
+  }
+  .metric-item .m-label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+  .metric-item .m-value {
+    font-weight: 600;
+    font-size: 12.5px;
+    margin-top: 2px;
+  }
+
+  /* Community Turnaround Section */
+  .turnaround-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  @media (min-width: 768px) {
+    .turnaround-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .workstream-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .workstream-card h3 {
+    margin: 0 0 12px 0;
+    color: var(--ok);
+    font-family: var(--font-heading);
+    font-size: 15px;
+  }
+  .workstream-card ul {
+    margin: 0;
+    padding-left: 18px;
+    color: var(--text-dim);
+  }
+  .workstream-card li {
+    margin-bottom: 8px;
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 11.5px;
+  }
+  /* SVG icon styling */
+  .icon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    stroke-width: 0;
+    stroke: currentColor;
+    fill: currentColor;
+  }
+
+  /* Meeting Notes Accordion */
+  .meeting-notes-header {
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+  }
+  .meeting-notes-header h2 {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    margin: 0;
+    color: var(--accent);
+  }
+  .notes-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 30px;
+  }
+  .notes-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .notes-item:hover {
+    border-color: var(--border-hover);
+  }
+  .notes-trigger {
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 14px;
+    user-select: none;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    color: var(--text);
+  }
+  .notes-trigger .arrow {
+    transition: transform 0.2s;
+    color: var(--text-muted);
+  }
+  .notes-content {
+    padding: 0 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease-out, padding 0.25s ease-out;
+    border-top: 0 solid var(--border);
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .notes-content.open {
+    padding: 20px;
+    border-top-width: 1px;
+  }
+  .notes-content h4 {
+    margin: 12px 0 6px 0;
+    color: var(--text);
+    font-size: 13px;
+  }
+  .notes-content h4:first-of-type {
+    margin-top: 0;
+  }
+  .notes-content ul {
+    margin: 0 0 12px 0;
+    padding-left: 18px;
+  }
+  .notes-content li {
+    margin-bottom: 6px;
+  }
+  .notes-content p {
+    margin: 0 0 12px 0;
+  }
+  .notes-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-left: 10px;
+    letter-spacing: 0.05em;
+  }
+  .notes-badge-approved { background: rgba(121,210,166,0.12); color: var(--ok); border: 1px solid rgba(121,210,166,0.2); }
+  .notes-badge-opposed { background: rgba(255,128,128,0.12); color: var(--err); border: 1px solid rgba(255,128,128,0.2); }
+
+</style>
+<style>
+  /* PREVIEW DEMO: Quick-Jump Index Bar */
+  .quick-jump-bar {
+    background: #1E293B;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+  .quick-jump-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #38BDF8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+  .quick-jump-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .quick-jump-chip {
+    background: #0F172A;
+    border: 1px solid #475569;
+    color: #F8FAFC;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .quick-jump-chip:hover {
+    border-color: #38BDF8;
+    color: #38BDF8;
+  }
+</style></head>
+<body>
+<div id="site-app"><div class="wrap">
+  <header>
+    <div>
+      <h1>Plantation at Leesburg — HOA Irregularities Hub</h1>
+      <div class="meta">Statutory, Financial &amp; Governance Compliance Review Platform</div>
+    </div>
+    <div class="meta" style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+      <div>Investigator: <strong>Plantation Residents</strong> · Site Start Date: <strong>2026-06-29</strong></div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div>Last Updated: <strong style="color: var(--accent);" id="last-updated-header"></strong></div>
+        <div id="hit-counter" style="font-size: 11px; color: var(--text-muted); background: var(--bg-card); border: 1px solid var(--border); padding: 3px 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 6px;">
+          <span style="width: 6px; height: 6px; background: var(--ok); border-radius: 50%; display: inline-block;"></span>
+          Visits: <strong id="hit-count" style="color: var(--text);">616</strong>
+        </div>
+        <button id="share-btn" onclick="shareSite()" title="Share this site" style="background: var(--accent); color: #fff; border: none; padding: 6px 12px; border-radius: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; white-space: nowrap; line-height: 1;">
+          ⤤ SHARE
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Community Portal Purpose Introduction Banner -->
+  <div style="background: linear-gradient(135deg, #E2E8F0, #CBD5E1); border: 2px solid #94A3B8; border-radius: 16px; padding: 24px 28px; margin: 20px 0 24px 0; box-shadow: 0 8px 24px rgba(0,0,0,0.08); color: #0F172A;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <span style="background: #1E293B; color: #FFFFFF; border: 1px solid #0F172A; font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 4px 10px; border-radius: 12px; letter-spacing: 0.06em;">Community Information &amp; Communication Portal</span>
+        <span style="color: #334155; font-size: 12.5px; font-weight: 600;">Serving all 2,820 Homes in The Plantation at Leesburg</span>
+      </div>
+      <button type="button" onclick="openSuggestionModal()" style="background: #2563EB; color: #FFFFFF; border: 1px solid #1D4ED8; padding: 7px 16px; border-radius: 20px; font-family: var(--font-heading); font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; white-space: nowrap; box-shadow: 0 2px 8px rgba(37,99,235,0.3);">
+        <span>💡 Resident Suggestions &amp; Additions</span>
+      </button>
+    </div>
+    
+    <h2 style="font-family: var(--font-heading); font-size: 23px; font-weight: 800; color: #0F172A; margin: 0 0 12px 0; line-height: 1.3;">
+      Welcome to The Plantation Resident Information &amp; Communication Portal
+    </h2>
+    
+    <p style="font-size: 14.5px; line-height: 1.65; color: #1E293B; margin: 0 0 20px 0; max-width: 1050px; font-weight: 500;">
+      This portal is an independent, resident-driven platform designed to foster open communication, facilitate transparent information sharing, and empower homeowners with up-to-date information. While compiled from available financial and public records, information is continuously refined through resident contributions and feedback to improve topics over time. Whether reviewing financial audits, exploring governance compliance under Florida Statutes Chapter 720, or participating in resident polls and discussions, this hub serves as a central communication resource for every homeowner.
+    </p>
+    
+    <!-- Community Pillars Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+      <div style="background: #FFFFFF; border: 1px solid #94A3B8; border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+        <span style="font-size: 18px;">💬</span>
+        <div>
+          <div style="font-weight: 700; font-size: 13px; color: #0F172A;">Resident Communication</div>
+          <div style="font-size: 11.5px; color: #475569;">Open discussion &amp; info sharing</div>
+        </div>
+      </div>
+      
+      <div style="background: #FFFFFF; border: 1px solid #94A3B8; border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+        <span style="font-size: 18px;">📊</span>
+        <div>
+          <div style="font-weight: 700; font-size: 13px; color: #0F172A;">Financial Transparency</div>
+          <div style="font-size: 11.5px; color: #475569;">Audited ledgers &amp; reserve reviews</div>
+        </div>
+      </div>
+      
+      <div style="background: #FFFFFF; border: 1px solid #94A3B8; border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+        <span style="font-size: 18px;">⚖️</span>
+        <div>
+          <div style="font-weight: 700; font-size: 13px; color: #0F172A;">Governance &amp; Compliance</div>
+          <div style="font-size: 11.5px; color: #475569;">F.S. § 720 compliance checks</div>
+        </div>
+      </div>
+      
+      <div style="background: #FFFFFF; border: 1px solid #94A3B8; border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+        <span style="font-size: 18px;">🗳️</span>
+        <div>
+          <div style="font-weight: 700; font-size: 13px; color: #0F172A;">Community Voice</div>
+          <div style="font-size: 11.5px; color: #475569;">Independent resident polls</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Portal Functionality Guide -->
+    <div style="margin-top: 20px; border-top: 1px solid #94A3B8; padding-top: 16px;">
+      <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #0F172A; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+        <span>⚙️</span> Portal Features &amp; Functionality Guide
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; font-size: 13px; color: #1E293B;">
+        <div style="background: #FFFFFF; padding: 10px 14px; border-radius: 8px; border: 1px solid #94A3B8; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+          <strong style="color: #0F172A;">🔍 Filter &amp; Search:</strong> Use the navigation buttons below to filter by category (Financial, Governance, Litigation) or search keywords, statutes, and resident posts in real time.
+        </div>
+        <div style="background: #FFFFFF; padding: 10px 14px; border-radius: 8px; border: 1px solid #94A3B8; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+          <strong style="color: #0F172A;">💬 Submit Perspectives:</strong> Every card includes an interactive form allowing homeowners to share statements, ask questions, or contribute supplementary information.
+        </div>
+        <div style="background: #FFFFFF; padding: 10px 14px; border-radius: 8px; border: 1px solid #94A3B8; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+          <strong style="color: #0F172A;">🗳️ Live Community Polling:</strong> Visit the <em>HOA Board Recall</em> tab to cast your vote in the real-time cloud-synchronized community sentiment poll.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI Metrics Banner -->
+  <div class="kpis">
+    <div class="kpi kpi-critical" id="kpi-audits">
+      <div class="label">Audit Status</div>
+      <div class="value">Up to Date</div>
+      <div class="desc">Clean 2023 Audit, 2024 complete early 2026. (2022 Disclaimer remains).</div>
+    </div>
+    <div class="kpi kpi-critical" id="kpi-equity">
+      <div class="label">Disputed Reserve Balances</div>
+      <div class="value">-$135K Decrease</div>
+      <div class="desc">Bank statements show reserves decreased while board claimed $70K increase.</div>
+    </div>
+    <div class="kpi kpi-warning" id="kpi-litigation">
+      <div class="label">Litigation Risk</div>
+      <div class="value">1 <span style="font-size: 12px; color: var(--warn); font-weight: 500;">Active Suit</span></div>
+      <div class="desc">Special assessment challenge (Frisillo).</div>
+    </div>
+    <div class="kpi kpi-info" id="kpi-irregularities">
+      <div class="label">Active Red Flags</div>
+      <div class="value">9 <span style="font-size: 12px; color: var(--accent); font-weight: 500;">Unresolved</span></div>
+      <div class="desc">Active compliance &amp; ledger irregularities.</div>
+    </div>
+  </div>
+
+  <!-- Navigation tabs -->
+  <div class="nav-bar">
+    <button class="nav-btn active" data-tab="all">All Irregularities</button>
+    <button class="nav-btn" data-tab="financial">Financial Anomalies</button>
+    <button class="nav-btn" data-tab="governance">Governance &amp; Compliance</button>
+    <button class="nav-btn" data-tab="litigation">Litigation &amp; Radar</button>
+    <button class="nav-btn" data-tab="turnaround">Turnaround Plan</button>
+    <button class="nav-btn" data-tab="recall">HOA Board Recall</button>
+    <button class="nav-btn" data-tab="history">History of The Plantation</button>
+    <button class="nav-btn" data-tab="meetings">HOA Meetings and Notes</button>
+    <button class="nav-btn" data-tab="exploratory">Exploratory Only</button>
+  </div>
+
+  <!-- Search & Actions Bar -->
+  <div class="actions-bar" id="search-container">
+    <div class="search-wrapper">
+      <svg class="search-icon icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" class="search-input" id="search-box" placeholder="Search irregularities, statutes, or comments...">
+    </div>
+  </div>
+
+  <!-- TAB CONTENT: IRREGULARITIES (All, Financial, Governance) -->
+  
+  <!-- PREVIEW DEMO: Quick Jump Index Bar -->
+  <div class="quick-jump-bar">
+    <div class="quick-jump-title">⚡ Quick Jump Index (Click to jump directly to any topic):</div>
+    <div class="quick-jump-links">
+      <a href="#vp-arrest" class="quick-jump-chip">1. VP Arrest & Charges</a>
+      <a href="#cca-vote" class="quick-jump-chip">2. 3rd CCA Vote</a>
+      <a href="#restaurant" class="quick-jump-chip">3. Restaurant Closure</a>
+      <a href="#accountant" class="quick-jump-chip">4. Accountant Fired</a>
+      <a href="#unbilled-spa" class="quick-jump-chip">5. Unbilled SPA Fees</a>
+      <a href="#reserve-shift" class="quick-jump-chip">6. Reserve Transfers</a>
+      <a href="#solicitation" class="quick-jump-chip">7. Solicitation Enforcement</a>
+      <a href="#legal-spend" class="quick-jump-chip">8. Legal Spend</a>
+      <a href="#autocratic-governance" class="quick-jump-chip">9. Governance Concerns</a>
+    </div>
+  </div>
+
+<div id="irregularities-container">
+    <!-- Irregularities will be rendered dynamically here -->
+  </div>
+
+  <!-- TAB CONTENT: RADAR (Litigation & Precedents) -->
+  <div id="radar-container" style="display: none;" class="radar-section">
+    <h2 style="font-family: var(--font-heading); font-size: 18px; margin: 0 0 8px 0; color: var(--accent);">Appellate Case Law Radar</h2>
+    <p style="color: var(--text-dim); margin: 0 0 24px 0;">Binding Florida appellate case law and circuit court precedents relevant to active HOA disputes. Read cases to understand how courts handle these issues.</p>
+  </div>
+
+  <!-- TAB CONTENT: TURNAROUND PLAN -->
+  <div id="turnaround-container" style="display: none;">
+    <h2 style="font-family: var(--font-heading); font-size: 18px; margin: 0 0 8px 0; color: var(--ok);">Turnaround &amp; Action Plan</h2>
+    <p style="color: var(--text-dim); margin: 0 0 24px 0;">Priorities to restore statutory compliance, resolve disputes, and protect homeowner equity.</p>
+    
+    <div class="turnaround-grid">
+      <div class="workstream-card">
+        <h3>1. Financial Transparency &amp; Audits</h3>
+        <ul>
+          <li><strong>Audit Resolution:</strong> Fast-track engagement letters to resolve and publish the suspended 2023 and 2024 CPA audits.</li>
+          <li><strong>Ledger Reconciliation:</strong> Rectify the $3.28M imbalance on the consolidated balance sheets.</li>
+          <li><strong>Methodology:</strong> Standardize revenue recognition, avoiding adjustments that artificially inflate positive cash flow.</li>
+        </ul>
+      </div>
+
+      <div class="workstream-card">
+        <h3>2. Litigation &amp; Dispute Discipline</h3>
+        <ul>
+          <li><strong>Receivership Containment:</strong> Resolve the Wolner case to limit further fee escalations and Homestead exposure.</li>
+          <li><strong>Assessment Settlements:</strong> Establish a compliance roadmap to verify and address special assessment posting errors.</li>
+          <li><strong>LLC Separateness:</strong> Put in place strict accounting barriers between golf operations and master reserves.</li>
+        </ul>
+      </div>
+
+      <div class="workstream-card">
+        <h3>3. Governance &amp; Digital Mandates</h3>
+        <ul>
+          <li><strong>Statutory Compliance:</strong> Host all bids and executed contracts on the secure resident portal per F.S. 720.303.</li>
+          <li><strong>Board Disclosures:</strong> Publish all board education certifications and conflict-of-interest forms.</li>
+          <li><strong>Physical Notices:</strong> Implement verified physical 48-hour meeting notices for all assessment discussions.</li>
+        </ul>
+      </div>
+
+      <div class="workstream-card">
+        <h3>4. Asset &amp; Reserve Firewalls</h3>
+        <ul>
+          <li><strong>10-Year Plan:</strong> Enforce the firewall separating residential capital reserves from golf course maintenance.</li>
+          <li><strong>Delinquency Collections:</strong> Collect the outstanding $222,000 internal delinquency balance without arbitrary legal escalations.</li>
+          <li><strong>Vendor Benchmarking:</strong> Scope and review the Brightview contract and Steve's Bar &amp; Grill renewal terms.</li>
+        </ul>
+      </div>
+    </div>
+
+      <div class="workstream-card" style="grid-column: 1 / -1; margin-top: 16px;">
+        <h3 style="color: var(--accent); margin-top: 0;">Strategic Options &amp; Recovery Plan for Golf Amenities</h3>
+        <div style="color: var(--text-dim); line-height: 1.6;">
+          <p><strong>Strategic Options &amp; Recovery Plan for Golf Amenities</strong><br>
+The Plantation at Leesburg HOA — Special Advisory Report Date: July 2026</p>
+
+          <p><strong>1. Executive Summary of Options</strong><br>
+This table compares the five strategic options for the community's 36-hole golf asset. Calculations are based on 2,820 homes and the current $15/month dedicated golf assessment ($507,600/year).</p>
+
+          <p><strong>Metric</strong><br>
+Option A: Private Park | Option B: Par-3 & Range | Option C: Mixed Rec Park | Option D: Third-Party Lease | Option E: 36-Hole Capital Plan | Option F: Otter Creek Lagoon Exploratory
+<strong>Upfront Capital Cost</strong> | $40,000 | $240,000 | $470,000 | $1,560,000 (Incl. Irrigation) | $2,550,000 (Irrigation &amp; Drainage)<br>
+<strong>Ongoing Maint. Cost</strong> | $25,000/yr (Park only) | $215,000/yr (Range/Par-3) | $95,000/yr (Rec park only) | $0 (Shifted to operator) | $1,150,000/yr (Paid by HOA)<br>
+<strong>Cranes Roost Maint.</strong> | $420,000/yr (18 holes) | $420,000/yr (18 holes) | $420,000/yr (18 holes) | $0 (Shifted to operator) | $0 (Included in Maint.)<br>
+<strong>HOA Subsidy/Loan Service</strong> | $0 | $0 | $0 | $220,000/yr (Fee + Loan) | $246,000/yr (Loan Service)<br>
+<strong>Projected Annual Revenue</strong> | $0 | $110,000/yr | $0 | $0 (Minimal profit-share) | $350,000/yr (Public play fees)<br>
+<strong>Total Annual HOA Cost</strong> | $445,000/yr | $525,000/yr (Net) | $515,000/yr | $220,000/yr (Subsidy + Loan) | $1,046,000/yr (Net)<br>
+<strong>Annual Operational Savings</strong> | $705,000/yr | $515,000/yr | $635,000/yr | $930,000/yr | $0 (No savings; covers bleed via dues hike)<br>
+<strong>Impact on Resident Dues</strong> | $62,600/yr surplus (Maintains $180/mo) | $17,400/yr deficit (Maintains $180/mo) | $7,400/yr deficit (Maintains $180/mo) | $287,600/yr surplus (Maintains $180/mo) | Hikes overall dues to $200.50/mo ($693,720/yr deficit at $15/mo) | Exploratory: no dues model yet; requires assessment pathway vote<br>
+<strong>Zoning Feasibility</strong> | High (Permitted Rec) | High (Golf-related) | High (Permitted Rec) | High (Remains Golf) | High (Remains Golf) | Medium-High (Amenity/Lagoon; permit path TBD)<br>
+<strong>Member Vote Required</strong> | Yes (Covenant change) | Yes (Capital levy) | Yes (Capital levy) | Yes (Capital & public play) | Yes (Capital loan & dues hike) | Yes (Reserve reallocation / covenant amendment / capital levy)<br>
+
+          <p><strong>2. Detailed Option Analysis</strong><br>
+<strong>Option A: Consolidate to Cranes Roost; Convert Otter Creek to Private Resident Park</strong><br>
+* Description: Retain Cranes Roost as the community's singular 18-hole championship course. Close Otter Creek (which has severe flooding issues) and convert its fairways into a low-maintenance, private resident park (nature trails, picnic nodes, and wetland observation boardwalks).<br>
+* Feasibility: High. Requires a member vote to amend the Declaration of Covenants.<br>
+* Upfront Capital: $40,000 (turf seeding, trail markers, legal fees).<br>
+* Annual Operating Cost: $445,000/year (Cranes Roost maintenance + park upkeep).<br>
+* Financial Result: Saves $705,000/year vs. status quo. The existing $15/month assessment base ($507,600/year) completely covers operations, leaving a $62,600/year surplus to rebuild Cranes Roost reserves.</p>
+
+          <p><strong>Option B: Keep Cranes Roost + Convert Otter Creek to Private Par-3 &amp; Range</strong><br>
+* Description: Retain Cranes Roost. Convert Otter Creek's higher-elevation, non-flooding areas into a private 9-hole short course and driving range, while dedicating the flood-prone sections to water retention.<br>
+* Feasibility: High on zoning. Medium on operations.<br>
+* Upfront Capital: $240,000 (tees, greens, picker vehicle, dispenser machine).<br>
+* Annual Operating Cost: $525,000/year (net of range card revenue).<br>
+* Financial Result: Saves $515,000/year vs. status quo, but leaves a small $17,400/year deficit over the golf assessment base.</p>
+
+          <p><strong>Option C: Keep Cranes Roost + Private Mixed-Use Recreation (Disc Golf &amp; Trails)</strong><br>
+* Description: Retain Cranes Roost. Repurpose Otter Creek into a private resident-only 18-hole disc golf course, walking trails, and pickleball courts.<br>
+* Feasibility: High on zoning. Requires a member vote to amend covenants to install non-golf recreation on platted golf land.<br>
+* Upfront Capital: $470,000 (pickleball courts, disc golf, paved trails).<br>
+* Annual Operating Cost: $515,000/year (Cranes Roost maintenance + park upkeep).<br>
+* Financial Result: Saves $635,000/year vs. status quo. Creates a minor $7,400/year deficit over the golf assessment base.</p>
+
+          <p><strong>Option D: Lease Both Courses to a Professional Golf Management Company</strong><br>
+* Description: Lease operations of both courses to a professional third-party management firm (e.g., Troon, KemperSports). The operator takes over all staffing and turf upkeep.<br>
+* Feasibility: Low-Medium. The operator will demand public play access and that the HOA replace the failing Cranes Roost irrigation system.<br>
+* Upfront Capital: $1,560,000 (irrigation replacement + legal/RFP costs).<br>
+* Annual Operating Cost: $220,000/year (management fee/subsidy + irrigation loan service).<br>
+* Financial Result: Saves $930,000/year on operations. Generates a $287,600/year surplus under the golf assessment, but saddles the HOA with $1.5M in capital debt.</p>
+
+          <p><strong>Option E: Keep Both Courses Operational (36-Hole "Status Quo" Capital Recovery Plan)</strong><br>
+          * Description: Retain and run both courses as active 18-hole courses by funding the backlog of infrastructure repairs and adjusting the dedicated golf assessment to cover actual operating losses and new capital debt.<br>
+          * Feasibility: Very Low. Homeowners must approve a $2.55M bank loan, an 87% increase in golf dues, and opening the community to public play to drive play from 32K up to the 56,000 rounds/year break-even threshold.<br>
+          * Upfront Capital: $2,550,000 (Cranes Roost irrigation replacement + Otter Creek drainage overhaul).<br>
+          * Annual Operating Cost: $1,396,000/year (operations + cart shop + debt service on new CapEx loan).<br>
+          * Financial Result: Net annual HOA cost of $1,046,000/year (net of $350K projected public play revenue). Hikes overall dues to $200.50/month.</p>
+
+          <p><strong>Option F: Otter Creek Lagoon Exploratory</strong><br>
+          * Description: Convert the Otter Creek back nine into a residential lagoon amenity while retaining or reducing the remaining front-nine golf footprint. This option is presented for resident discussion only and is not an adopted board plan.<br>
+          * Feasibility: Exploratory. Requires reserve reallocation, covenant review, and counsel opinion before any vote.<br>
+          * Upfront Capital: $3.0M–$8.6M indicative range for excavation/grading, liner, hydrology, permitting, beach/cabanas/decks, and soft costs. This range is based on general inland-lagoon construction precedents, not a local bid or approved budget.<br>
+          * Annual Operating Cost: exploratory placeholder $90,000–$180,000/year for lagoon maintenance, water quality, landscaping, and amenities upkeep. No local lagoon Opex file or comparable HOA lagoon budget has been recovered.<br>
+          * Financial Result: illustrative operating improvement vs. maintaining those 9 holes of ~$87,000–$276,000/year, before any new revenue from amenity programming. No approved revenue model exists yet.<br>
+          * Governance Gates: reserve firewall required; environmental/water-management permitting required; exact agency path to be determined by counsel.</p>
+
+          <p><strong>3. Audited Dues Hike Calculation (Option E Details)</strong><br>
+To keep both courses operational under HOA management, the dedicated golf assessment must increase from $15.00/month to $35.50/month (an increase of $20.50/month).<br>
+* Monthly Increase: An additional $20.50/month per home.<br>
+* Total Dues Bill: Total monthly HOA dues will increase from $180.00/month to $200.50/month per home.<br>
+* Overall Dues Hike: This is an 11.4% increase in the overall monthly HOA dues paid by each household.<br>
+* Annual Impact: Increases the total annual HOA cost per home from $2,160.00/year ($180 * 12) to $2,406.00/year ($200.50 * 12)—a net annual increase of $246.00/year per household.</p>
+
+          <p><strong>Math Breakdown</strong><br>
+A. Baseline Operating Cost (No CapEx)<br>
+* YTD April 2025 Actual Loss: $149,457.86 over 4 months, which averages $37,364.47/month.<br>
+* HOA Transfers: This loss was in addition to the regular monthly transfer of $42,300/month.<br>
+* True Baseline Operating Cost: $42,300 + $37,364.47 = $79,664.47/month.<br>
+* Per-Home Operating Dues: $79,664.47 / 2,820 = $28.25/month per home.<br>
+B. Infrastructure Debt Service (CapEx)<br>
+* New Loan Requirement: $2,550,000 bank loan including $50K design/permitting.<br>
+* Annual Debt Service: $246,000/year, or $20,500/month.<br>
+* Per-Home Debt Dues: $20,500 / 2,820 = $7.27/month per home.<br>
+C. Combined Total<br>
+* Total Monthly Assessment Required: $28.25 (Operating Baseline) + $7.27 (CapEx Debt) = $35.52/month per home.<br>
+* Final Dedicated Golf Fee: Rounded to $35.50/month per home.<br>
+* Net Increase: Hikes dedicated golf fees from $15.00 to $35.50/month (an increase of $20.50/month).</p>
+
+          <p><strong>4. Recommended Recovery Pathway (Option D: Third-Party Lease)</strong><br>
+          1. Complete Audits &amp; Website Compliance (Immediate): Publish backlogged 2023/2024 CPA audits and missing vendor contracts to comply with Fla. Stat. §720.303 and restore trust.<br>
+          2. Draft Professional RFP &amp; Select Operator (Months 1–3): Draft a professional request for proposal (RFP) to lease operations of both courses to a professional third-party management firm (e.g., Troon, KemperSports) to handle all staffing, scheduling, and turf upkeep.<br>
+          3. Conduct Member Vote for Irrigation Capital Loan (Months 3–6): Structure and conduct a community vote to approve a $1.56M bank loan to replace the failing Cranes Roost irrigation system, which is a mandatory condition for commercial operators to lease the courses.<br>
+          4. Transition Operations &amp; Capture Surplus (Months 6–12): Execute the lease agreement, transition all golf operations and maintenance to the third-party operator, and redirect the resulting $287,600/year surplus under the golf assessment to build capital reserves and service the new loan.</p>
+
+          <p><strong>5. Critical Financial Milestones &amp; Funding Mechanisms</strong><br>
+          * <strong>Sunset of the $15 Special Assessment (June 2028):</strong> Hard sunset date for the current 7-year special assessment (covenant changes enacted June 2021). The golf course LLC must reach commercial self-sufficiency or be leased to a third party before this date to prevent a massive operating budget gap when the $507,600/year assessment stream expires.<br>
+          * <strong>Capital Contribution Fee (CCF / CCA) Implementation:</strong> A proposed one-time fee on new home buyers equal to 6 months of annual assessments ($990). The April 2025 vote failed (1,370 "Yes" vs. 491 "No," falling 41 votes short of the 1,411 absolute majority threshold of total membership required by Covenants Section 9.5). A re-vote is planned for Fall 2026. This fee is projected to generate $200,000 to $300,000 annually from new home sales to support long-term capital replacement reserves without increasing monthly assessments on current residents.</p>
+
+          <p><strong>Exploratory Only: Otter Creek Lagoon Option</strong><br>
+          <em>Status: no approved estimate yet; requires RFP, permitting review, and counsel opinion before use in decision-making.</em><br>
+          Concept: convert the Otter Creek back nine into a residential lagoon amenity while retaining or reducing the remaining front-nine golf footprint. This option is presented for resident discussion only and is not an adopted board plan.</p>
+
+          <p><strong>Realized Golf Cost Deduction Basis</strong><br>
+          Current combined fixed operating cost for both 18-hole courses: ~$1,094,930/year.<br>
+          Vendor maintenance baseline for 2 courses, excluding irrigation: $254,580–$677,280/year.<br>
+          HOA golf assessment base: $15/home/mo × 2,820 homes = ~$507,600/year.<br>
+          Full-course removal annual savings vs. status quo: ~$354,790–$732,140/year.<br>
+          Remaining single-course fixed cost range after removal: ~$384,790–$792,140/year.<br>
+          Park upkeep replacement if closed to passive recreation: $25,000–$60,000/year.</p>
+
+          <p><strong>Exploratory Back-Nine Cost Shift</strong><br>
+          Lagoon capital estimate: excavation/grading, liner, hydrology, permitting, beach/cabanas/decks, and soft costs — indicative range $3.0M–$8.6M. This range is based on general inland-lagoon construction precedents, not a local bid or approved budget.<br>
+          Back-nine golf maintenance/operating cost: estimated at roughly 50% of single-course removal, or ~$177,000–$366,000/year eliminated. That split is an assumption; no recovered document breaks out per-hole costs for Otter Creek.<br>
+          Lagoon maintenance, water quality, landscaping, and amenities upkeep: exploratory placeholder estimate $90,000–$180,000/year. No local lagoon Opex file or comparable HOA lagoon budget has been recovered.<br>
+          Net illustrative operating improvement vs. maintaining those 9 holes: ~$87,000–$276,000/year, before any new revenue from amenity programming.</p>
+
+          <p><strong>Governance &amp; Compliance Gates</strong><br>
+          Reserve firewall required between residential capital reserves and new amenity capital.<br>
+          Assessment re-allocation or new capital levy likely requires member vote under Florida statutory thresholds.<br>
+          Environmental/water-management permitting required; exact agency path to be determined by counsel.</p>
+
+          <p><strong>Comparable</strong><br>
+          Metro Development Group, Lake Hideaway, Hernando County, FL — MetroPlaces lagoon community with resort-style water amenity, trails, and parks. For scale reference only; not a binding cost comparator.</p>
+        </div>
+        <div id="golf-recovery-comments-container"></div>
+      </div>
+    </div>
+
+    <!-- TAB CONTENT: HISTORY -->
+    <div id="history-container" style="display: none;">
+    <h2 style="font-family: var(--font-heading); font-size: 18px; margin: 0 0 8px 0; color: var(--ok);">History of The Plantation</h2>
+    <p style="color: var(--text-dim); margin: 0 0 24px 0;">Here is the strictly factual, chronological history of The Plantation at Leesburg, including how and when it was advertised as a golf community, based only on verified public records and established facts:</p>
+
+    <div class="turnaround-grid">
+      <div class="workstream-card">
+        <h3>1985: Land Acquisition</h3>
+        <ul>
+          <li><strong>The Facts:</strong> Lakewood Development Co. purchases approximately 999 acres of land in Leesburg, Florida, to develop a 55+ active adult community.</li>
+          <li><strong>The Advertising:</strong> At this stage, there is no public advertising, but the foundational master plan is established around a golf-centric layout.</li>
+        </ul>
+      </div>
+
+      <div class="workstream-card">
+        <h3>1987: Development Begins</h3>
+        <ul>
+          <li><strong>The Facts:</strong> Pringle Development begins construction on the site, building the infrastructure, residential lots, and the first golf course.</li>
+          <li><strong>The Advertising:</strong> Early conceptual marketing and pre-sales materials are used to sell the idea of a golf-focused lifestyle to secure initial buyers before the physical community is complete.</li>
+        </ul>
+      </div>
+
+      <div class="workstream-card">
+        <h3>1988: Otter Creek Opens and Initial Marketing</h3>
+        <ul>
+          <li><strong>The Facts:</strong> The first 18-hole golf course, Otter Creek, opens.</li>
+          <li><strong>The Advertising:</strong> The community officially launches with a major print media campaign, including advertisements in the <em>Orlando Sentinel</em>. The explicit tagline used in these 1988 advertisements is <strong>&ldquo;More Golf, More Friends, More Fun.&rdquo;</strong> The word &ldquo;Golf&rdquo; is placed first, explicitly selling the public on the premise that this is a premier golf destination.</li>
+        </ul>
+      </div>
+
+      <div class="workstream-card">
+        <h3>1996: Cranes Roost Opens</h3>
+        <ul>
+          <li><strong>The Facts:</strong> The second 18-hole golf course, Cranes Roost, opens, expanding the community&rsquo;s golf footprint to 36 holes.</li>
+          <li><strong>The Advertising:</strong> The community is re-marketed to a new wave of buyers. Advertising shifts to promote The Plantation as a <strong>&ldquo;36-hole golf destination,&rdquo;</strong> elevating the prestige of the neighborhood and attracting new buyers to the lots bordering the second course.</li>
+        </ul>
+      </div>
+
+      <div class="workstream-card" style="grid-column: 1 / -1;">
+        <h3>The Transition: Course Acquisition and Corporate Structure</h3>
+        <ul>
+          <li><strong>The Facts:</strong> At a later date, the residents agreed to purchase both 18-hole golf courses. The courses were placed under a separate legal entity, &ldquo;The Plantation at Leesburg Golf Course, LLC.&rdquo; The LLC manages its own finances and assessments, which are separate from the main HOA dues (golf is explicitly excluded from standard HOA dues). The physical maintenance of the courses is contracted out to a third party, BrightView Golf Maintenance.</li>
+          <li><strong>The Advertising:</strong> The external marketing continues to rely heavily on the golf lifestyle, while internally, the community must navigate the financial and operational realities of the newly acquired Golf Course LLC.</li>
+        </ul>
+      </div>
+
+      <div class="workstream-card" style="grid-column: 1 / -1;">
+        <h3>Present Day: Current Status</h3>
+        <ul>
+          <li><strong>The Facts:</strong> The community consists of exactly 2,820 single-family homes.</li>
+          <li><strong>The Advertising:</strong> Despite internal financial discussions regarding the upkeep of the courses, external advertising remains unchanged from the developer days. Real estate agents and brokerages continue to heavily market The Plantation at Leesburg to outside buyers as an <strong>&ldquo;award-winning gated golf community.&rdquo;</strong> The original 1988 promise of &ldquo;More Golf&rdquo; is still used to sell homes today, even as the current residents manage the ongoing operational and financial realities of maintaining two 18-hole courses.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+    <!-- TAB CONTENT: HOA MEETINGS & NOTES -->
+  <div id="meetings-container" style="display: none;">
+    <div style="max-width: 850px; margin: 0 auto; padding: 20px 10px;">
+      
+      <div class="meeting-notes-header">
+        <h2>July 8, 2026 Board Meeting Notes by Category</h2>
+      </div>
+
+      <div class="notes-accordion">
+        
+        <!-- Accordion Item 1: Meeting Administration -->
+        <div class="notes-item">
+          <div class="notes-trigger" onclick="toggleNotesAccordion(this)">
+            <span>1. Meeting Administration &amp; Governance</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="notes-content">
+            <h4>Meeting Call to Order</h4>
+            <p>The Board of Directors meeting was called to order at 10:00 AM. All 5 board members (Russ, Jeff, Nancy Shea, Jerry Tucker, Gary) were present, establishing a quorum.</p>
+            <h4>Pledge of Allegiance &amp; Proof of Notice</h4>
+            <p>The Pledge of Allegiance was performed, and the proof of meeting notice (posted 48 hours in advance) was tabled and verified.</p>
+            <h4>Agenda Corrections</h4>
+            <p>A double-sided printing error was corrected by reprinting and distributing the updated agendas. A missing page from the "first perspectives" packet was also reprinted and handed out to attendees.</p>
+            <h4>Minutes Approval</h4>
+            <p>The open board meeting minutes from May 20, 2026, were approved unanimously (5-0), motioned by Jerry and seconded by Gary.</p>
+            <h4>President's Address on Trust and Empathy</h4>
+            <p>President Russ spoke about trust being earned through actions rather than words, pointing to financial corrections and the successful expansion of reserves (over \$600,000 added in 2 years). He emphasized running the retirement community with empathy for members facing life changes (such as dementia or loss of a spouse).</p>
+            <h4>Strategic Plan Update</h4>
+            <p>Nancy Shea reported that the 1-3-5-10 planning committee will update the community strategic plan (extending goals through 2027) later this year.</p>
+          </div>
+        </div>
+
+        <!-- Accordion Item 2: Staffing, Safety & Compliance -->
+        <div class="notes-item">
+          <div class="notes-trigger" onclick="toggleNotesAccordion(this)">
+            <span>2. Staffing, Safety &amp; Compliance</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="notes-content">
+            <h4>Presidential Awards</h4>
+            <p>HOA President Russ presented a President's Award to resident <strong>Dan Lyall</strong> for his outstanding contributions to the community. Additionally, <strong>Dan Lyle</strong> presented a President's Award to resident <strong>Edmund</strong> for his outstanding contributions, specifically highlighting his role in supporting veterans and the HOA Softball team.</p>
+            <h4>New Compliance Specialist</h4>
+            <p>Karen announced that <strong>Brittany</strong> (formerly working at the front desk) has been promoted internally to the Compliance Specialist position. Covenant infractions are handled by Brittany, while ARC (Architectural Review Committee) improvement requests remain routed through Karen.</p>
+            <h4>Safety Committee Update</h4>
+            <p>Garrett reported that the Safety Committee has developed cost-effective training programs. A certified instructor will teach AED, CPR, Basic First Aid, and "Stop the Bleed" classes to the community starting in August, with details to follow later in the summer.</p>
+          </div>
+        </div>
+
+        <!-- Accordion Item 3: Capital Contribution Assessment (CCA) -->
+        <div class="notes-item">
+          <div class="notes-trigger" onclick="toggleNotesAccordion(this)">
+            <span>3. Capital Contribution Assessment (CCA) Vote <span class="notes-badge notes-badge-approved">5-0 Approved</span></span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="notes-content">
+            <h4>CCA Vote Motion</h4>
+            <p>The board voted unanimously (5-0) to hold a third community-wide vote on the Capital Contribution Assessment (CCA), to close as a single-issue election no later than **October 30, 2026**.</p>
+            <h4>Assessment Details</h4>
+            <p>The CCA is a one-time fee paid exclusively by new home buyers at closing (equivalent to 6 months of annual assessments, estimated at \$990 based on past dockets) to build the HOA capital reserves. Current homeowners are exempt. If passed originally, it would have generated approximately \$297,000 to date.</p>
+            <h4>Historical Context</h4>
+            <p>Previous votes failed narrowly by 41 and 29 votes. Over 1,000 homeowners did not vote in the last election. The board plans to benchmark other communities to organize voter turnout strategies. Dues comparison shows the current \$180 dues are highly competitive.</p>
+          </div>
+        </div>
+
+        <!-- Accordion Item 4: Water & Infrastructure Updates -->
+        <div class="notes-item">
+          <div class="notes-trigger" onclick="toggleNotesAccordion(this)">
+            <span>4. Water &amp; Infrastructure Updates</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="notes-content">
+            <h4>Water Shortage Restrictions</h4>
+            <p>The St. John's Water Management Authority water restrictions remain in place due to low water levels. The golf course is restricted to watering 3 days a week.</p>
+            <h4>Sawgrass Lake Pump Station</h4>
+            <p>Two new 260 HP pumps are on order and an intake filter cage is expected in approximately 2 weeks. However, the pumps cannot operate until Sawgrass Lake (33 acres) rises 2 to 3 feet to push water into the pump; currently, water is barely a foot above the suction bottom.</p>
+            <h4>Lightning Damage Recovery</h4>
+            <p>Significant lightning strikes over a recent weekend damaged IT equipment in the administration building, Ashley Hall, and caused minor superficial damage to the geothermal systems. Commercial surge arresters on primary disconnects prevented much more severe damage. Damaged firewalls were replaced at no cost by the HOA's current IT provider (LTC Technologies).</p>
+          </div>
+        </div>
+
+        <!-- Accordion Item 5: Facilities Maintenance -->
+        <div class="notes-item">
+          <div class="notes-trigger" onclick="toggleNotesAccordion(this)">
+            <span>5. Facilities Maintenance</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="notes-content">
+            <h4>Roofing &amp; Gutters</h4>
+            <p>Tyler reported that the Ashley Hall and Admin building roofs/gutters have been replaced. The Manor roof project is scheduled for **July 28th to 31st** (4-day project), which will require restricted access to building areas during work.</p>
+            <h4>Parking Lot Resurfacing</h4>
+            <p>Phase 1 of the Ashley Hall parking lot resurfacing is almost complete. Prep work was delayed due to a contractor equipment malfunction, but workers are returning July 17th. Re-sealing and restriping remain scheduled for **July 27th and 28th**.</p>
+          </div>
+        </div>
+
+        <!-- Accordion Item 6: Golf Course Operations & Finances -->
+        <div class="notes-item">
+          <div class="notes-trigger" onclick="toggleNotesAccordion(this)">
+            <span>6. Golf Course Operations &amp; Finances</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="notes-content">
+            <h4>Rounds &amp; Memberships</h4>
+            <p>YTD rounds are down by only 150, despite losing 1,000 rounds in February (bad weather) and 400 in June (greens aeration). The Plantation Club reached its goal of selling 700 memberships by July (currently at 847, representing 17% of the community).</p>
+            <h4>Putting Green &amp; Landscape Maintenance</h4>
+            <p>BrightView Golf Maintenance is completely scraping, fumigating, and replanting the clubhouse putting green due to poor turf conditions. Canopy trimming is underway to increase sunlight, and BrightView is root-pruning oak trees within 150 feet of the green to stop root encroachment.</p>
+            <h4>LSSC Partnership &amp; Events</h4>
+            <p>A partnership check was received from Lake Sumter State College (LSSC), making the course the home course for their golf team (practicing at range and playing in afternoons). The recent Patriot Cup had 112 players, and the upcoming August 66 Challenge (2-person event, alternate/best ball/scramble) is scheduled.</p>
+            <h4>Golf Course Loans &amp; Cash Flow</h4>
+            <p>The HOA is paying off the **Thompson Loan** this month (July 2026), and the remaining two loans are fully funded for payoff in 2027 and 2028. Golf course financials are positive \$30,000 YTD. July expected revenue is \$190,000 (including player enhancement fees).</p>
+          </div>
+        </div>
+
+        <!-- Accordion Item 7: HOA Financials & Collections -->
+        <div class="notes-item">
+          <div class="notes-trigger" onclick="toggleNotesAccordion(this)">
+            <span>7. HOA Financials &amp; Collections</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="notes-content">
+            <h4>2025 Audit Status</h4>
+            <p>The 2025 audit is proceeding smoothly. Draft financial statements are expected by mid-July 2026, and final reports by the end of July. A clean unqualified opinion is expected for the third consecutive year.</p>
+            <h4>HOA Financial Outcomes</h4>
+            <p>YTD HOA financials are \$21,000 favorable to budget (and June monthly positive by \$2,000). High legal expenses in June may cause a monthly deficit, but the overall YTD position remains positive by over \$60,000.</p>
+            <h4>Delinquency &amp; Past-Due Dues</h4>
+            <p>Total past-due dues stand at **\$114,000** (down from \$384,000 in December 2023, representing \$270,000 collected).
+            <ul>
+              <li>378 homeowners are past due (down from 417).</li>
+              <li>38 homeowners owe >\$500 (average \$1,741; 21 of these owe >\$1,000 totaling \$54,000).</li>
+              <li>340 homeowners owe &lt;\$500 (average \$107, mainly auto-pay errors).</li>
+              <li>90 accounts are in collections (\$4,000 attorney recovery yesterday). Two properties in receivership.</li>
+              <li>Spa delinquencies stand at \$17,000 (110 homeowners).</li>
+            </ul>
+            </p>
+          </div>
+        </div>
+
+        <!-- Accordion Item 8: Restaurant & Bar Transition -->
+        <div class="notes-item">
+          <div class="notes-trigger" onclick="toggleNotesAccordion(this)">
+            <span>8. Restaurant &amp; Bar Transition</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="notes-content">
+            <h4>Transition Timeline</h4>
+            <p>Steve’s last day of food service is **July 18th**. Packing/closure will occur on **July 19th and 20th**. The restaurant will temporarily close while the board transitions the food service license with state agencies.</p>
+            <h4>Interim Capabilities</h4>
+            <p>Staff member Nick has a ServSafe license, enabling the HOA to host limited food/beverage service directly in the interim if needed.</p>
+            <h4>Management Model &amp; Negotiations</h4>
+            <p>The board is negotiating with experienced multi-unit operators. The HOA will pay a small monthly fee and split the monthly profits, which will be reinvested into restaurant capital improvements.</p>
+            <h4>Steve's Debt Transparency</h4>
+            <p>The board explained that disclosure of Steve's overdue debt and unpaid sales tax was to explain why the liquor license could not be transferred, and they apologized for any privacy concerns.</p>
+          </div>
+        </div>
+
+        <!-- Accordion Item 9: Reserve Fund Votes -->
+        <div class="notes-item">
+          <div class="notes-trigger" onclick="toggleNotesAccordion(this)">
+            <span>9. Reserve Fund Votes</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="notes-content">
+            <h4>Hermitage Pickleball Court Repairs <span class="notes-badge notes-badge-approved">4-1 Approved</span></h4>
+            <p>Tripping hazards exist on courts 1, 2, and 4 due to roots and organic material. The board approved up to **\$12,000** for repairs and fungicide treatment. Gary opposed, preferring a complete redo next year.</p>
+            <h4>Manor Pool Lights <span class="notes-badge notes-badge-approved">5-0 Approved</span></h4>
+            <p>Updating pool lights to comply with county codes for night swimming. Approved up to **\$20,000** from reserves.</p>
+            <h4>Manor Pool Pump <span class="notes-badge notes-badge-approved">5-0 Approved</span></h4>
+            <p>Replacing the failing 14-year-old geothermal well pump. Approved up to **\$10,000** from reserves.</p>
+            <h4>Restaurant Renovations <span class="notes-badge notes-badge-approved">5-0 Approved</span></h4>
+            <p>Pre-occupancy repairs (dishwasher, painting, POS). Approved up to **\$15,000** from reserves (adding to \$24,121.57 spent out of rent YTD).</p>
+            <h4>Otter Creek Bridge Replacement <span class="notes-badge notes-badge-approved">5-0 Approved</span></h4>
+            <p>Rotted load-bearing glulam beams. Approved up to **$95,000** from reserves pending the engineering report. Bids: new bridge \$68,000, installation \$57k–\$100k, crane \$15,000. Under oversight of Jerry Tucker and Gary.</p>
+            <h4>IT Hardware Upgrades <span class="notes-badge notes-badge-approved">5-0 Approved</span></h4>
+            <p>Equipment and firewall licensing from LTC Technologies. Approved **\$11,899** from reserves.</p>
+          </div>
+        </div>
+
+        <!-- Accordion Item 10: Security & Solicitation Enforcement -->
+        <div class="notes-item">
+          <div class="notes-trigger" onclick="toggleNotesAccordion(this)">
+            <span>10. Security &amp; Solicitation Enforcement</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="notes-content">
+            <h4>Statewide Solicitation Issue</h4>
+            <p>Jerry Tucker reported that door-to-door solicitors from "Statewide" (van of 7 youth) gain entry under the pretense of golf course/restaurant public access.</p>
+            <h4>Confrontation &amp; Police Action</h4>
+            <p>Jerry confronted the solicitors, resulting in a minor accident damaging his truck and their van. Despite police warning, the group resumed soliciting in Long Valley. Local sheriff response times (up to 1.75 hours) allow solicitors to escape. Residents are warned not to do business with Statewide.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Discussions Section -->
+      <div id="meetings-comments-container"></div>
+
+    </div>
+  </div>
+<!-- TAB CONTENT: EXPLORATORY ONLY -->
+  <div id="exploratory-container" style="display: none;" class="turnaround-grid">
+    <div class="workstream-card" style="grid-column: 1 / -1;">
+      <h3 style="color: var(--accent); margin-top: 0; display: flex; align-items: center; gap: 8px;">
+        ⚖️ Legal Disclaimer &amp; Terms of Use
+      </h3>
+      <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 16px;" id="last-updated-disclaimer"></div>
+      
+      <div style="color: var(--text-dim); line-height: 1.6; font-size: 13px; display: flex; flex-direction: column; gap: 14px;">
+        <p><strong>Non-Affiliation Disclaimer:</strong> This website is an independent, resident-run platform established solely for the purpose of community information, discussion, and transparency. This site is not affiliated with, authorized by, sponsored by, or in any way officially connected to the Board of Directors of the Plantation at Leesburg Homeowners Association, Inc., its management company, or any of its subsidiaries or affiliates. The official website for the HOA is located at <a href="https://www.plantationatleesburg.com" target="_blank" style="color: var(--accent); text-decoration: none;">https://www.plantationatleesburg.com</a>.</p>
+        
+        <p><strong>Information Purposes Only:</strong> All content, analysis, data, litigation summaries, and financial reviews provided on this website are for general informational, educational, and resident-advocacy purposes only. Nothing on this site constitutes professional legal, financial, accounting, or real estate advice.</p>
+        
+        <p><strong>No Representation of Accuracy:</strong> While the information presented on this platform is compiled in good faith from public records, court filings, official HOA board slide decks, and resident reports, the publisher makes no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, or suitability of the information. Any reliance you place on such information is strictly at your own risk.</p>
+        
+        <p><strong>Factual Demarcation:</strong> Factual assertions regarding ongoing disputes are categorized clearly. Items marked as [ALLEGED] are opinions or claims under review by resident groups and are subject to ongoing community feedback and verification. Items marked as [OFFICIAL] represent extracts of records published by the board. Items marked as [COURT] represent public court filings. Users are urged to verify all figures and filings independently via the Lake County Clerk of Court database or official HOA records before drawing conclusions.</p>
+        
+        <p><strong>No Endorsement or Liability:</strong> Under no circumstances shall the publishers or hosts of this site be liable for any loss, damage, or legal action arising out of, or in connection with, the use of this website. Homeowners are advised to consult a licensed Florida attorney before taking any legal action, joining any petition, or altering assessment payments in connection with the matters discussed herein.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB CONTENT: HOA BOARD RECALL & POLL -->
+  <div id="recall-container" style="display: none;">
+    <div style="max-width: 900px; margin: 0 auto; padding: 10px 0;">
+      
+      <h2 style="font-family: var(--font-heading); font-size: 22px; margin: 0 0 8px 0; color: var(--err); display: flex; align-items: center; gap: 10px;">
+        🗳️ Resident Special Initiative: HOA Board Recall Poll
+      </h2>
+      <p style="color: var(--text-dim); margin: 0 0 24px 0; font-size: 13.5px; line-height: 1.6;">
+        Under <strong>Florida Statute § 720.303(10)</strong>, homeowners have the statutory right to recall and remove any or all members of the Board of Directors with or without cause. This independent poll measures resident sentiment across the 2,820 single-family homes in The Plantation at Leesburg.
+      </p>
+
+      <!-- Interactive Poll Card -->
+      <div style="background: var(--bg-card); border: 2px solid var(--border-hover); border-radius: 16px; padding: 28px; margin-bottom: 28px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+        
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+          <div>
+            <span style="background: rgba(255, 107, 107, 0.15); color: var(--err); border: 1px solid rgba(255, 107, 107, 0.3); font-size: 10.5px; font-weight: 700; text-transform: uppercase; padding: 3px 8px; border-radius: 12px; letter-spacing: 0.05em;">Community Vote</span>
+            <h3 style="font-family: var(--font-heading); font-size: 20px; margin: 10px 0 0 0; color: var(--text);">
+              Should we recall the HOA Board completely?
+            </h3>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Statutory Threshold</div>
+            <div style="font-size: 13px; font-weight: 700; color: var(--accent);">1,411 Votes Required (50% + 1)</div>
+          </div>
+        </div>
+
+        <!-- Voting Options Buttons -->
+        <div id="recall-vote-actions" style="display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
+          <button type="button" onclick="castRecallVote('yes')" style="flex: 1; min-width: 200px; padding: 14px 20px; background: rgba(255, 107, 107, 0.12); border: 2px solid var(--err); border-radius: 10px; color: var(--err); font-family: var(--font-heading); font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+            <span>👍 YES — Recall the Board</span>
+          </button>
+          <button type="button" onclick="castRecallVote('no')" style="flex: 1; min-width: 200px; padding: 14px 20px; background: rgba(121, 210, 166, 0.12); border: 2px solid var(--ok); border-radius: 10px; color: #065F46; font-family: var(--font-heading); font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+            <span>👎 NO — Keep Current Board</span>
+          </button>
+        </div>
+
+        <!-- User Vote Notification -->
+        <div id="recall-vote-msg" style="display: none; padding: 10px 14px; border-radius: 8px; font-size: 12.5px; margin-bottom: 20px; font-weight: 600; text-align: center;"></div>
+
+        <!-- Live Results Progress Bars -->
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h4 style="margin: 0; font-size: 13.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim);">Live Poll Results</h4>
+            <span style="font-size: 12px; color: var(--text-muted);" id="recall-total-votes-label">Total Votes: 0</span>
+          </div>
+
+          <!-- YES Bar -->
+          <div style="margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;">
+              <span style="color: var(--err); font-weight: 600;">YES — Recall Board</span>
+              <span style="font-weight: 700; color: var(--text);" id="recall-yes-stat">0% (0 votes)</span>
+            </div>
+            <div style="width: 100%; height: 16px; background: rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
+              <div id="recall-yes-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #ff6b6b, #ff8787); transition: width 0.4s ease;"></div>
+            </div>
+          </div>
+
+          <!-- NO Bar -->
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;">
+              <span style="color: var(--ok); font-weight: 600;">NO — Keep Current Board</span>
+              <span style="font-weight: 700; color: var(--text);" id="recall-no-stat">0% (0 votes)</span>
+            </div>
+            <div style="width: 100%; height: 16px; background: rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
+              <div id="recall-no-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #51cf66, #69db7c); transition: width 0.4s ease;"></div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Statutory Framework & Process Cards -->
+      <div class="turnaround-grid">
+        <div class="workstream-card">
+          <h3 style="color: var(--warn);">📜 Florida Statute § 720.303(10) Legal Standard</h3>
+          <ul style="line-height: 1.6; font-size: 13px;">
+            <li><strong>Right to Recall:</strong> Any director may be recalled and removed from office with or without cause by a majority of all voting interests (50% + 1 of 2,820 homes = 1,411 signatures).</li>
+            <li><strong>Written Agreement / Ballot:</strong> Recall may be executed via written agreement ballots signed by registered parcel owners without holding a formal meeting.</li>
+            <li><strong>Board Action Deadline:</strong> Upon receipt of a recall agreement, the board must meet within <strong>5 business days</strong> to either certify or non-certify the recall.</li>
+          </ul>
+        </div>
+
+        <div class="workstream-card">
+          <h3 style="color: var(--accent);">⚖️ DBPR Binding Arbitration &amp; Governance</h3>
+          <ul style="line-height: 1.6; font-size: 13px;">
+            <li><strong>Automatic Removal:</strong> If the board certifies the recall, the recalled directors are immediately removed and must surrender all association records within 5 business days.</li>
+            <li><strong>DBPR Petition:</strong> If the board fails to certify, it must file a petition for recall arbitration with the Florida DBPR within 5 business days.</li>
+            <li><strong>Owner Recourse:</strong> If the board refuses to act or meet, representative homeowners may file a recall petition directly with DBPR to enforce the removal.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Resident Suggestion Modal -->
+  <div id="suggestion-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 999999; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; max-width: 580px; width: 100%; padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); position: relative;">
+      <button type="button" onclick="closeSuggestionModal()" style="position: absolute; top: 18px; right: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer;">✕</button>
+
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+        <span style="font-size: 22px;">💡</span>
+        <h3 style="font-family: var(--font-heading); font-size: 19px; margin: 0; color: var(--text);">Submit Dashboard Suggestion or Improvement</h3>
+      </div>
+
+      <p style="font-size: 13px; color: var(--text-dim); margin: 0 0 20px 0; line-height: 1.5;">
+        Have a request for a new topic, requested addition, data correction, or feature improvement? Send your suggestion directly to the site administrator.
+      </p>
+
+      <iframe name="sug_hidden_iframe" id="sug_hidden_iframe" style="display:none;"></iframe>
+
+      <form id="suggestion-form" action="https://formsubmit.co/drlooper@gmail.com" method="POST" target="sug_hidden_iframe" onsubmit="return handleSuggestionSubmit(event)">
+        <input type="hidden" name="_subject" id="sug-hidden-subject" value="[HOA Dashboard Suggestion]">
+        <input type="hidden" name="_captcha" value="false">
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px;">Resident Name / Neighborhood (Optional)</label>
+          <input type="text" id="sug-name" name="Resident_Name" class="form-control" placeholder="e.g. John Doe (Village of Somerset) or Anonymous" style="width: 100%;">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px;">Suggestion Category</label>
+          <select id="sug-category" name="Category" class="form-control" style="width: 100%;">
+            <option value="addition">New Topic or Document Addition Request</option>
+            <option value="correction">Data Correction or Detail Update</option>
+            <option value="feature">Dashboard Feature &amp; UI Improvement</option>
+            <option value="general">General Resident Feedback</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px;">Your Requested Changes or Additions</label>
+          <textarea id="sug-text" name="Suggestion_Details" class="form-control" rows="4" required placeholder="Describe the change, document link, topic addition, or improvement you would like to see..." style="width: 100%;"></textarea>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+          <button type="button" onclick="closeSuggestionModal()" class="submit-btn" style="background: var(--bg-card); border: 1px solid var(--border); color: var(--text-dim);">Cancel</button>
+          <button type="submit" class="submit-btn" style="background: var(--accent); color: #fff;">Send Suggestion</button>
+        </div>
+      </form>
+
+      <div id="sug-confirm-msg" style="display: none; margin-top: 16px; padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center; background: rgba(121,210,166,0.15); border: 1px solid rgba(121,210,166,0.3); color: var(--ok);"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    Plantation at Leesburg HOA Irregularities Hub · Generated June 2026 · <a href="javascript:void(0)" onclick="viewSuggestions()" style="color: var(--text-muted); text-decoration: underline; font-size: 11px;">View Resident Suggestions Log</a>
+  </footer>
+</div>
+
+<script src="hit-counter.js"></script>
+<script>
+
+const IRREGULARITIES = [
+  {
+    id: "hoa-vp-arrested-van-ramming",
+    title: "[Priority: Top] HOA Vice President Arrested After Alleged Van-Ramming Incident",
+    category: "litigation",
+    severity: "critical",
+    source: "FOX 35 Orlando / Lake County Sheriff's Office (July 20, 2026 / Incident June 29, 2026)",
+    details: "On June 29, 2026, at The Plantation at Leesburg, HOA Vice President Gerald 'Jerry' Tucker allegedly pursued a window-company employee in his personal truck after confronting the worker for alleged door-to-door soliciting, a violation of community rules. According to Lake County Sheriff's Office reports, Tucker blocked the worker's company van multiple times and rammed it with his Ford F-150 at a dead end. Five workers were inside the van; one reported a minor arm injury from the door caving inward. Tucker told investigators he stopped the van earlier that day and was following them because soliciting is not allowed in the neighborhood. He was arrested on July 17, 2026, and charged with five counts of aggravated battery with a deadly weapon, then released on a $10,000 bond.",
+    legalStandard: "Under Florida law, the business judgment rule protects board actions taken in good faith and within the scope of authority, but it does not insulate alleged criminal conduct or intentional torts. F.S. § 720.303 establishes that directors must discharge duties in the best interest of the association and its members. An incident involving aggravated battery with a vehicle falls outside ordinary HOA enforcement authority and likely exceeds the scope of official board duties. Retention of the director pending adjudication, without suspension, may expose the association to increased liability if a court later finds the acts were within the apparent scope of board authority or if the board's public statements are construed as ratification.",
+    boardPosition: "The HOA President stated the board is aware and handling the matter with law enforcement and attorneys. He said: 'We have confidence in our fellow board member, Jerry Tucker. It is important to consider the full context of the incident, including Jerry's attempt to respond to the presence of unauthorized solicitors on private HOA property, and Jerry's objective of protecting the community's interest. While the situation ultimately resulted in an outcome that was both unfortunate and unintended, it should not overshadow Jerry's commitment to serving the community.' As of publication, Tucker remains on the board.",
+    statutes: [
+      { name: "F.S. § 784.045", violation: "Aggravated battery with a deadly weapon" },
+      { name: "F.S. § 720.303", violation: "Board member conduct standards and fiduciary duty to residents" }
+    ],
+    prompt: "Given the criminal charges and the board president's public defense of Tucker, what steps will the board take to protect residents and vendors, and will Tucker be suspended from board duties pending adjudication?"
+  },
+  {
+    id: "cca-membership-vote",
+    title: "[Priority: Top] Third Membership Vote on Capital Contribution Assessment (CCA)",
+    category: "governance",
+    severity: "critical",
+    source: "July 8, 2026 Board Meeting Resolution / F.S. § 720.306",
+    details: "The board has approved a motion (5-0) to hold a third community-wide vote on the Capital Contribution Assessment (CCA), to close by October 30, 2026, as a single-issue election. The CCA would charge a one-time fee to new home buyers at closing (equivalent to 6 months of assessments, estimated at $990 based on past dockets) to build HOA capital reserves. Current homeowners are exempt. If passed originally, it would have generated approximately $297,000 to date.",
+    boardPosition: "The board maintains that the CCA is critical for the long-term health of reserves without placing a financial burden on current residents. They point out that strong reserves support property values and reduce the likelihood of special assessments.",
+    statutes: [
+      { name: "F.S. § 720.306", violation: "Requirements for association meetings and member voting" },
+      { name: "Bylaws & Covenants", violation: "Covenant amendment procedures for fee structures" }
+    ],
+    prompt: "How will the board encourage voter turnout to exceed the previous elections, and what are the budget contingency plans if the CCA fails a third time?"
+  },
+  {
+    id: "steves-restaurant-closure",
+    title: "[Priority: Top] Restaurant Operator Transition & Temporary Closure",
+    category: "litigation",
+    severity: "critical",
+    source: "Concerned Residents Forum / Facebook (July 19, 2026)",
+    details: "On July 19, 2026, Steve’s Bar & Grill ceased operations permanently following a lease and liquor licensing dispute. The restaurant venue itself is temporarily closed while the board transitions the food service license with state agencies and completes negotiations with a new operator. Residents have expressed frustration over the sudden disruption of service.",
+    boardPosition: "The board states that the temporary closure is necessary to safely transition the liquor license, which could not be directly transferred due to the previous operator's outstanding sales tax liabilities. They are currently negotiating with multiple experienced multi-unit operators.",
+    statutes: [
+      { name: "F.S. § 565.02 / Florida ABT", violation: "Licensing compliance and vendor authorization limits" },
+      { name: "F.S. § 720.303", violation: "Fiduciary duty to maintain and manage common area commercial leases" }
+    ],
+    prompt: "How does the board plan to replace the restaurant service at the clubhouse, and what are the financial implications of the vacant lease?"
+  },
+  {
+    id: "accountant-fired-pavilion-office",
+    title: "[ALLEGED] [Priority: Top] HOA Staff Accountant Fired & Pavilion Room Closed",
+    category: "governance",
+    severity: "high",
+    source: "Concerned Residents Forum / Facebook (June 18, 2026)",
+    details: "[UNOFFICIAL REPORT] Forum posts claim the board terminated the staff accountant and temporarily converted the Pavilion meeting room into administrative office space for contract bookkeepers. This has not been officially confirmed in the board's July minutes.",
+    boardPosition: "Bookkeeping and audit compliance are high-priority operations that require dedicated operational space. The board states that temporary adjustments to common spaces are necessary to restore administrative order.",
+    statutes: [
+      { name: "F.S. § 720.303(6)", violation: "Accurate financial records maintenance and staffing" },
+      { name: "F.S. § 720.303(2)", violation: "Closure of common-area amenities without member consultation" }
+    ],
+    prompt: "Why was the staff accountant fired during a critical audit reconciliation period, and when will the Pavilion meeting room be restored to resident use?"
+  },
+  {
+    id: "resident-recall-petitions",
+    title: "[Priority: Top] Resident Recall Petitions & Emergency Board Elections",
+    category: "governance",
+    severity: "medium",
+    source: "Concerned Residents Forum / Facebook (June 19, 2026) / F.S. § 720.303(10)",
+    details: "Residents on the community forum are organizing a petition to recall and remove current board members from office. The petition calls for the immediate resignation of the board and the scheduling of emergency recall elections. Under Florida Statute § 720.303(10), any director may be recalled by a majority of all voting interests (50% + 1 of the total association membership).",
+    boardPosition: "The board maintains that it is executing its duties in accordance with the governing documents and Florida law, and that a recall would create administrative instability and disrupt the reserve recovery plan.",
+    statutes: [
+      { name: "F.S. § 720.303(10)", violation: "Statutory procedures governing the recall of homeowners association directors" }
+    ],
+    prompt: "What is the board's strategy if a recall petition successfully gathers the required majority signatures, and how will they ensure a transparent certification process?"
+  },
+  {
+    id: "consolidated-balance-sheet-june-2026",
+    title: "[Priority: Top] June 2026 Consolidated Balance Sheet Review",
+    category: "financial",
+    severity: "high",
+    source: "June 2026 Consolidated Balance Sheet (compiled 7-12-2026; modified WordPress 7-14) / April 2026 Consolidated Balance Sheet",
+    details: "The Consolidated Balance Sheet for June 2026 reveals a significant asset contraction, with Total Assets dropping to $4,505,250.19 (down $948,211.60 from the $5,453,461.79 audited FY2024 baseline and down $467,946 from the April 2026 figure of $4,973,196.16). While Total Reserve Cash remains stable at $1,398,753.42, the operating fund is burdened by an active net loss of -$52,926.69 YTD and an operational deficit in the Golf Course Fund Balance of -$127,402.00, demonstrating active pressure on reserves. The April 2026 balance sheet also shows long-term debt of $419,295.80 in Promissory Note Payable - Fustos.",
+    boardPosition: "The board maintains that reserves are healthy and are being managed responsibly. They highlight that reserve cash has increased to nearly $1.4M to fund planned capital expenditures and preserve property values.",
+    statutes: [
+      { name: "F.S. § 720.303(6)", violation: "Proper financial reporting and management of operational deficits" },
+      { name: "F.S. § 720.308", violation: "Segregation of master funds from separate commercial operations" }
+    ],
+    prompt: "How does the board plan to eliminate the -$127,402.00 golf course operational deficit without using residential master funds? What caused the $948,211.60 asset contraction since the FY2024 audit?"
+  },
+  {
+    id: "ca-closed-minutes-03-20-2026",
+    title: "HOA BOD Closed Meeting Minutes March 20, 2026",
+    category: "governance",
+    severity: "medium",
+    source: "https://plantationatleesburg.com/wp-content/uploads/2026/05/03.20.2026-Approved-BOD-Mtg.-Min-CLOSED.pdf",
+    details: "Closed session minutes from the March 20, 2026 board meeting. The closed session was called to order at 8:00 AM EST to discuss a personnel matter. Board present: President Russ Roberson, Secretary/Treasurer Geoff Alpert, Director at Large Nancy Sheahan, Director at Large Gary Rushlo, and Vice President Jerry Tucker via telephone. No votes were taken in closed session. The meeting reconvened in open session at 9:11 AM and was adjourned at 9:13 AM.",
+    boardPosition: "The board maintains that closed sessions are used strictly for personnel matters and that no votes or financial decisions occurred during the closed portion.",
+    statutes: [
+      { name: "F.S. § 720.303(2)", violation: "Closed session notice and recordkeeping requirements" }
+    ],
+    prompt: "What specific personnel matter was discussed in closed session, and were any follow-up actions taken in open session?"
+  },
+  {
+    id: "march-2026-financials",
+    title: "March 2026 Financials",
+    category: "financial",
+    severity: "medium",
+    source: "https://plantationatleesburg.com/wp-content/uploads/2026/04/PH-March-26-financials.pdf",
+    details: "Public posting of March 2026 financial statements for Plantation at Leesburg. This document is part of the statutory financial record series posted by the board. The file is image-based/scanned PDF on the WordPress media server.",
+    boardPosition: "The board maintains that monthly financials are published promptly on the website.",
+    statutes: [
+      { name: "F.S. § 720.303(6)", violation: "Accurate and timely financial reporting" }
+    ],
+    prompt: "Can the March financial statements be extracted and compared against the prior-year budget for material variances?"
+  },
+  {
+    id: "february-2026-financials",
+    title: "February 2026 Financials",
+    category: "financial",
+    severity: "medium",
+    source: "https://plantationatleesburg.com/wp-content/uploads/2026/03/Pine-Hill-Fund.pdf",
+    details: "Public posting of February 2026 financial statements for Plantation at Leesburg. This document is part of the statutory financial record series posted by the board. The file is image-based/scanned PDF on the WordPress media server.",
+    boardPosition: "The board maintains that monthly financials are published promptly on the website.",
+    statutes: [
+      { name: "F.S. § 720.303(6)", violation: "Accurate and timely financial reporting" }
+    ],
+    prompt: "Can the February financial statements be extracted and compared against the prior-year budget for material variances?"
+  },
+  {
+    id: "spa-revenue-gap-2026",
+    title: "January-March 2026 SPA Revenue Recognition Gap",
+    category: "financial",
+    severity: "critical",
+    source: "Plantation_HOA_TownCrier_Allegations_Supplement.txt Post 1 & 6",
+    details: "Financial reports show that no Special Activity (SPA 2021) revenue was recognized for January-March 2026, despite the HOA continuing to collect unbilled special assessments from residents. The destination of these collected funds remains undocumented.",
+    boardPosition: "The board maintains that all collected assessments are fully accounted for in the operating and reserve ledgers.",
+    statutes: [
+      { name: "F.S. § 720.303(6)", violation: "Proper recognition and segregation of assessment revenues" }
+    ],
+    prompt: "Why was no SPA 2021 revenue recognized for the Q1 2026 period, and where were the collected assessments deposited?"
+  },
+  {
+    id: "cranes-roost-irrigation-repair",
+    title: "Cranes Roost Golf Course Irrigation System Repair",
+    category: "financial",
+    severity: "high",
+    source: "plantation-governance-review-2026-06.txt Sec 10-11",
+    details: "The board has not published an official timeline or cost estimate for the Cranes Roost golf course irrigation system repair. Timeline and cost figures shown in earlier drafts are unverified placeholders. The maintenance vendor is BrightView Golf.",
+    boardPosition: "The board is working with BrightView Golf to finalize plans for necessary repairs to maintain the community's assets.",
+    statutes: [
+      { name: "F.S. § 720.303(6)", violation: "Reporting and reserve planning for major capital repairs" }
+    ],
+    prompt: "When will the board publish a verified timeline and cost estimate for the Cranes Roost irrigation system repair?"
+  },
+  {
+    id: "golf-cash-flow-projection",
+    title: "2025 Golf Course Cash Flow Projection Validation",
+    category: "financial",
+    severity: "high",
+    source: "plantation-governance-review-2026-06.txt Sec 2-3 / Allegations Supplement",
+    details: "The board's October 2024 projection anticipated ~$229,000 in positive cash flow from golf operations in 2025. Verification is required to determine if this projection was accurate and to establish the verified EBITDA for 2025 vs. 2024.",
+    boardPosition: "The board maintains that the golf course is a key asset that supports home values and that financial projections were based on the best information available at the time.",
+    statutes: [
+      { name: "F.S. § 720.303", violation: "Accurate financial forecasting and disclosure to members" }
+    ],
+    prompt: "What was the actual verified EBITDA for golf operations in 2025, and did it meet the projected ~$229,000 positive cash flow?"
+  },
+  {
+    id: "audit-methodology-change",
+    title: "Audit Methodology Change Justification",
+    category: "financial",
+    severity: "medium",
+    source: "Plantation_HOA_TownCrier_Allegations_Supplement.txt Post 1",
+    details: "The board changed the Special Activity revenue recognition methodology from 2024 to 2025, which residents allege resulted in an artificially inflated profitability figure of ~$516,487. It is unclear if this methodology change was formally approved by the independent CPA firm.",
+    boardPosition: "The board states that accounting adjustments were made in accordance with standard practice to accurately reflect reserve allocations.",
+    statutes: [
+      { name: "F.S. § 720.303(6)", violation: "Consistent application of accounting principles in audited statements" }
+    ],
+    prompt: "What is the detailed justification for changing the SPA revenue recognition methodology, and did the independent CPA firm approve it?"
+  },
+  {
+    id: "precedent-notice",
+    title: "Special Assessment Posting & Notice",
+    category: "litigation",
+    severity: "critical",
+    source: "F.S. § 720.309 / 5th DCA Rulings",
+    details: "The 2021 and 2023 special assessments are under active challenge in Frisillo v. Plantation (Case No. 35-2025-CA-002520). The plaintiff is a Heron Run resident with a prior October 2023 ARC lot line fence dispute (seeking >$50k). Plaintiffs allege procedural failures: lack of physical 48-hour board-meeting postings specifying assessments and failure to reach quorums. Documented meeting procedures for the June 24, 2021 vote show the board required a simple majority of total membership (1,411 votes) to amend covenants, but only a simple majority of those attending to approve the $1.75M assessment (non-voters not counted), which plaintiffs challenge as a statutory violation of F.S. § 720.309.",
+    boardPosition: "Strict compliance is mandatory for special assessments. Rulings state that failure to physically post notice of meetings with assessment details at least 48 hours in advance renders the assessment a legal nullity. Re-votes do not retroactively cure past invalid assessments.",
+    statutes: [
+      { name: "F.S. § 720.303(2)(c)2", violation: "Physical Posting" },
+      { name: "F.S. § 720.309", violation: "Assessment Quorums" }
+    ],
+    prompt: "How does the board verify that physical, conspicuous notices were posted 48 hours in advance for the 2021 and 2023 assessment meetings?"
+  },
+  {
+    id: "special-assessments",
+    title: "2021 & 2023 Special Assessment Procedural Violations",
+    category: "litigation",
+    severity: "high",
+    source: "Special Assessment Suits / F.S. § 720.309",
+    details: "One active lawsuit challenges the 2021 ($1,260/household, or $15/month for 7 years via a $1,750,000 promissory note at 4.25% interest) and 2023 ($225/lot) special assessments: Frisillo v. Plantation (Case No. 35-2025-CA-002520), filed on November 7, 2025 (seeking >$50k). The plaintiff is a Heron Run resident with a prior October 2023 ARC lot line fence dispute. Plaintiffs claim the board failed to post physical 48-hour meeting notices specifying assessment details and circumvented voting thresholds via split covenant amendment (1,411 total membership majority) and assessment voting (meeting majority) requirements.",
+    boardPosition: "The board maintains all assessments were discussed at open meetings and approved by board majorities, and that the funds were critical to acquire the golf course.",
+    statutes: [
+      { name: "F.S. § 720.303(2)(c)2", violation: "Mandatory 48-hour physical meeting notices for assessments" },
+      { name: "F.S. § 720.309", violation: "Quorum and member voting requirements for assessments" }
+    ],
+    prompt: "If the court voids the 2021 or 2023 assessments, what is the plan to refund collected funds? Will this trigger a massive deficit?"
+  },
+  {
+    id: "golf-draws",
+    title: "Golf Course LLC Contra-Revenue Draws (\$42,300/mo)",
+    category: "financial",
+    severity: "high",
+    source: "golf-course-llc.txt / PLA_Financials_extracted",
+    details: "A Special Activity draw of \$42,300/month is transferred from residential assessments to the Golf Course LLC. The transfers are classified under Account 400832 (Special Activity Income) as a contra-revenue item. Total FY2024 transfers reached \$695,271.77. The board asserts this LLC structure firewalls residential funds. However, the board's May 2021 letters reveal an intentional strategy to draft 'shared maintenance agreements' (e.g. for roads, cart paths, security gates) specifically designed to shift commercial golf facility operations expenses to residential master reserves, supporting resident alter-ego/veil-piercing arguments.",
+    boardPosition: "The golf courses are community assets. The \$42,300/month draw is fully authorized by the budget and represents necessary maintenance costs to protect property values.",
+    statutes: [
+      { name: "F.S. § 720.308", violation: "Funding of separate entities using master assessments" },
+      { name: "Dania Jai-Alai Rule", violation: "Corporate shield invalidity if funds are commingled" }
+    ],
+    prompt: "If the Golf Course LLC loses in court or defaults, what legal guarantees prevent the golf course's liabilities from draining residential master funds?"
+  },
+  {
+    id: "steves-liquor-license",
+    title: "Steve’s Bar & Grill Alcohol Service Without Verified Lessee Liquor License",
+    category: "litigation",
+    severity: "high",
+    source: "Florida ABT license record / attached screenshot / Plantation at Leesburg official website (steves-bar-and-grill)",
+    details: "Publicly available Florida alcoholic-beverage license records show THE PLANTATION AT LEESBURG GOLF CLUB (DBA) and THE PLANTATION AT LEESBURG GOLF COURSE LLC as the licensee/primary holder for license BEV4502663 at 4720 Plantation Blvd, Leesburg, FL 34748. There is no record showing Steve’s Bar & Grill as a licensee, registrant, or lessee of that license. The restaurant operates from the same licensed location and publicly serves alcohol while the Golf Club/Course LLC remains the named ABT licensee. This raises a direct legal question whether alcohol may lawfully be served by a separately branded restaurant without its own licensee status or a verified lessee/operator arrangement on record.",
+    boardPosition: "",
+    statutes: [
+      { name: "F.S. § 565.02 / Florida ABT", violation: "Unlicensed alcoholic beverage service / operating without licensee status" },
+      { name: "F.S. § 720.303", violation: "Statutory disclosure and compliance obligations" }
+    ],
+    prompt: "Is there a legally valid lessee/operator agreement placing Steve’s Bar & Grill under the Plantation’s liquor license? If not, who authorized alcohol service at a separate commercial restaurant without a license in its own name or verified lessee status?"
+  },
+  {
+    id: "hoa-board-directors-2025",
+    title: "Audit Failures, Disclaimers & Suspensions (2022–2025)",
+    category: "governance",
+    severity: "critical",
+    source: "Final FS 2022 - V2.txt / plantation-governance-review-2026-06.txt Sec 7",
+    details: "The annual CPA audits, which faced severe ongoing delays, have been completed and brought up to date through 2024. iRO CPA completed both the 2023 and 2024 financial audits on February 13, 2026, restoring the association to statutory compliance. The 2025 audit is currently in progress, with the board transitioning focus to this next review.",
+    boardPosition: "The board reports that audits are fully finalized through 2024, and focus has successfully transitioned to the 2025 CPA audit.",
+    statutes: [
+      { name: "F.S. § 720.303(7)", violation: "Mandatory annual financial report deadline" },
+      { name: "HB 1203", violation: "Failure to provide official audit records within statutory timelines" }
+    ],
+    prompt: "Why did the 2022 audit result in a Disclaimer of Opinion? What specific intercompany balances and consolidation entries could the auditors not reconcile?"
+  },
+  {
+    id: "mrta-expiration",
+    title: "[ALLEGED] Marketable Record Title Act (MRTA) Covenant Extinguishment Claim",
+    category: "governance",
+    severity: "critical",
+    source: "Declaration of Covenants (Book 1130, Page 0882) / F.S. Ch. 712",
+    details: "[RESIDENT LEGAL THEORY] Resident advocates assert that the community's covenants may have expired under the 30-year Marketable Record Title Act (MRTA) window because they did not locate a recorded preservation notice in their public records search. This claim is controversial and has not been tested in court.",
+    boardPosition: "The board operates under the assumption that the covenants remain fully active and enforceable under corporate and residential guidelines.",
+    statutes: [
+      { name: "F.S. Ch. 712", violation: "Covenant extinguishment after 30-year statutory window" },
+      { name: "F.S. § 720.305", violation: "Extinguishment of legal authority to enforce rules or collect assessments" }
+    ],
+    prompt: "Has the board verified that a valid Notice of Preservation was recorded before the 30-year MRTA deadline? If not, what is the legal basis for covenant enforcement?"
+  },
+  {
+    id: "unbalanced-sheet",
+    title: "Non-Balancing December 2025 Year-End Balance Sheet",
+    category: "financial",
+    severity: "critical",
+    source: "Balance-Sheet-12-25.txt",
+    details: "The December 2025 year-end balance sheet fails to balance. Total Assets are reported as \$1,838,775.84, while Total Liabilities & Equity are reported as \$5,122,035.42, showing a massive discrepancy of \$3,283,259.58. Releasing unbalanced financial statements to the membership indicates a critical failure of internal accounting controls.",
+    boardPosition: "The board claims the discrepancy represents a closing system adjustment reflecting projected reserve transfers. Note that the 2025 audit is expected to resolve this and issue a clean unqualified opinion.",
+    statutes: [
+      { name: "F.S. § 720.303(6)", violation: "Requirement to maintain accurate, transparent bookkeeping" },
+      { name: "Ch. 617 Corporate Duties", violation: "Fiduciary duty to present true, balanced corporate records" }
+    ],
+    prompt: "What specific journal entries explain the \$3.28M imbalance in the December 2025 balance sheet? Why were unbalanced financials released to the community?"
+  },
+  {
+    id: "phantom-profit",
+    title: "Phantom \$453,129.67 Profit Entry Posted & Deleted",
+    category: "financial",
+    severity: "critical",
+    source: "Balance-Sheet-12-25.txt / Jan-2026-Balance-Sht.txt",
+    details: "The December 2025 Consolidated Balance Sheet reported a 'Total Net Income / (Loss)' of \$453,129.67. This massive entry disappeared entirely in the January 2026 statements, which showed the line reset to \$207.58, then \$50.00. No ledger reconciliation or transaction explanation accompanied the removal of this half-million-dollar asset profit.",
+    boardPosition: "The entry represented a closing system adjustment reflecting projected reserve transfers, which was corrected in the subsequent period to align with actual cash postings.",
+    statutes: [
+      { name: "F.S. § 720.303(6)", violation: "Requirement to maintain accurate, transparent bookkeeping" },
+      { name: "Ch. 617 Corporate Duties", violation: "Fiduciary duty to present true corporate records" }
+    ],
+    prompt: "Why was a \$453,129.67 net profit posted at year-end and deleted immediately in January 2026? What transaction or adjustments explain this swing?"
+  },
+  {
+    id: "equity-collapse",
+    title: "Disputed Reserve Withdrawals & Reserve Capital Votes",
+    category: "financial",
+    severity: "critical",
+    source: "Plantation_HOA_Briefing_Residents_v20260614.txt / Q&A documents",
+    details: "Disputes exist regarding reserve fund movements. Resident reports highlight a \$194,000 withdrawal in late 2024 and point to bank statements showing a net decrease in reserve assets of \$134,985 during the restoration period. This stands in contrast to the board's official report of adding \$600,000 to reserves over two years. The board recently approved \$152,000 in new infrastructure expenditures from reserves on July 8, 2026.",
+    boardPosition: "The board maintains that reserves were managed appropriately and that it has allocated approximately \$600,000 to reserves over the past two years to cover major capital projects (such as the Manor roof). They state that the \$152,000 in new capital projects approved on July 8, 2026, represents necessary infrastructure maintenance funded through standard reserve planning.",
+    statutes: [
+      { name: "F.S. § 720.303(6)(a)", violation: "Proper accounting and authorization for reserve withdrawals" },
+      { name: "Ch. 617 Fiduciary Duty", violation: "Fiduciary standard of care for corporate asset preservation" }
+    ],
+    prompt: "Are there formal board resolutions authorizing the \$194,000 reserve withdrawals in late 2024? Where did the \$450,000 earmarked for the 2023 Discretionary Reserves go, and why do bank statements show a net decrease in reserves?"
+  },
+
+  {
+    id: "vendor-bids",
+    title: "Concealment of 2026 Vendor Bids & Contracts",
+    category: "governance",
+    severity: "high",
+    source: "plantation-governance-review-2026-06.txt Sec 8-11",
+    details: "The 'Contracts' section of the HOA resident portal remains empty of 2026 vendor bids and executed agreements. This includes major contracts for Ashley pool renovations and community road maintenance. The statutory deadline for posting these contracts passed over 18 months ago, denying residents visibility into vendor selection and bidding practices.",
+    boardPosition: "Bids are sensitive commercial records. The board publishes contracts after they are finalized, signed, and reviewed by legal counsel.",
+    statutes: [
+      { name: "F.S. § 720.303(5)", violation: "Conspicuously publish all bids and contracts to members" },
+      { name: "HB 1203 Portal Mandate", violation: "Digital publication of executed contracts and bidding packages" }
+    ],
+    prompt: "Why are the 2026 vendor bids and contracts missing from the portal? Are contract prices and bids being intentionally hidden from members?"
+  },
+  {
+    id: "receivership-fees",
+    title: "Disproportionate Receivership Fees (\$46,000 on \$480)",
+    category: "litigation",
+    severity: "high",
+    source: "Wolner appeal (5D2023-2882) / Case 2022-CA-001009",
+    details: "In the Wolner receivership appeal, the association appointed a receiver to collect an outstanding assessment delinquency of \$480 from a hospitalized resident. The resident, Linda Wolner (77), passed away in November 2024. While the 5th District Court of Appeal issued a PCA ruling on June 10, 2025 (Appellate Case No. 5D2023-2882) technically affirming the receiver's appointment, the main trial court case (Case No. 2022-CA-001009) concluded in late 2025 with the Lake County Circuit Court judge ruling in favor of Ms. Wolner's estate, halting the foreclosure of the homestead and ordering the receiver to submit a complete accounting of the \$46,000 in accrued fees.",
+    boardPosition: "The board maintains it acted in compliance with the collection statutes and notes that the appellate court technically affirmed the validity of the receiver's appointment in June 2025.",
+    statutes: [
+      { name: "F.S. § 720.3085", violation: "Reasonableness and proportionality in assessment collections" },
+      { name: "Homestead Protection", violation: "Forced sale threat on homestead properties for non-lien debt" }
+    ],
+    prompt: "Is the board reviewing its collection policies to prevent \$480 debts from turning into \$46,000 receiver lawsuits? How will this impact community litigation liability?"
+  },
+
+  {
+    id: "transfer-cap",
+    title: "CCR 10% Annual Transfer Cap Compliance",
+    category: "governance",
+    severity: "medium",
+    source: "Allegations Supplement Post 3",
+    details: "Residents allege the board exceeded the 10% annual transfer cap on master assessments to the special activity fund in 2025. The second amended restrictions limit cumulative annual transfers to \$507,600 (10% of total master assessments). The ledger indicates transfers may have exceeded this threshold without member voting.",
+    boardPosition: "Transfers are calculated based on net operating budgets and capital reserves. The board maintains all transfers were within statutory and bylaws caps.",
+    statutes: [
+      { name: "Second Amended Restrictions", violation: "10% cap limit on annual transfers" },
+      { name: "F.S. § 720.305", violation: "Duty of the board to strictly comply with governing documents" }
+    ],
+    prompt: "What were the exact cumulative transfers to the special activity fund in 2025? Did they exceed the \$507,600 limit?"
+  },
+  {
+    id: "social-media",
+    title: "Board Social Media Policy & Fund Usage",
+    category: "governance",
+    severity: "medium",
+    source: "February 2025 Strategy Deck",
+    details: "A February 2025 board strategy deck proposed creating a 'positive news only' Facebook page to manage community sentiment. Residents allege that HOA staff time and resources are being used to run this page, and that comments criticising the board are censored, violating statutory records accessibility and open communication rules.",
+    boardPosition: "The Facebook page is a communication channel designed to share community news and updates. No HOA funds are used for advertising, and moderation is standard policy.",
+    statutes: [
+      { name: "F.S. § 720.303", violation: "Access to official records and correspondence" },
+      { name: "Ch. 617 Fiduciary Duty", violation: "Use of corporate funds for political or selective messaging" }
+    ],
+    prompt: "Are association funds or staff hours used to run or moderate the board's Facebook page? Why are resident questions regarding finances being deleted?"
+  },
+  {
+    id: "precedent-wolner",
+    title: "Wolner Receivership Battle Precedents",
+    category: "litigation",
+    severity: "high",
+    source: "Florida 5th DCA & Circuit Precedents",
+    details: "In *Plantation of Leesburg HOA v. Wolner* (Case No. 2022-CA-001009), the HOA sought a receivership and foreclosure over a \$480 debt, resulting in \$46,000 in fees. Although the 5th DCA (Case No. 5D2023-2882) PCA'd the receiver's appointment in June 2025, the trial court ultimately ruled in favor of Ms. Wolner's estate in late 2025, halting the foreclosure. This establishes a precedent that Florida courts will protect homestead property from forced foreclosure and demand full accounting audits when collection methods are deemed highly disproportionate.",
+    boardPosition: "Courts will vacate receiver appointments where the underlying debt is trivial, the process lacks proper notice, or corporate actions represent bad faith. Homestead protections under the Florida Constitution prohibit forced sales or assessments that circumvent standard protections.",
+    statutes: [
+      { name: "F.S. § 720.3085", violation: "Collection Rules" },
+      { name: "F.S. § 720.311", violation: "Alternative Dispute Resolution" }
+    ],
+    prompt: "What changes will the board make to its collection policies in light of the Wolner appeal to prevent similar fee escalations?"
+  },
+
+  {
+    id: "precedent-veil",
+    title: "Golf Course LLC Separateness & Veil-Piercing",
+    category: "litigation",
+    severity: "critical",
+    source: "Dania Jai-Alai Palace, Inc. v. SY. Assocs.",
+    details: "The board maintains that residential master funds are shielded because golf course debt resides in a separate LLC. However, the HOA has funded consistent \$42,300/month Special Activity draws from residential assessments to the LLC.",
+    boardPosition: "Under Florida corporate law, the 'corporate shield' is pierced if the parent entity exercises complete dominion, commingles assets, shares directors with zero conflict procedures, or uses the subsidiary as a mere shell. If pierced, the HOA master funds are fully exposed to golf liabilities.",
+    statutes: [
+      { name: "Veil Piercing", violation: "Alter-Ego & Commingling" },
+      { name: "F.S. § 617.0830", violation: "Fiduciary Loyalty" }
+    ],
+    prompt: "What structural accounting firewalls are in place to prevent the commercial liabilities of the Golf LLC from exposing master residential reserves?"
+  },
+  {
+    id: "audit-equity-verification",
+    title: "Audited FY2024 Equity & Solvency Verification",
+    category: "financial",
+    severity: "high",
+    source: "Audited 2024 Balance Sheet / 12-31-2024 Audit",
+    details: "Forensic audit of the official FY2024 financial statement verifies that the HOA's audited equity at the end of 2024 was \$2,449,563.40 (derived from Total Assets of \$5,453,461.79 and Total Liabilities of \$3,003,898.39). Total reserve cash stood at \$1,353,526.22, with \$1,634,875.90 in board-designated discretionary reserves. This refutes allegations of a 99% reserve collapse or that equity fell to \$48,000.",
+    boardPosition: "The board maintains that its reserve recovery plan and financial management have successfully placed the community in a stable, medium-risk solvency tier.",
+    statutes: [
+      { name: "F.S. § 720.303(6)", violation: "Requirement to prepare and maintain audited financial statements" }
+    ],
+    prompt: "How does the verified FY2024 audited equity of \$2,449,563.40 reconcile with early resident projections suggesting a reserve collapse?"
+  },
+  {
+    id: "golf-draw-verification",
+    title: "Verification of Golf Course Draws & Transfer Cap",
+    category: "financial",
+    severity: "medium",
+    source: "General Ledger Account 400832 / towncryer-hypothesis-determination.md",
+    details: "Forensic ledger review verifies that the monthly draw from the master association to the Golf Course LLC was exactly \$42,300/month (totaling \$507,600/year). This matches the approved \$15/home/month allocation for golf operations and strictly complies with the CCR 10% annual transfer cap. Allegations of an 'excess draw' of \$92,300/month or \$136,522 in operating irregularities are refuted.",
+    boardPosition: "The board maintains that all golf course funding draws were strictly budgetary allocations in full compliance with the CCR 10% transfer cap to preserve community assets.",
+    statutes: [
+      { name: "F.S. § 720.305", violation: "Strict compliance with association covenants and transfer restrictions" }
+    ],
+    prompt: "Do the monthly ledger entries show any variance from the authorized \$42,300/month draw amount during the FY2025 period?"
+  },
+  {
+    id: "spa-loss-reconciliation",
+    title: "SPA Loss Reconciliation & Cash Diversion",
+    category: "financial",
+    severity: "high",
+    source: "SPA-Reconciliation.pdf (Dec 5, 2025)",
+    details: "The SPA Reconciliation document confirms that \$129,995 in special assessment net income was allocated to cover the Golf Course LLC operating loss of \$129,995. This reconciliation formally links the special assessment revenue to the offset of golf course operational deficits.",
+    boardPosition: "The board reports that special assessment funds were properly accounted for and utilized to sustain the golf course amenities during course restoration.",
+    statutes: [
+      { name: "F.S. § 720.308", violation: "Proper allocation and reporting of assessment funds for separate entities" }
+    ],
+    prompt: "What specific board resolutions or disclosures authorized the use of \$129,995 in SPA net income to offset Golf Course LLC operating losses?"
+  },
+  {
+    id: "spa-delinquency-strike",
+    title: "October 2024 Special Assessment Delinquency Strike",
+    category: "financial",
+    severity: "high",
+    source: "December 2024 Board Meeting Minutes / January 2025 Q&A",
+    details: "Official board records confirm that 730 homes went delinquent on the October 2024 special assessment of \$175, resulting in an unpaid cash shortfall of \$127,750. This represents a delinquency rate of approximately 25% across the 2,820 homes in the community, reflecting significant resident friction and payment resistance.",
+    boardPosition: "The board continues to pursue collections and legal actions for all delinquent assessment accounts to recover the unpaid shortfall.",
+    statutes: [
+      { name: "F.S. § 720.3085", violation: "Due process and statutory compliance in assessment collection and liens" }
+    ],
+    prompt: "What collection strategies and timeline does the board have in place to recover the \$127,750 shortfall from the 730 delinquent homes?"
+  },
+  {
+    id: "hoa-delinquency-recovery",
+    title: "HOA Delinquency & Past-Due Debt Reduction",
+    category: "financial",
+    severity: "medium",
+    source: "June 2026 Board Meeting Disclosures / Past Due Dues Reports",
+    details: "As of June 30, 2026, the total outstanding HOA past-due dues stood at \$114,000—a significant decrease of \$270,000 from the \$384,000 peak reported in December 2023. The delinquency roll includes 378 past-due accounts (down from 417), with 38 homeowners owing more than \$500 (average \$1,741 each, 21 of whom owe over \$1,000 totaling \$54,000). The remaining 340 past-due accounts owe an average of \$107, typically representing minor auto-pay oversight. There are currently 90 accounts in active legal collections, and two properties in receivership.",
+    boardPosition: "The board reports significant success in collecting unpaid dues, retrieving over \$270,000 in past-due balances since late 2023. They continue to pursue standard collections, legal recoveries, and receivership actions on high-balance accounts.",
+    statutes: [
+      { name: "F.S. § 720.3085", violation: "Due process in assessment collections and liens" }
+    ],
+    prompt: "What is the timeline and criteria for transitioning high-balance delinquencies into legal collection or receivership status?"
+  },
+
+  {
+    id: "otter-creek-bridge",
+    title: "Otter Creek Bridge Structural Decay & CapEx",
+    category: "financial",
+    severity: "high",
+    source: "July 8, 2026 Reserve Vote / Universal Engineering Orlando Inspection",
+    details: "A structural assessment by Universal Engineering (Orlando) confirmed that the two primary glulam load-bearing beams of the Otter Creek Bridge are rotted and separating. To prevent total failure, the board approved up to $95,000 from the reserve fund to replace the bridge, pending the final engineering report. Bids for a new bridge are \$68,000, installation bids range from \$57,000 to \$100,000, and Edge Crane (Eustis) bid \$15,000. Lead times from Alabama and Georgia fabricators are 21 to 23 weeks, making immediate funding allocation necessary to avoid delays into next year. Two board members (Jerry Tucker and Gary) must approve the final contracts.",
+    boardPosition: "The board maintains that replacing the bridge is an urgent safety issue to maintain access and golf course routing. They authorized the funding ahead of the September meeting to secure the 21-23 week manufacturing slot.",
+    statutes: [
+      { name: "F.S. § 720.303(6)", violation: "Proper stewardship and maintenance of common areas" }
+    ],
+    prompt: "Will the final engineering assessment consider repair and shoring options instead of complete replacement, and how will the $95,000 expenditure impact reserve health?"
+  },];
+
+// Prepopulated comments database to show diverse resident perspectives
+const INITIAL_COMMENTS = {
+  "cca-membership-vote": [
+    { author: "Resident (Long Meadow)", stance: "concerned", text: "The Capital Contribution Assessment appears to be another attempt to create a new revenue stream rather than addressing the real issue: proper management of existing money and assets. Homeowners are already dealing with reduced property appeal caused by deteriorating golf courses and amenities. Adding a new transfer-related fee only creates more baggage for sellers, gives buyers another reason to negotiate the price down or demand concessions, and does nothing to prove that current funds and community assets are being managed responsibly. Before asking residents or future buyers for more money, the HOA should demonstrate better stewardship of the resources it already controls.", date: "2026-07-14 11:13" }
+  ],
+  "hoa-meeting-july-8-2026": [
+    { author: "Resident (Ashley Court)", stance: "concerned", text: "Wait, there's a vote on a Capital Contribution Assessment (Item IV.H) and Reserve Fund Votes (Item IV.J)? What are the details of these votes? Why haven't the board published any briefing papers?", date: "2026-07-07 10:15" },
+    { author: "Resident (Otter Creek)", stance: "skeptical", text: "Reserve Fund Votes for Hermitage Pickleball and Restaurant Renovation are on the table. We need to make sure this money isn't diverted to Golf Course LLC losses.", date: "2026-07-07 12:30" }
+  ],
+  "golf-recovery-plan": [
+    { author: "Resident (Otter Creek)", stance: "supportive", text: "Option A is the only sensible choice. Otter Creek has flooded for years, and trying to keep all 36 holes open is financially impossible. We must consolidate and protect the reserves.", date: "2026-06-29 11:30" },
+    { author: "Avid Golfer (Long Meadow)", stance: "skeptical", text: "If we close Otter Creek, we lose our 36-hole destination status. It will lower the property values of homes backing onto Otter Creek. We should look at Option D first.", date: "2026-06-30 14:15" },
+    { author: "Resident (Ashley Court)", stance: "concerned", text: "Option E would raise our overall monthly dues by 11.4%. That's a huge burden on residents on fixed incomes just to support a hobby that only 20% of the community uses.", date: "2026-07-01 09:20" }
+  ],
+  "hoa-board-directors-2025": [
+    { author: "Retired Auditor (Long Meadow)", stance: "concerned", text: "As a retired accountant, a suspended audit for multiple straight years is a red alert. If there is nothing to hide, why aren't the ledgers in the hands of the CPA? We cannot get mortgages refi or sell our houses easily with suspended audits on record.", date: "2026-06-25 10:15" },
+    { author: "Resident (Ashley Court)", stance: "neutral", text: "I spoke with Dennis at the office and he said the CPA is just waiting on some bank statements from the 2023 ledger transfer. It seems like it's a software translation issue, not fraud.", date: "2026-06-26 14:22" },
+    { author: "Ed Fredericks (Concerned Residents)", stance: "skeptical", text: "It's not just a software issue. The board answered in writing last November that the audits were completed. Now they say they are suspended. That is a clear contradiction. We deserve transparency.", date: "2026-06-28 09:41" }
+  ],
+  "phantom-profit": [
+    { author: "Homeowner (Inverness)", stance: "concerned", text: "How does a half-million dollars in profit just show up on a December balance sheet and then vanish in January? That's not a standard closing adjustment, that is moving numbers to make the year-end look profitable before backing it out.", date: "2026-06-26 11:05" },
+    { author: "Board Supporter (Long Meadow)", stance: "supportive", text: "Let's wait for the audit before accusing anyone of cooking the books. Bookkeeping errors happen, especially with the volume of transactions we have with Steve's grill and the golf course.", date: "2026-06-27 16:30" }
+  ],
+  "equity-collapse": [
+    { author: "Harry Butler (Long Meadow)", stance: "concerned", text: "The board stated publicly three times in meeting Q&As that the $450,000 discretionary reserve deposit was made. But our bank statements show reserves went down by nearly $135k over that same period. The numbers simply do not lie.", date: "2026-06-25 15:44" },
+    { author: "Ed Fredericks (Concerned Residents)", stance: "skeptical", text: "We need to see the actual bank statements and the signed resolutions authorizing that $194k withdrawal in late 2024. If they withdrew it to cover golf LLC operating deficits, they are using residential reserves to fund the golf course.", date: "2026-06-28 13:12" }
+  ],
+  "golf-draws": [
+    { author: "Homeowner (Otter Creek)", stance: "skeptical", text: "The $42,300/mo draw is a massive drain. We are essentially subsidizing the golf course at the expense of our residential reserves. If the golf entity is a separate LLC, why are master funds constantly flowing into it?", date: "2026-06-24 08:30" },
+    { author: "Golf Committee Member (Long Meadow)", stance: "supportive", text: "If we let the golf courses decline, our home values will drop by 20%. The $15/month golf assessment is a small price to pay to keep our community green and attractive.", date: "2026-06-27 10:14" },
+    { author: "Ed Fredericks (Concerned Residents)", stance: "concerned", text: "The problem is not keeping it green. The problem is that the lawyers hired by the HOA warned that the LLC corporate shield won't hold if we commingle the funds. If the LLC gets sued or goes bankrupt, the whole HOA is on the hook.", date: "2026-06-28 17:02" }
+  ],
+  "vendor-bids": [
+    { author: "Homeowner (Ashley Court)", stance: "concerned", text: "F.S. 720.303(5) is very clear. We have a legal right to see all vendor bids and executed contracts. The fact that the contracts page on the portal has been empty for 18 months is a direct violation of the law. What is the board hiding?", date: "2026-06-25 09:00" },
+    { author: "Resident (Manor Pool Area)", stance: "neutral", text: "I asked for the Ashley pool renovation contract and was told I could view it physically at the office. They aren't hiding it, but they should put it on the website to comply with HB 1203.", date: "2026-06-26 12:15" }
+  ],
+  "receivership-fees": [
+    { author: "Resident (Hermitage)", stance: "concerned", text: "Charging a sick, hospitalized resident \$46,000 in fees on a \$480 debt is cruel and legally stupid. It exposes the entire community to lawsuits. The board should have used standard mediation, not a predatory receivership.", date: "2026-06-24 14:02" },
+    { author: "Resident (Long Meadow)", stance: "concerned", text: "Florida courts have thrown out receivership actions where fees are disproportionate. If Wolner wins their appeal, the HOA will have to pay back those fees, which means *we* pay for the board's mistakes.", date: "2026-06-28 11:24" }
+  ],
+  "special-assessments": [
+    { author: "Ed Fredericks (Concerned Residents)", stance: "skeptical", text: "We didn't get physical 48-hour notices for the meetings where the 2021 golf assessment was finalized. That is a direct violation of F.S. 720. If the lawsuit succeeds, the HOA will have to refund millions. This is a ticking financial time bomb.", date: "2026-06-25 18:20" },
+    { author: "Board Supporter (Long Meadow)", stance: "supportive", text: "The special assessment was necessary to buy the golf course from the developer. If we didn't buy it, a commercial builder could have bought the land and built cheap apartments. The board acted in our best interest.", date: "2026-06-26 19:10" },
+    { author: "Resident (Ashley Court)", stance: "concerned", text: "The financial disclosures for the assessment were redacted in the mailing we received. How can we vote responsibly if we cannot see the actual numbers?", date: "2026-06-27 08:45" },
+    { author: "Resident (Hermitage)", stance: "skeptical", text: "Special assessments in excess of \$1,500 should require a full membership vote, not a proxy quorum. The board used a skewed turnout to pass this.", date: "2026-06-27 14:30" },
+    { author: "Resident (Otter Creek)", stance: "neutral", text: "Can someone point me to the exact budget document that triggered the special assessment? I want to review it independently.", date: "2026-06-28 09:15" },
+    { author: "Resident (Manor Pool Area)", stance: "concerned", text: "Our property values did not rise as projected after the golf course purchase. We are paying for an asset that is actively dragging values down.", date: "2026-06-28 16:50" }
+  ],
+  "transfer-cap": [
+    { author: "Resident (Otter Creek)", stance: "skeptical", text: "The second amended restrictions limit transfers to 10% of total assessments (\$507k). Ledger review shows we exceeded that in 2025 to support the golf course. The board cannot just ignore our own covenants when they run out of money.", date: "2026-06-26 09:30" }
+  ],
+  "social-media": [
+    { author: "Homeowner (Ashley Court)", stance: "concerned", text: "I posted a question about the suspended audits on the community Facebook page, and it was deleted within 10 minutes, and I was blocked. If association staff are doing this during work hours, they are censoring residents using our own money.", date: "2026-06-27 15:40" },
+    { author: "Homeowner (Long Meadow)", stance: "neutral", text: "The Facebook group is privately run by board members as individuals, not as the official HOA. They can moderate it how they want. But it does look bad to delete financial questions.", date: "2026-06-28 16:15" }
+  ],
+  "precedent-wolner": [
+    { author: "Resident (Hermitage)", stance: "concerned", text: "Charging a sick, hospitalized resident \$46,000 in fees on a \$480 debt is cruel and legally stupid. It exposes the entire community to lawsuits. The board should have used standard mediation, not a predatory receivership.", date: "2026-06-24 14:02" },
+    { author: "Resident (Long Meadow)", stance: "concerned", text: "Florida courts have thrown out receivership actions where fees are disproportionate. If Wolner wins their appeal, the HOA will have to pay back those fees, which means *we* pay for the board's mistakes.", date: "2026-06-28 11:24" }
+  ],
+  "precedent-notice": [
+    { author: "Notice review cross-reference: see Special Assessment Posting & Notice and Procedural Violations entries.", stance: "neutral", text: "No separate resident posts here; review threads are consolidated under special-assessments.", date: "2026-06-29 00:00" }
+  ],
+  "precedent-veil": [
+    { author: "Homeowner (Otter Creek)", stance: "skeptical", text: "The \$42,300/mo draw is a massive drain. We are essentially subsidizing the golf course at the expense of our residential reserves. If the golf entity is a separate LLC, why are master funds constantly flowing into it?", date: "2026-06-24 08:30" },
+    { author: "Golf Committee Member (Long Meadow)", stance: "supportive", text: "If we let the golf courses decline, our home values will drop by 20%. The \$15/month golf assessment is a small price to pay to keep our community green and attractive.", date: "2026-06-27 10:14" },
+    { author: "Ed Fredericks (Concerned Residents)", stance: "concerned", text: "The problem is not keeping it green. The problem is that the lawyers hired by the HOA warned that the LLC corporate shield won't hold if we commingle the funds. If the LLC gets sued or goes bankrupt, the whole HOA is on the hook.", date: "2026-06-28 17:02" }
+  ]
+};
+
+// Storage Key
+const STORAGE_KEY = 'plant_hoa_dashboard_forum_notes_v4';
+
+// Initialize data from LocalStorage or use defaults
+let forumNotes = {};
+try {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored) {
+    forumNotes = JSON.parse(stored);
+  } else {
+    forumNotes = INITIAL_COMMENTS;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(forumNotes));
+  }
+} catch (e) {
+  forumNotes = INITIAL_COMMENTS;
+}
+
+// Function to save comments to LocalStorage
+function saveForumData() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(forumNotes));
+  } catch (e) {
+    console.error("Failed to save to LocalStorage", e);
+  }
+}
+
+// Helper to escape HTML to prevent XSS
+function escapeHtml(text) {
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+
+// Render dynamic irregularities cards
+function renderIrregularities(filter = "all", searchQuery = "") {
+  const VISIBLE_CAP = 5;
+  const container = document.getElementById("irregularities-container");
+  container.innerHTML = "";
+
+  const query = searchQuery.toLowerCase().trim();
+
+  const filtered = IRREGULARITIES.filter(item => {
+    // Tab filter
+    if (filter !== "all" && item.category !== filter) return false;
+    
+    // Search query filter
+    if (query) {
+      const matchTitle = item.title.toLowerCase().includes(query);
+      const matchDetails = item.details.toLowerCase().includes(query);
+      const matchSource = item.source.toLowerCase().includes(query);
+      const matchPrompt = item.prompt.toLowerCase().includes(query);
+      
+      // Also match comments/notes
+      const comments = forumNotes[item.id] || [];
+      const matchComments = comments.some(c => 
+        c.author.toLowerCase().includes(query) || 
+        c.text.toLowerCase().includes(query)
+      );
+
+      return matchTitle || matchDetails || matchSource || matchPrompt || matchComments;
+    }
+    
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="irregularity-card" style="text-align: center; color: var(--text-muted); padding: 40px 20px;">No irregularities match your filter or search query.</div>`;
+    return;
+  }
+
+  filtered.forEach(item => {
+    const comments = forumNotes[item.id] || [];
+    
+    const card = document.createElement("div");
+    card.className = "irregularity-card";
+    card.setAttribute("data-id", item.id);
+
+    // Build Statutes HTML
+    let statutesHtml = "";
+    if (item.statutes && item.statutes.length > 0) {
+      statutesHtml = `
+        <div class="statutes-col">
+          <h4>${item.category === "litigation" ? "Precedent Framework" : "Compliance Framework"}</h4>
+          ${item.statutes.map(st => `
+            <div class="statute-badge">
+              <code>${escapeHtml(st.name)}</code>
+              <span>${escapeHtml(st.violation)}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // Build Visible + Archived Comments
+    const VISIBLE_LIMIT = 5;
+    const visibleComments = comments.slice(0, VISIBLE_LIMIT);
+    const archivedComments = comments.slice(VISIBLE_LIMIT);
+    let commentsListHtml = "";
+    if (comments.length === 0) {
+      commentsListHtml = `<div class="no-comments" style="text-align: center; padding: 20px; color: var(--text-muted); font-style: italic;">No resident perspectives submitted yet. Be the first to share your information.</div>`;
+    } else {
+      commentsListHtml = visibleComments.map((c, i) =>
+        buildCommentHtml(c, item.id, i)
+      ).join('');
+      if (archivedComments.length > 0) {
+        commentsListHtml += `
+          <button type="button" class="archive-toggle" id="archive-toggle-${item.id}" onclick="toggleArchive('${item.id}')">Archived Posts (${archivedComments.length})</button>
+          <div class="comment-archived" id="archive-${item.id}" style="display: none;">
+            ${archivedComments.map((c, i) =>
+              buildCommentHtml(c, item.id, visibleComments.length + i)
+            ).join('')}
+          </div>`;
+      }
+    }
+
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="title-area">
+          <h2>${escapeHtml(item.title)}</h2>
+          <span class="source-tag">Source: <strong>${escapeHtml(item.source)}</strong></span>
+        </div>
+        <span class="badge badge-${escapeHtml(item.severity)}">${escapeHtml(item.severity)}</span>
+      </div>
+
+      <div class="card-body">
+        <div class="details-col">
+          <h3>${item.category === "litigation" ? "Forensic Context" : "The Irregularity"}</h3>
+          <p>${escapeHtml(item.details)}</p>
+          
+          ${item.category === "litigation" ? `
+          <h3>Florida Legal Standard</h3>
+          <p style="font-style: italic; color: var(--text-dim);">${escapeHtml(item.legalStandard || "")}</p>
+          ` : ""}
+          
+          <h3>${item.category === "litigation" ? "Board Response" : "Official Board Explanation"}</h3>
+          <p style="font-style: italic; color: var(--text-dim);">${escapeHtml(item.boardPosition)}</p>
+        </div>
+        ${statutesHtml}
+      </div>
+
+      <div class="prompt-box">
+        <h4>${item.category === "litigation" ? "Precedent Inquiry Prompt" : "Irregularity Inquiry Prompt"}</h4>
+        <p>${escapeHtml(item.prompt)}</p>
+      </div>
+
+      <div class="forum-section">
+        <div class="perspectives-window" style="padding:14px;">
+          <div class="forum-header">
+          <h4>Resident Perspectives &amp; Town Hall Info</h4>
+          <span class="forum-count">${comments.length} Posts</span>
+        </div>
+        
+        <div class="comment-list" id="comments-${item.id}">
+          ${commentsListHtml}
+        </div>
+          </div>
+
+        <div class="add-comment-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name-${item.id}">Resident Name &amp; Address / Neighborhood (e.g. Resident - Ashley Court)</label>
+              <input type="text" class="form-control" id="name-${item.id}" placeholder="Enter name, street address, or neighborhood (can be anonymous)">
+            </div>
+            <div class="form-group">
+              <label for="stance-${item.id}">Your Perspective / Stance</label>
+              <select class="form-control" id="stance-${item.id}">
+                <option value="concerned">Concerned Resident</option>
+                <option value="skeptical">Skeptical Watchdog</option>
+                <option value="neutral">Neutral Inquirer</option>
+                <option value="supportive">Supportive of Board</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="text-${item.id}">Your Perspective, Statement or Supplementary Information</label>
+            <textarea class="form-control" id="text-${item.id}" rows="3" placeholder="Provide your perspective, share facts, or ask follow-up questions regarding this irregularity..."></textarea>
+          </div>
+          <button type="button" class="submit-btn" onclick="submitComment('${item.id}')">Submit Perspective</button>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+// Profanity & Offensive Language Filter with Strikeout '######' Masking
+const PROFANITY_LIST = [
+  'fuck', 'fucking', 'fucked', 'fucker', 'fucks',
+  'shit', 'shitting', 'shitted', 'shits', 'bullshit',
+  'bitch', 'bitches', 'bitching',
+  'ass', 'asshole', 'assholes', 'asses',
+  'bastard', 'bastards',
+  'cunt', 'cunts',
+  'dick', 'dicks', 'dickhead',
+  'pussy', 'pussies',
+  'cock', 'cocksucker',
+  'damn', 'dammit',
+  'slut', 'sluts', 'whore', 'whores',
+  'nigger', 'niggers', 'nigga', 'faggot', 'faggots', 'retard', 'retarded'
+];
+
+function censorProfanity(inputStr) {
+  if (!inputStr || typeof inputStr !== 'string') return inputStr;
+  let cleaned = inputStr;
+  PROFANITY_LIST.forEach(word => {
+    const regex = new RegExp(`\\b${word}\\b`, 'gi');
+    cleaned = cleaned.replace(regex, (match) => {
+      const hashes = '#'.repeat(match.length);
+      return `<span style="text-decoration: line-through; opacity: 0.65; font-family: monospace; font-weight: bold; color: var(--err);">${hashes}</span>`;
+    });
+  });
+  return cleaned;
+}
+
+// Submit a new comment
+window.submitComment = function(irregularityId) {
+  const nameInput = document.getElementById(`name-${irregularityId}`);
+  const stanceInput = document.getElementById(`stance-${irregularityId}`);
+  const textInput = document.getElementById(`text-${irregularityId}`);
+
+  if (!textInput || !textInput.value.trim()) {
+    alert("Please enter your perspective or statement text before submitting.");
+    return;
+  }
+
+  const author = censorProfanity(nameInput.value.trim() || "Anonymous Resident");
+  const stance = stanceInput.value;
+  const text = censorProfanity(textInput.value.trim());
+
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+  const newComment = {
+    id: `${irregularityId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    author,
+    stance,
+    text,
+    date: dateStr,
+    likes: 0
+  };
+
+  if (!forumNotes[irregularityId]) {
+    forumNotes[irregularityId] = [];
+  }
+
+  forumNotes[irregularityId].push(newComment);
+  saveForumData();
+
+  // Clear input fields
+  nameInput.value = "";
+  textInput.value = "";
+
+  // Re-render comments for this specific card
+  if (irregularityId === "golf-recovery-plan") {
+    renderGolfRecoveryComments();
+  } else if (irregularityId === "hoa-meeting-july-8-2026") {
+    renderMeetingsComments();
+  } else {
+    renderIrregularities(activeTab, document.getElementById("search-box").value);
+  }
+};
+
+window.toggleLike = function(irregularityId, commentIndex, buttonEl) {
+  const comments = forumNotes[irregularityId] || [];
+  const comment = comments[commentIndex];
+  if (!comment) return;
+
+  const key = comment.id || `${irregularityId}-${commentIndex}`;
+  let likedSet = [];
+  try {
+    likedSet = JSON.parse(localStorage.getItem('likeState') || '[]');
+  } catch (e) {
+    likedSet = [];
+  }
+
+  const likelyOldKey = `${irregularityId}-${commentIndex}`;
+  if (likedSet.includes(key)) {
+    return;
+  }
+
+  comment.likes = (comment.likes || 0) + 1;
+  saveForumData();
+
+  likedSet.push(key);
+  if (likelyOldKey !== key && !likedSet.includes(likelyOldKey)) {
+    likedSet.push(likelyOldKey);
+  }
+  localStorage.setItem('likeState', JSON.stringify(likedSet));
+
+  const countSpan = buttonEl.parentElement ? buttonEl.parentElement.querySelector('.like-count') : null;
+  if (countSpan) {
+    countSpan.textContent = `${comment.likes} like${comment.likes === 1 ? '' : 's'}`;
+  }
+
+  buttonEl.disabled = true;
+  buttonEl.textContent = 'Liked';
+  buttonEl.style.opacity = '0.6';
+  buttonEl.style.cursor = 'not-allowed';
+};
+
+window.toggleReplyForm = function(safeId) {
+  const form = document.getElementById(`reply-form-${safeId}`);
+  if (!form) return;
+  const isHidden = form.style.display === 'none';
+  form.style.display = isHidden ? 'block' : 'none';
+};
+
+window.submitReply = function(irregularityId, commentIndex, safeId) {
+  const nameInput = document.getElementById(`reply-name-${safeId}`);
+  const stanceInput = document.getElementById(`reply-stance-${safeId}`);
+  const textInput = document.getElementById(`reply-text-${safeId}`);
+
+  if (!textInput || !textInput.value.trim()) {
+    alert('Please enter your reply text.');
+    return;
+  }
+
+  const author = censorProfanity(nameInput ? nameInput.value.trim() : 'Anonymous Resident');
+  const stance = stanceInput ? stanceInput.value : 'neutral';
+  const text = censorProfanity(textInput.value.trim());
+
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+  const reply = { author, stance, text, date: dateStr, likes: 0 };
+
+  const comments = forumNotes[irregularityId] || [];
+  const comment = comments[commentIndex];
+  if (!comment) return;
+
+  if (!Array.isArray(comment.replies)) {
+    comment.replies = [];
+  }
+  comment.replies.push(reply);
+  saveForumData();
+
+  if (textInput) textInput.value = '';
+
+  if (irregularityId === 'golf-recovery-plan') {
+    renderGolfRecoveryComments();
+  } else if (irregularityId === 'hoa-meeting-july-8-2026') {
+    renderMeetingsComments();
+  } else {
+    renderIrregularities(activeTab, document.getElementById('search-box').value);
+  }
+};
+
+window.toggleReplyLike = function(replyKey, buttonEl) {
+  let likedSet = [];
+  try {
+    likedSet = JSON.parse(localStorage.getItem('likeState') || '[]');
+  } catch (e) {
+    likedSet = [];
+  }
+
+  if (likedSet.includes(replyKey)) {
+    return;
+  }
+
+  likedSet.push(replyKey);
+  localStorage.setItem('likeState', JSON.stringify(likedSet));
+
+  const card = buttonEl.closest('[data-comment-id]');
+  const countSpan = card ? card.querySelector('.like-count') : null;
+  if (countSpan) {
+    const current = parseInt(countSpan.textContent.replace(/[^0-9]/g, ''), 10) || 0;
+    countSpan.textContent = `${current + 1} like${current === 1 ? '' : 's'}`;
+  }
+
+  buttonEl.disabled = true;
+  buttonEl.textContent = 'Liked';
+  buttonEl.style.opacity = '0.6';
+  buttonEl.style.cursor = 'not-allowed';
+};
+
+window.buildCommentHtml = function(c, irregularityId, index) {
+  const likes = c.likes || 0;
+  const oldKey = c.id || `${irregularityId}-${index}`;
+  const likesKey = c.id || oldKey;
+  let likedSet = [];
+  try {
+    likedSet = JSON.parse(localStorage.getItem('likeState') || '[]');
+  } catch (e) {
+    likedSet = [];
+  }
+  const liked = likedSet.includes(likesKey);
+
+  const safeId = (c.id || `${irregularityId}-${index}`).replace(/[^a-zA-Z0-9_-]/g, '_');
+  const replies = Array.isArray(c.replies) ? c.replies : [];
+  const repliesHtml = replies.map((r, idx) => buildReplyHtml(r, irregularityId, likesKey, idx)).join('');
+
+  return `
+    <div class=\"comment-card\" data-comment-id=\"${escapeHtml(likesKey)}\">
+      <div class=\"comment-meta\">
+        <span class=\"comment-author\">${escapeHtml(c.author)}</span>
+        <div>
+          <span class=\"comment-stance stance-${escapeHtml(c.stance)}\">${escapeHtml(c.stance)}</span>
+          <span class=\"comment-date\" style=\"margin-left: 8px;\">${escapeHtml(c.date)}</span>
+        </div>
+      </div>
+      <p class=\"comment-text\">${escapeHtml(c.text)}</p>
+      <div class=\"like-row\">
+        <button type=\"button\" class=\"like-button\" onclick=\"toggleLike('${irregularityId}', ${index}, this)\" ${liked ? 'disabled' : ''}>${liked ? 'Liked' : 'Like'}</button>
+        <span class=\"like-count\">${likes} like${likes === 1 ? '' : 's'}</span>
+        <button type=\"button\" class=\"reply-toggle\" onclick=\"toggleReplyForm('${safeId}')\" style=\"margin-left: 10px; background: none; border: none; color: var(--accent); font-weight: 700; cursor: pointer; font-size: 12px;\">Reply</button>
+      </div>
+      <div class=\"reply-form\" id=\"reply-form-${safeId}\" style=\"display: none; margin-top: 10px; padding: 10px; border-left: 2px solid var(--border);\">
+        <input id=\"reply-name-${safeId}\" placeholder=\"RESIDENT NAME / NEIGHBORHOOD\" style=\"width: 100%; padding: 8px; margin-bottom: 6px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-input); color: var(--text);\" />
+        <select id=\"reply-stance-${safeId}\" style=\"width: 100%; padding: 8px; margin-bottom: 6px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-input); color: var(--text);\">
+          <option value=\"concerned\">Concerned Resident</option>
+          <option value=\"skeptical\">Skeptical Watchdog</option>
+          <option value=\"neutral\">Neutral Inquirer</option>
+          <option value=\"supportive\">Supportive of Board</option>
+        </select>
+        <textarea id=\"reply-text-${safeId}\" rows=\"2\" placeholder=\"Write a reply...\" style=\"width: 100%; padding: 8px; margin-bottom: 6px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-input); color: var(--text);\"></textarea>
+        <button type=\"button\" onclick=\"submitReply('${irregularityId}', ${index}, '${safeId}')\" style=\"background: var(--accent); color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 700; cursor: pointer;\">Submit Reply</button>
+      </div>
+      <div class=\"replies-list\" id=\"replies-${safeId}\" style=\"margin-top: 10px;\">
+        ${repliesHtml}
+      </div>
+    </div>
+  `;
+};
+
+window.buildReplyHtml = function(r, irregularityId, parentKey, replyIndex) {
+  const likes = r.likes || 0;
+  const replyKey = `${parentKey}__reply_${replyIndex}`;
+  let likedSet = [];
+  try {
+    likedSet = JSON.parse(localStorage.getItem('likeState') || '[]');
+  } catch (e) {
+    likedSet = [];
+  }
+  const liked = likedSet.includes(replyKey);
+
+  return `
+    <div class=\"comment-card\" style=\"margin-left: 12px; border-left: 2px solid var(--border);\" data-comment-id=\"${escapeHtml(replyKey)}\">
+      <div class=\"comment-meta\">
+        <span class=\"comment-author\">${escapeHtml(r.author)}</span>
+        <div>
+          <span class=\"comment-stance stance-${escapeHtml(r.stance)}\">${escapeHtml(r.stance)}</span>
+          <span class=\"comment-date\" style=\"margin-left: 8px;\">${escapeHtml(r.date)}</span>
+        </div>
+      </div>
+      <p class=\"comment-text\">${escapeHtml(r.text)}</p>
+      <div class=\"like-row\">
+        <button type=\"button\" class=\"like-button\" onclick=\"toggleReplyLike('${replyKey}', this)\" ${liked ? 'disabled' : ''}>${liked ? 'Liked' : 'Like'}</button>
+        <span class=\"like-count\">${likes} like${likes === 1 ? '' : 's'}</span>
+      </div>
+    </div>
+  `;
+};
+
+// Toggle archived comments
+// Render comments for the static Golf Recovery Plan card
+function renderMeetingsComments() {
+  const irregularityId = "hoa-meeting-july-8-2026";
+  const comments = forumNotes[irregularityId] || [];
+  const container = document.getElementById("meetings-comments-container");
+  if (!container) return;
+
+  const VISIBLE_LIMIT = 5;
+  const visibleComments = comments.slice(0, VISIBLE_LIMIT);
+  const archivedComments = comments.slice(VISIBLE_LIMIT);
+
+  let commentsHtml = "";
+  if (comments.length === 0) {
+    commentsHtml = `<div class="no-comments" style="text-align: center; padding: 20px; color: var(--text-muted); font-style: italic;">No resident perspectives submitted yet. Be the first to share your information.</div>`;
+  } else {
+    commentsHtml = visibleComments.map((c, i) =>
+      buildCommentHtml(c, irregularityId, i)
+    ).join('');
+
+    if (archivedComments.length > 0) {
+      commentsHtml += `
+        <button type="button" class="archive-toggle" id="archive-toggle-${irregularityId}" onclick="toggleArchive('${irregularityId}')" style="margin-bottom: 12px;">Archived Posts (${archivedComments.length})</button>
+        <div class="comment-archived" id="archive-${irregularityId}" style="display: none; margin-bottom: 12px;">
+          ${archivedComments.map((c, i) =>
+            buildCommentHtml(c, irregularityId, visibleComments.length + i)
+          ).join('')}
+        </div>`;
+    }
+  }
+
+  container.innerHTML = `
+    <div class="forum-section" style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 20px;">
+      <div class="forum-header" style="margin-bottom: 16px;">
+        <h4 style="font-family: var(--font-heading); font-size: 13.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text); margin: 0;">Resident Perspectives &amp; Notes</h4>
+        <span class="forum-count" style="background: var(--border); padding: 2px 8px; border-radius: 12px; font-size: 11px; color: var(--text-dim);">${comments.length} Posts</span>
+      </div>
+      <div class="comment-list" id="comments-${irregularityId}">
+        ${commentsHtml}
+      </div>
+      <div class="add-comment-form" style="margin-top: 16px;">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name-${irregularityId}">Resident Name/Affiliation</label>
+            <input type="text" class="form-control" id="name-${irregularityId}" placeholder="e.g. John Doe (Village of Somerset)">
+          </div>
+          <div class="form-group">
+            <label for="stance-${irregularityId}">Stance</label>
+            <select class="form-control" id="stance-${irregularityId}">
+              <option value="neutral">Neutral Inquirer</option>
+              <option value="concerned">Concerned Citizen</option>
+              <option value="skeptical">Skeptical Watchdog</option>
+              <option value="supportive">Supportive of Board</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 8px;">
+          <label for="text-${irregularityId}">Your Perspective, Statement or Supplementary Information</label>
+          <textarea class="form-control" id="text-${irregularityId}" rows="3" placeholder="Provide your perspective, share facts, or ask follow-up questions regarding this board meeting..."></textarea>
+        </div>
+        <button type="button" class="submit-btn" onclick="submitComment('${irregularityId}')" style="margin-top: 8px;">Submit Perspective</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderGolfRecoveryComments() {
+  const irregularityId = "golf-recovery-plan";
+  const comments = forumNotes[irregularityId] || [];
+  const container = document.getElementById("golf-recovery-comments-container");
+  if (!container) return;
+
+  const VISIBLE_LIMIT = 5;
+  const visibleComments = comments.slice(0, VISIBLE_LIMIT);
+  const archivedComments = comments.slice(VISIBLE_LIMIT);
+
+  let commentsHtml = "";
+  if (comments.length === 0) {
+    commentsHtml = `<div class="no-comments" style="text-align: center; padding: 20px; color: var(--text-muted); font-style: italic;">No resident perspectives submitted yet. Be the first to share your information.</div>`;
+  } else {
+    commentsHtml = visibleComments.map((c, i) =>
+      buildCommentHtml(c, irregularityId, i)
+    ).join('');
+
+    if (archivedComments.length > 0) {
+      commentsHtml += `
+        <button type="button" class="archive-toggle" id="archive-toggle-${irregularityId}" onclick="toggleArchive('${irregularityId}')" style="margin-bottom: 12px;">Archived Posts (${archivedComments.length})</button>
+        <div class="comment-archived" id="archive-${irregularityId}" style="display: none; margin-bottom: 12px;">
+          ${archivedComments.map((c, i) =>
+            buildCommentHtml(c, irregularityId, visibleComments.length + i)
+          ).join('')}
+        </div>`;
+    }
+  }
+
+  container.innerHTML = `
+    <div class="forum-section" style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 20px;">
+      <div class="forum-header" style="margin-bottom: 16px;">
+        <h4 style="font-family: var(--font-heading); font-size: 13.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text); margin: 0;">Resident Perspectives &amp; Notes</h4>
+        <span class="forum-count" style="background: var(--border); padding: 2px 8px; border-radius: 12px; font-size: 11px; color: var(--text-dim);">${comments.length} Posts</span>
+      </div>
+      <div class="comment-list" id="comments-${irregularityId}">
+        ${commentsHtml}
+      </div>
+      <div class="add-comment-form" style="margin-top: 16px;">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name-${irregularityId}">Resident Name/Affiliation</label>
+            <input type="text" class="form-control" id="name-${irregularityId}" placeholder="e.g. John Doe (Village of Somerset)">
+          </div>
+          <div class="form-group">
+            <label for="stance-${irregularityId}">Stance</label>
+            <select class="form-control" id="stance-${irregularityId}">
+              <option value="neutral">Neutral Inquirer</option>
+              <option value="concerned">Concerned Citizen</option>
+              <option value="skeptical">Skeptical Watchdog</option>
+              <option value="supportive">Supportive of Board</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 8px;">
+          <label for="text-${irregularityId}">Your Perspective, Statement or Supplementary Information</label>
+          <textarea class="form-control" id="text-${irregularityId}" rows="3" placeholder="Provide your perspective, share facts, or ask follow-up questions regarding this turnaround option..."></textarea>
+        </div>
+        <button type="button" class="submit-btn" onclick="submitComment('${irregularityId}')" style="margin-top: 8px;">Submit Perspective</button>
+      </div>
+    </div>
+  `;
+}
+
+window.toggleArchive = function(irregularityId) {
+  const archivedDiv = document.getElementById(`archive-${irregularityId}`);
+  const toggleBtn = document.getElementById(`archive-toggle-${irregularityId}`);
+  if (!archivedDiv || !toggleBtn) {
+    return;
+  }
+  const isHidden = archivedDiv.style.display === "none";
+  archivedDiv.style.display = isHidden ? "block" : "none";
+  toggleBtn.textContent = isHidden
+    ? `Archived Posts (${archivedDiv.querySelectorAll('.comment-card').length}) — Hide`
+    : `Archived Posts (${archivedDiv.querySelectorAll('.comment-card').length})`;
+};
+
+// HOA Board Recall Poll Logic
+const RECALL_STORAGE_KEY = 'plant_hoa_recall_poll_data_v3';
+const RECALL_USER_VOTE_KEY = 'plant_hoa_user_recall_vote_v3';
+
+let recallPollData = {
+  yes: 3,
+  no: 1
+};
+
+function loadRecallPollData() {
+  try {
+    const stored = localStorage.getItem(RECALL_STORAGE_KEY);
+    if (stored) {
+      recallPollData = JSON.parse(stored);
+    } else {
+      localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
+    }
+  } catch (e) {
+    console.warn("localStorage read error for recall poll", e);
+  }
+}
+
+function renderRecallPoll() {
+  loadRecallPollData();
+  const yesCount = recallPollData.yes || 0;
+  const noCount = recallPollData.no || 0;
+  const total = yesCount + noCount;
+
+  const yesPct = total > 0 ? ((yesCount / total) * 100).toFixed(1) : 0;
+  const noPct = total > 0 ? ((noCount / total) * 100).toFixed(1) : 0;
+
+  const yesBar = document.getElementById("recall-yes-bar");
+  const noBar = document.getElementById("recall-no-bar");
+  const yesStat = document.getElementById("recall-yes-stat");
+  const noStat = document.getElementById("recall-no-stat");
+  const totalLabel = document.getElementById("recall-total-votes-label");
+  const voteMsg = document.getElementById("recall-vote-msg");
+
+  if (yesBar) yesBar.style.width = `${yesPct}%`;
+  if (noBar) noBar.style.width = `${noPct}%`;
+  if (yesStat) yesStat.textContent = `${yesPct}% (${yesCount.toLocaleString()} votes)`;
+  if (noStat) noStat.textContent = `${noPct}% (${noCount.toLocaleString()} votes)`;
+  if (totalLabel) totalLabel.textContent = `Total Community Votes: ${total.toLocaleString()}`;
+
+  // Check if user already voted
+  try {
+    const userVote = localStorage.getItem(RECALL_USER_VOTE_KEY);
+    if (userVote && voteMsg) {
+      voteMsg.style.display = "block";
+      voteMsg.style.background = "rgba(77, 171, 247, 0.12)";
+      voteMsg.style.border = "1px solid rgba(77, 171, 247, 0.3)";
+      voteMsg.style.color = "var(--accent)";
+      voteMsg.textContent = `Your vote (${userVote.toUpperCase()}) has been recorded. Thank you for participating!`;
+    }
+  } catch (e) {}
+}
+
+window.castRecallVote = function(option) {
+  try {
+    const existingVote = localStorage.getItem(RECALL_USER_VOTE_KEY);
+    if (existingVote) {
+      const voteMsg = document.getElementById("recall-vote-msg");
+      if (voteMsg) {
+        voteMsg.style.display = "block";
+        voteMsg.style.background = "rgba(255, 192, 72, 0.12)";
+        voteMsg.style.border = "1px solid rgba(255, 192, 72, 0.3)";
+        voteMsg.style.color = "var(--warn)";
+        voteMsg.textContent = `You have already voted (${existingVote.toUpperCase()}). Thank you for participating!`;
+      }
+      return;
+    }
+
+    if (option === 'yes') {
+      recallPollData.yes += 1;
+    } else if (option === 'no') {
+      recallPollData.no += 1;
+    }
+
+    localStorage.setItem(RECALL_STORAGE_KEY, JSON.stringify(recallPollData));
+    localStorage.setItem(RECALL_USER_VOTE_KEY, option);
+    renderRecallPoll();
+  } catch (e) {
+    console.error("Error submitting recall vote:", e);
+  }
+};
+
+// Tabs switching logic
+let activeTab = "all";
+function applyTabState(tab) {
+  const searchBar = document.getElementById("search-container");
+  const container = document.getElementById("irregularities-container");
+  const radar = document.getElementById("radar-container");
+  const turnaround = document.getElementById("turnaround-container");
+  const history = document.getElementById("history-container");
+  const exploratory = document.getElementById("exploratory-container");
+  const meetings = document.getElementById("meetings-container");
+  const recall = document.getElementById("recall-container");
+
+  if (tab === "litigation") {
+    container.style.display = "block"; searchBar.style.display = "flex"; turnaround.style.display = "none"; radar.style.display = "block"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
+    renderIrregularities(tab, document.getElementById("search-box").value);
+  } else if (tab === "turnaround") {
+    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "block"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
+    renderGolfRecoveryComments();
+  } else if (tab === "recall") {
+    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none";
+    if (recall) recall.style.display = "block";
+    renderRecallPoll();
+  } else if (tab === "meetings") {
+    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "none"; if (recall) recall.style.display = "none";
+    document.getElementById("meetings-container").style.display = "block";
+    renderMeetingsComments();
+  } else if (tab === "history") {
+    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "block"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
+  } else if (tab === "exploratory") {
+    container.style.display = "none"; searchBar.style.display = "none"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "block"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
+  } else {
+    container.style.display = "block"; searchBar.style.display = "flex"; radar.style.display = "none"; turnaround.style.display = "none"; history.style.display = "none"; exploratory.style.display = "none"; meetings.style.display = "none"; if (recall) recall.style.display = "none";
+    renderIrregularities(tab, document.getElementById("search-box").value);
+  }
+}
+document.querySelectorAll(".nav-btn").forEach(btn => {
+  btn.addEventListener("click", function() {
+    document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+    this.classList.add("active");
+    activeTab = this.getAttribute("data-tab");
+    applyTabState(activeTab);
+  });
+});
+applyTabState(activeTab);
+
+// Search input logic
+document.getElementById("search-box").addEventListener("input", function() {
+  renderIrregularities(activeTab, this.value);
+});
+
+
+
+window.toggleNotesAccordion = function(element) {
+  const content = element.nextElementSibling;
+  const arrow = element.querySelector('.arrow');
+  
+  content.classList.toggle('open');
+  
+  if (content.classList.contains('open')) {
+    content.style.maxHeight = content.scrollHeight + "px";
+    arrow.style.transform = "rotate(180deg)";
+    arrow.style.color = "var(--accent)";
+    
+    const handler = function() {
+      if (content.classList.contains('open')) {
+        content.style.maxHeight = "none";
+      }
+      content.removeEventListener('transitionend', handler);
+    };
+    content.addEventListener('transitionend', handler);
+  } else {
+    if (content.style.maxHeight === "none") {
+      content.style.maxHeight = content.scrollHeight + "px";
+      content.offsetHeight; // Force reflow
+    }
+    setTimeout(() => {
+      content.style.maxHeight = null;
+      arrow.style.transform = "rotate(0deg)";
+      arrow.style.color = "var(--text-muted)";
+    }, 10);
+  }
+};
+
+// Auto Last Updated
+function setLastUpdated() {
+  const hdr = document.getElementById('last-updated-header');
+  const disc = document.getElementById('last-updated-disclaimer');
+  const label = 'Last Updated: ';
+  
+  // Use document.lastModified to automatically get the file's deploy/modify time
+  const lastMod = new Date(document.lastModified);
+  const d = isNaN(lastMod.getTime()) ? new Date() : lastMod;
+  
+  const date = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  if (hdr) hdr.textContent = date;
+  if (disc) disc.textContent = label + date;
+}
+setLastUpdated();
+
+window.shareSite = function() {
+  const url = typeof window !== 'undefined' ? window.location.href.split('?')[0] : '';
+  const title = document.title;
+  if (navigator.share) {
+    navigator.share({ url, title }).catch(() => {});
+  } else {
+    if (navigator.clipboard && url) {
+      navigator.clipboard.writeText(url).then(() => alert('Link copied to clipboard.'), () => prompt('Copy this link:', url));
+    } else {
+      prompt('Copy this link:', url);
+    }
+  }
+};
+
+// Resident Suggestion Modal Handlers
+window.openSuggestionModal = function() {
+  const modal = document.getElementById("suggestion-modal");
+  if (modal) modal.style.display = "flex";
+};
+
+window.closeSuggestionModal = function() {
+  const modal = document.getElementById("suggestion-modal");
+  if (modal) modal.style.display = "none";
+};
+
+let isSubmittingSuggestion = false;
+
+window.handleSuggestionSubmit = function(e) {
+  const name = document.getElementById("sug-name").value.trim() || "Anonymous Resident";
+  const category = document.getElementById("sug-category").value;
+  const text = document.getElementById("sug-text").value.trim();
+  const confirmMsg = document.getElementById("sug-confirm-msg");
+  const textInput = document.getElementById("sug-text");
+  const subjectInput = document.getElementById("sug-hidden-subject");
+
+  if (!text) {
+    if (e) e.preventDefault();
+    if (textInput) {
+      textInput.style.border = "2px solid #EF4444";
+      textInput.focus();
+    }
+    if (confirmMsg) {
+      confirmMsg.style.display = "block";
+      confirmMsg.style.background = "rgba(239, 68, 68, 0.15)";
+      confirmMsg.style.border = "1px solid rgba(239, 68, 68, 0.3)";
+      confirmMsg.style.color = "#EF4444";
+      confirmMsg.innerHTML = "⚠️ Please type your requested changes or additions in the box above before submitting.";
+    }
+    return false;
+  }
+
+  if (isSubmittingSuggestion) return true;
+  isSubmittingSuggestion = true;
+
+  if (textInput) textInput.style.border = "1px solid var(--border)";
+  if (subjectInput) subjectInput.value = `[HOA Dashboard Suggestion] ${category.toUpperCase()}: From ${name}`;
+
+  const newEntry = { name, category, text, date: new Date().toLocaleString() };
+
+  // 1. Save to local browser cache
+  try {
+    const existing = JSON.parse(localStorage.getItem("plant_hoa_suggestions") || "[]");
+    existing.push(newEntry);
+    localStorage.setItem("plant_hoa_suggestions", JSON.stringify(existing));
+  } catch (err) {}
+
+  // 2. Sync to Central Cloud Database (2q7ohpt5/resident_suggestions)
+  const sugApiUrl = `https://keyvalue.immanuel.co/api/KeyVal/GetValue/2q7ohpt5/resident_suggestions`;
+  fetch(sugApiUrl)
+    .then(r => r.ok ? r.json() : null)
+    .catch(() => null)
+    .then(raw => {
+      let list = [];
+      if (raw) {
+        try {
+          list = JSON.parse(typeof raw === 'string' ? raw : JSON.stringify(raw));
+        } catch (e) {
+          if (Array.isArray(raw)) list = raw;
+        }
+      }
+      list.push(newEntry);
+      const postUrl = `https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/2q7ohpt5/resident_suggestions/${encodeURIComponent(JSON.stringify(list))}`;
+      fetch(postUrl, { method: 'POST' }).catch(() => {});
+    });
+
+  // 3. Update UI with immediate success message
+  if (confirmMsg) {
+    confirmMsg.style.display = "block";
+    confirmMsg.style.background = "rgba(121, 210, 166, 0.15)";
+    confirmMsg.style.border = "1px solid rgba(121, 210, 166, 0.3)";
+    confirmMsg.style.color = "var(--ok)";
+    confirmMsg.innerHTML = `
+      ✓ <strong>Suggestion Submitted!</strong> Thank you for your feedback.<br>
+      <span style="font-size: 11.5px; color: var(--text-dim); font-weight: normal;">Recorded to central cloud database and sent to Site Admin.</span>
+    `;
+  }
+
+  setTimeout(() => {
+    isSubmittingSuggestion = false;
+    document.getElementById("sug-text").value = "";
+    closeSuggestionModal();
+    if (confirmMsg) confirmMsg.style.display = "none";
+  }, 2500);
+
+  return true;
+};
+
+// Admin helper function to view all submitted suggestions live
+window.viewSuggestions = function() {
+  const sugApiUrl = `https://keyvalue.immanuel.co/api/KeyVal/GetValue/2q7ohpt5/resident_suggestions`;
+  fetch(sugApiUrl)
+    .then(r => r.json())
+    .then(data => {
+      console.log("=== RESIDENT SUGGESTIONS & IMPROVEMENTS LOG ===");
+      let items = [];
+      try { items = typeof data === 'string' ? JSON.parse(data) : data; } catch(e){}
+      console.table(items);
+      alert(`Found ${items.length} suggestions stored on the cloud. Press F12 -> Console to view details.`);
+    })
+    .catch(err => {
+      console.error("Error fetching suggestions:", err);
+      alert("Could not load cloud suggestions. Check browser console.");
+    });
+};
+
+// Initial Render
+renderIrregularities("all");
+</script>
+</div>
+</div>
+
+</body>
+</html>
